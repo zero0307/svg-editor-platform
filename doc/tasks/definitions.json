@@ -1,0 +1,720 @@
+[
+  {
+    "key": "TASK-QA-01",
+    "title": "[Q] 固定 Phase 1 行为基线、输入夹具和规格差异",
+    "area": "Q",
+    "priority": "p0",
+    "summary": "初始化已复跑原83项测试；继续补齐重构前可自动复现的逐字节基线，防止迁移后才生成期望值。",
+    "depends_on": [],
+    "paths": [
+      "doc/transcript/（拟建）",
+      "test/fixtures/svg/（拟建）",
+      "test/fixtures/expected/（拟建）",
+      "test/acceptance/（拟建）",
+      "doc/evidence/baseline/（拟建）"
+    ],
+    "scope": [
+      "独立检出final^{commit}，固定P1 §6与§6.1A会话和SVG输入，分别保存原始stdout、stderr与退出码。",
+      "输入只含命令与注释，期望输出与运行日志分离；记录规格示例与final实际反馈的差异及裁决。",
+      "建立固定目录夹具和复原协议，保留原七个测试文件及断言。"
+    ],
+    "out_of_scope": ["不改写final或旧实现，不生成虚假box基线。"],
+    "interfaces": ["无未完成硬依赖，可立即认领；向框架和A/B验收提供固定fixture。"],
+    "acceptance": [
+      "从final新建工作树按记录命令可生成相同字节，比较不trim、不排序、不移除warning/error。",
+      "覆盖基础会话、手工流程图、缺ID导入、IO屏障、失败后继续和退出码。",
+      "dir用目录可重建，输入脚本和输出日志在被列目录之外。",
+      "golden变更有依据，不能用新实现输出静默覆盖旧值。"
+    ],
+    "requirements": ["BASE-01", "DOC-01"],
+    "deliverables": ["会话与golden文件", "生成/比较入口", "环境、SHA和规格差异记录"]
+  },
+  {
+    "key": "TASK-CORE-01",
+    "title": "[F] 发布四扩展点、公开领域契约和测试替身",
+    "area": "F",
+    "priority": "p0",
+    "summary": "先让所有板块获得可编译的接口和fake context；契约完成不代表框架已经实现。",
+    "depends_on": [],
+    "paths": [
+      "packages/core/（拟建）",
+      "packages/core/test/（拟建）",
+      "doc/architecture.md",
+      "doc/adr/（接口ADR）"
+    ],
+    "scope": [
+      "定义ShapeProvider、Command、TreeDecorator、AttributeHandler及稳定注册名、PluginModule/manifest。",
+      "定义只读文档、EditorSessionPort、ShapeCreationService、SvgElementView、DirectoryReader、事务与事件边界。",
+      "命令准备结果提供requiresDocument/effect，区分Command与EditAction，覆盖canvas查询/修改。",
+      "提供最小fake服务、故障处理器与扩展上下文，公共中立视图定义在core防止反向依赖XML包。"
+    ],
+    "out_of_scope": ["不实现真实IO、完整loader或box专用分支，不引入Node/平台API到core。"],
+    "interfaces": [
+      "无硬依赖，可立即做契约PR；包名、exports和工作区合入与ENG-01协调。",
+      "契约后插件可用fake在功能分支开发，真实接入及关闭任务需等待FRAME-01。"
+    ],
+    "acceptance": [
+      "接口/fake通过strict编译，示例消费者仅使用公开入口。",
+      "四扩展点有注册、调用、缺省和违约测试约定，插件以类或实例实现。",
+      "只读路径不获得可变活文档，handles纯查询，handler冲突和错误契约明确。",
+      "跨板块契约评审及ADR完成，列出受影响消费者。"
+    ],
+    "requirements": ["BASE-02", "EXT-01", "EXT-02", "ATTR-02", "LOAD-01"],
+    "deliverables": ["公开接口/导出", "fake与消费示例", "契约ADR及扩展点清单初版"]
+  },
+  {
+    "key": "TASK-ENG-01",
+    "title": "[F] 建立 npm workspaces、构建顺序和包边界检查",
+    "area": "F",
+    "priority": "p0",
+    "summary": "建立目标多包工程，继续使用现有npm、TypeScript、node:test和锁文件。",
+    "depends_on": ["TASK-QA-01", "TASK-CORE-01"],
+    "paths": [
+      "package.json",
+      "package-lock.json",
+      "tsconfig.json",
+      "packages/、apps/、plugins/（按实际任务逐步创建）",
+      "scripts/check-architecture.mjs"
+    ],
+    "scope": [
+      "建立workspaces、TS项目引用、公开exports和编译入口；只创建有实际实现的包。",
+      "升级依赖检查覆盖跨包内部路径、插件互相导入及core反向依赖，保留一类一文件。",
+      "保留npm run check一键体验，提供单包独立测试入口，集中协调根锁文件。"
+    ],
+    "out_of_scope": ["不同时更换测试框架或包管理器，不实现插件业务或改golden。"],
+    "interfaces": ["依赖固定基线和公开契约；其他板块先写包内文件，根配置由本任务协调。"],
+    "acceptance": [
+      "干净克隆npm ci、依赖顺序构建与根检查可执行，旧CLI与基线仍能运行。",
+      "消费者不能穿透src内部路径，core不依赖host/builtins/plugins/平台API。",
+      "不删旧测试断言，工程变更与业务重构分开提交。",
+      "本地/CI检查入口一致，必要依赖元数据与锁文件变化有说明。"
+    ],
+    "requirements": ["BASE-01", "BASE-02", "EXT-01"],
+    "deliverables": ["工作区配置", "跨包边界检查", "单包/全仓命令说明"]
+  },
+  {
+    "key": "TASK-CORE-02",
+    "title": "[F] 实现候选文档事务、属性分派和通用结构不变量",
+    "area": "F",
+    "priority": "p0",
+    "summary": "提前完成复合图形需要的通用克隆、校验和结构保护，后续box接入不再补内核能力。",
+    "depends_on": ["TASK-ENG-01"],
+    "paths": [
+      "packages/core/领域与编辑服务（拟建）",
+      "packages/core/test/（拟建）",
+      "doc/adr/事务与结构保护ADR"
+    ],
+    "scope": [
+      "克隆候选→执行→全树及节点校验→一次提交文档和历史；失败丢弃副本。",
+      "实现AttributeHandler纯匹配/执行、冲突拒绝和默认白名单回退。",
+      "提供kind/tag、容器能力、clone、validateInvariant及结构策略，反馈使用通用结果或多态钩子。",
+      "提供只读查询、IO屏障、提交/保存/undo/redo事件，事件在成功后发出并隔离观察者故障。"
+    ],
+    "out_of_scope": ["不实现真实box，不把label加入内核白名单，不通过SVG编解码制作历史快照。"],
+    "interfaces": [
+      "用假复合图形和故障处理器即可独立验证，无需业务插件。",
+      "不得为测试向插件开放可变历史栈。"
+    ],
+    "acceptance": [
+      "多部件修改只形成一个undo单元，undo/redo保留插件运行类型，无共享可变子节点。",
+      "部分修改抛错、匹配冲突、校验失败保持文档、路径、dirty基准、屏障及已有undo/redo行为。",
+      "合法默认属性保持旧行为，未知属性报约定错误，handler失败不再回退默认处理。",
+      "普通命令统一经过结构策略，整体删除和必要部件单独移出的语义可测。",
+      "查询不清空redo或改变屏障，canvas查询/修改、保存失败符合P1。"
+    ],
+    "requirements": ["BASE-01", "EXT-01", "ATTR-02", "ATTR-03", "BOX-02", "BOX-04", "TREE-02"],
+    "deliverables": ["核心事务/结构策略", "故障与历史测试", "事务/结构保护ADR"]
+  },
+  {
+    "key": "TASK-XML-01",
+    "title": "[F] 建立保留源码范围的中立 XML 语法入口",
+    "area": "F",
+    "priority": "p1",
+    "summary": "向Outline提供元素树和源码范围，与CLI严格领域导入分离，允许无ID和未知SVG标签。",
+    "depends_on": ["TASK-CORE-01"],
+    "paths": [
+      "packages/svg-xml/语法入口（拟建）",
+      "packages/svg-xml/test/（拟建）",
+      "doc/adr/XML复用ADR"
+    ],
+    "scope": [
+      "输出标签、可选ID、子元素、文本和定义清晰的偏移/行列范围，消费core公开中立视图。",
+      "验证解析依赖的范围精度，必要时独立扫描；不靠搜索重复标签文本定位。",
+      "不补ID、不创建领域对象、不套CLI白名单，不完整XML返回受控失败。"
+    ],
+    "out_of_scope": ["不实现VSCode对象、图形预览或完整SVG校验。"],
+    "interfaces": [
+      "依赖中立接口；可先包内编译，根工作区整合与ENG-01协调。",
+      "向VSC-02提供固定输入输出与range契约。"
+    ],
+    "acceptance": [
+      "嵌套根/容器/叶子、无ID、重复标签和同一行多元素的树与范围正确。",
+      "中文/emoji、LF/CRLF及前导空白有测试，UTF-16转换约定无歧义。",
+      "不完整XML可由调用方显示空大纲，没有未捕获异常。",
+      "包不依赖host、具体图形插件或VSCode API。"
+    ],
+    "requirements": ["BASE-02", "VS-02", "VS-03"],
+    "deliverables": ["中立语法API", "范围与异常fixture", "XML复用ADR"]
+  },
+  {
+    "key": "TASK-XML-02",
+    "title": "[F] 通过 provider 恢复完整 SVG 子树并保留导入语义",
+    "area": "F",
+    "priority": "p0",
+    "summary": "让新图形通过注册恢复，保留P1的ID、变换、样式、元数据和失败原子性。",
+    "depends_on": ["TASK-CORE-02", "TASK-XML-01"],
+    "paths": [
+      "packages/svg-xml/严格codec（拟建）",
+      "packages/svg-xml/test/（拟建）",
+      "test/fixtures/svg/（拟建）",
+      "doc/adr/读回匹配ADR"
+    ],
+    "scope": [
+      "完整中立树→全局ID/限制预检→变换和继承规范化→provider恢复完整子树。",
+      "语义标记匹配优先于标签默认provider，同级多命中拒绝；没有特定provider按默认标签恢复。",
+      "缺box插件按g降级并保留data-kind；未知标签仍按P1拒绝。",
+      "维持编码格式、补ID警告和read失败不替换文档。"
+    ],
+    "out_of_scope": ["不在codec写box特例或import具体插件，不扩展旋转/CSS/path等范围。"],
+    "interfaces": [
+      "用假provider验证通用恢复，无需先实现box。",
+      "输出公开SvgCodec给CLI与DSH运行时装配。"
+    ],
+    "acceptance": [
+      "原SVG/字符串/变换测试和基线输出通过。",
+      "每片叶子的累计变换只应用一次，恢复容器后不二次变换整树。",
+      "重复ID在降级前整体拒绝，读入失败不改变文档、历史或默认路径。",
+      "假复合provider可完整恢复与往返；匹配冲突没有静默覆盖。"
+    ],
+    "requirements": ["BASE-01", "EXT-01", "BOX-03"],
+    "deliverables": ["provider驱动codec", "变换/往返/降级测试", "匹配与降级ADR"]
+  },
+  {
+    "key": "TASK-HOST-01",
+    "title": "[F] 实现双装配共享加载器、清单校验和注册回滚",
+    "area": "F",
+    "priority": "p0",
+    "summary": "A代码装配和B配置装配均调用同一PluginInstaller，插件贡献先暂存再原子发布。",
+    "depends_on": ["TASK-ENG-01"],
+    "paths": [
+      "packages/host/loader与installer（拟建）",
+      "packages/host/test/（拟建）",
+      "test/fixtures/plugins/（拟建）",
+      "doc/adr/加载事务ADR"
+    ],
+    "scope": [
+      "校验default/activate/manifest，比较四类别名称集合，检测重复名并统一回滚。",
+      "按配置顺序装入，disabled完全跳过，相对路径以配置目录解析，options只读传递。",
+      "区分顶层定位失败与求值/内部依赖失败，按任务书报错并继续启动。",
+      "允许的事件订阅或资源申请纳入暂存/释放契约。"
+    ],
+    "out_of_scope": ["不绕过installer裸activate，不承诺撤销任意模块顶层外部副作用。"],
+    "interfaces": [
+      "使用微型故障插件独立测试，不等业务插件。",
+      "A/B只在谁决定插件集合和实例化上不同。"
+    ],
+    "acceptance": [
+      "四种规定失败、非法default、重复注册、非法JSON/结构、内部依赖与求值失败都有测试。",
+      "失败插件前后放成功插件：之前保留、失败四类注册及订阅无残留、后续可用。",
+      "enabled:false模块即使顶层会抛错也不解析/求值。",
+      "集合比较不会吞重复名，错误文案准确，非法配置回退默认能力。",
+      "A/B共用注册校验入口；加载器没有具体插件导入/名字映射。"
+    ],
+    "requirements": ["EXT-01", "LOAD-01", "LOAD-02", "LOAD-03", "LOAD-04"],
+    "deliverables": ["共享installer/loader", "故障矩阵", "配置说明与加载ADR"]
+  },
+  {
+    "key": "TASK-HOST-02",
+    "title": "[F] 提供文件、目录和运行会话的真实宿主适配器",
+    "area": "F",
+    "priority": "p1",
+    "summary": "在框架基线完成通用IO，后续dir接入不再新增宿主运行逻辑。",
+    "depends_on": ["TASK-ENG-01"],
+    "paths": [
+      "packages/host/adapters/（拟建）",
+      "packages/host/test/（拟建）",
+      "doc/architecture.md"
+    ],
+    "scope": [
+      "迁移LocalFileStore读写/原子保存，实现DirectoryReader和进程cwd适配。",
+      "返回直接目录项与类型，不递归、不追踪链接、不修改cwd。",
+      "端口与Node实现隔离，核心及业务插件仅依赖公开抽象。"
+    ],
+    "out_of_scope": ["不实现dir排序或输出格式，不把SVG文件位置当cwd。"],
+    "interfaces": ["消费core公开端口；CMD-02用替身开发，真实组合等本任务完成。"],
+    "acceptance": [
+      "临时目录覆盖普通项/隐藏项/空目录/特殊项/不存在路径，资源finally清理。",
+      "保存原子替换和失败清理保留，不破坏原文件。",
+      "测试不并行process.chdir，日志与被列目录隔离。",
+      "真实适配器可替换，core/业务插件无Node文件系统导入。"
+    ],
+    "requirements": ["BASE-01", "BASE-02", "DIR-02", "DIR-03"],
+    "deliverables": ["真实宿主适配器", "文件/目录组合测试", "Adapter角色说明"]
+  },
+  {
+    "key": "TASK-CORE-03",
+    "title": "[F] 建立通用树展示与行尾装饰管线",
+    "area": "F",
+    "priority": "p1",
+    "summary": "业务标签之前完成渲染扩展，无标签时保持P1字节格式。",
+    "depends_on": ["TASK-ENG-01"],
+    "paths": [
+      "packages/core/展示服务（拟建）",
+      "packages/core/test/（拟建）",
+      "doc/architecture.md"
+    ],
+    "scope": [
+      "迁移tree/show通用展示，定义根行、子树行和只读上下文，按注册顺序拼接后缀。",
+      "提供持久化投影、装饰器生命周期与故障隔离，状态留在实例。"
+    ],
+    "out_of_scope": ["不实现box或modified-star，不让展示修改文档。"],
+    "interfaces": ["消费公开TreeDecorator；向BOX-01/TREE-01交付稳定行上下文。"],
+    "acceptance": [
+      "零装饰器时tree/tree id/show/空文档与final逐字节一致。",
+      "两个彼此不知情的假标签可并存，无后缀不多空格，顺序可复现。",
+      "两个编辑器/实例无状态泄漏，展示错误不改变文档/历史。",
+      "新增第三种假标签无需改渲染代码。"
+    ],
+    "requirements": ["EXT-01", "TREE-01", "TREE-03", "BASE-01"],
+    "deliverables": ["展示管线", "无标签golden/假标签测试", "行上下文与故障契约"]
+  },
+  {
+    "key": "TASK-CLI-01",
+    "title": "[F] 插件化默认命令和六种图形并接通 CLI",
+    "area": "F",
+    "priority": "p0",
+    "summary": "具体实现迁入builtins经注册提供默认能力，CLI负责输入和组合根。",
+    "depends_on": [
+      "TASK-CORE-02",
+      "TASK-XML-02",
+      "TASK-HOST-01",
+      "TASK-HOST-02",
+      "TASK-CORE-03",
+      "TASK-QA-01"
+    ],
+    "paths": [
+      "packages/builtins/（拟建）",
+      "apps/cli/（拟建）",
+      "src/（逐步迁出）",
+      "test/（保留迁移）",
+      "plugins.config.json（拟建）"
+    ],
+    "scope": [
+      "六类图形与原命令改为类/实例注册，help参数规则由注册对象提供并保留原顺序。",
+      "router按requiresDocument/effect判断前置条件，不列命令名例外白名单。",
+      "提供等价A/B启动入口，无可选插件仍默认提供P1能力。",
+      "迁移测试导入、脚本入口、保存路径、屏障、错误继续和退出码。"
+    ],
+    "out_of_scope": ["不提前接入正式业务插件，不改golden或夹带行为升级。"],
+    "interfaces": ["真实组合关闭前完成所有硬依赖；目录/根配置与框架协调者统一处理。"],
+    "acceptance": [
+      "禁用所有可选插件时原83项及新增回归通过，基础会话与final相同。",
+      "六种图形/全部原命令/help可用，参数和未知命令/图形错误不变。",
+      "默认A/B输出相同且内置实现经过同一校验路径。",
+      "core不导入builtins或具体命令/图形，旧新两套运行内核不并存。"
+    ],
+    "requirements": ["BASE-01", "BASE-02", "EXT-01", "EXT-02", "LOAD-01", "ASM-01"],
+    "deliverables": ["默认插件和CLI入口", "测试迁移", "默认兼容日志"]
+  },
+  {
+    "key": "TASK-FRAME-01",
+    "title": "[Q] 验收并冻结 M2 通用框架基线",
+    "area": "Q",
+    "priority": "p0",
+    "summary": "固定正式业务插件接入前的共同框架F，证明通用能力已齐备。",
+    "depends_on": ["TASK-CLI-01", "TASK-MET-01"],
+    "paths": [
+      "test/acceptance/（拟建）",
+      "test/fixtures/plugins/通用虚拟插件（拟建）",
+      "doc/evidence/framework/（拟建）",
+      "doc/evidence-index.md（拟建）"
+    ],
+    "scope": [
+      "用测试专用未知复合类型证明创建/clone/校验/恢复/属性事务/反馈/装饰不依赖业务名字。",
+      "复核loader故障、默认兼容和包边界，补扩展点真实文件/函数与契约错误。",
+      "固定F完整SHA和evidence/p2-framework-base分支，不打中间tag。",
+      "使用TASK-MET-01脚本比较final与框架候选提交，在冻结F前生成并归档首次CLI三类指标。",
+      "冻结基础、box、stats/dir会话输入、SVG输入和固定目录重建协议；输入、预期输出、实际日志分离。"
+    ],
+    "out_of_scope": ["不先合box再称C新增，不用空路径diff或最终merge提交冒充接入证据。"],
+    "interfaces": [
+      "这是正式接入/关闭业务插件任务的硬门槛；插件在CORE-01后可先用fake在功能分支开发。"
+    ],
+    "acceptance": [
+      "假复合provider/handler/decorator可独立运行，clone运行类型与失败历史均有断言。",
+      "扩展点清单包含实际位置、实现、缺省和错误测试，四类可核验。",
+      "F已包含插件所需通用能力和工具，但不包含正式新插件包。",
+      "受保护路径真实存在，F/插件集合/环境/命令有证据索引，可从F分叉A/B演示。",
+      "首版metrics由脚本读取Git历史生成并写明输入SHA、分类和工具口径，冻结F之前可复现，不手填数字。"
+    ],
+    "requirements": ["BASE-01", "BASE-02", "EXT-01", "EXT-02", "ATTR-03", "LOAD-01", "ASM-02"],
+    "deliverables": [
+      "M2验收日志",
+      "共同基线SHA/分支",
+      "扩展点实际位置清单",
+      "final到框架候选的首次metrics报告及生成日志"
+    ]
+  },
+  {
+    "key": "TASK-CMD-01",
+    "title": "[C] 实现可独立启停的 stats 命令插件",
+    "area": "C",
+    "priority": "p1",
+    "summary": "按文档树顺序统计叶子和容器，作为独立只读Command插件。",
+    "depends_on": ["TASK-FRAME-01"],
+    "paths": [
+      "plugins/command-stats/（拟建）",
+      "plugins/command-stats/test/（拟建）",
+      "doc/transcript/stats-dir.txt（拟建）"
+    ],
+    "scope": [
+      "提供Command实例、语法/help及manifest；从根子节点依当前顺序DFS。",
+      "叶子类型按首次出现计数，g/box只算容器，根不计，内部叶子仍统计。"
+    ],
+    "out_of_scope": ["不加内核统计分支，不依赖box插件才能测容器。"],
+    "interfaces": [
+      "FRAME-01为合并/关闭硬依赖；CORE-01后可在功能分支用fake并行开发。",
+      "真实完整A/B回放由QA-02验收。"
+    ],
+    "acceptance": [
+      "嵌套/混合叶子、首次出现顺序、根不计和空文档(total 0, containers 0)有测试。",
+      "前后文档、dirty、历史和屏障无变化；参数规则明确。",
+      "help随启停变化，禁用报error: unknown command: stats。",
+      "独立单测不加载其他插件，接入不改core/host/既有插件。"
+    ],
+    "requirements": ["CMD-01", "CMD-02", "BASE-02"],
+    "deliverables": ["stats插件/manifest", "独立测试", "示例和接入差异"]
+  },
+  {
+    "key": "TASK-CMD-02",
+    "title": "[C] 实现 dir 命令与真实目录组合测试",
+    "area": "C",
+    "priority": "p1",
+    "summary": "仅通过DirectoryReader读取进程cwd，未初始化文档也可调用。",
+    "depends_on": ["TASK-FRAME-01"],
+    "paths": [
+      "plugins/command-dir/（拟建）",
+      "plugins/command-dir/test/（拟建）",
+      "test/acceptance/dir-adapter.test.ts（拟建）",
+      "doc/dir.md（拟建）"
+    ],
+    "scope": [
+      "插件提供语法/help与manifest，替身测试业务，根集成组合host已完成的适配器。",
+      "直接项目录在前文件在后、组内稳定名称序、含隐藏项、标记后两个空格；记录特殊项策略。"
+    ],
+    "out_of_scope": ["不在接入补host/core，不跟随符号链接或递归，不将dir当文档IO。"],
+    "interfaces": [
+      "FRAME-01为合并/关闭硬门槛；CORE-01后fake开发，真实组合使用HOST-02。",
+      "业务单测不依赖host内部，真实IO组合放根集成测试。"
+    ],
+    "acceptance": [
+      "替身覆盖混合/隐藏/空目录/乱序稳定性/失败/拒绝参数；空目录输出(empty directory)。",
+      "真实临时目录含中文空格名称，错误准确为error: cannot read directory: <path>且后续命令可执行。",
+      "无文档可用；成功/失败不改变内容、dirty、cwd、undo/redo或屏障，含已有redo前置。",
+      "A/B同一固定目录逐字节一致，日志在外，read/save不改变cwd。",
+      "help随启停更新，禁用unknown command，单插件业务可独立测试。"
+    ],
+    "requirements": ["CMD-02", "DIR-01", "DIR-02", "DIR-03", "ASM-01"],
+    "deliverables": ["dir插件及独立测试", "真实适配器组合测试", "Adapter角色和命令文档"]
+  },
+  {
+    "key": "TASK-BOX-01",
+    "title": "[B] 实现 box 图形、属性处理器与类型标签",
+    "area": "B",
+    "priority": "p1",
+    "summary": "同包注册box、box-attributes与box-type-label，不修改冻结框架。",
+    "depends_on": ["TASK-FRAME-01"],
+    "paths": [
+      "plugins/shape-box/（拟建）",
+      "plugins/shape-box/test/（拟建）",
+      "doc/transcript/box.txt（拟建）",
+      "test/fixtures/svg/box*.svg（拟建）",
+      "doc/adr/box决策ADR"
+    ],
+    "scope": [
+      "通过公开创建服务生成<id>-rect/<id>-label，支持in/move/scale/嵌套/group/整体delete。",
+      "实现clone保类型、角色重新绑定、必要部件保护和不变量；普通命令不能拆走必要部件。",
+      "fill改内部rect，label改内部文字，各一次事务；(box)由独立decorator添加。",
+      "序列化g data-kind=box，完整子树恢复；装插件但坏结构按ADR拒绝整次读入。"
+    ],
+    "out_of_scope": ["不import builtins/其他插件，不扩内核label白名单，不在renderer写box。"],
+    "interfaces": [
+      "FRAME-01为合并/关闭硬门槛；CORE-01后可fake并行开发。",
+      "三类贡献共同注册/回滚；缺契约先回框架重建F，不能夹带补洞。"
+    ],
+    "acceptance": [
+      "完整P1 §6.1B会话可复现，fill/label各一次undo/redo整体恢复。",
+      "派生ID任一冲突无残留，重复ID读入拒绝，坏结构保留原文档。",
+      "必要部件单独删除/移出及ungroup拒绝，整体删除允许，额外子节点/嵌套策略可测。",
+      "缺插件降级g保留标记；装插件往返保类型；未知属性/冲突/部分修改抛错均覆盖。",
+      "独立测试仅core公开API/fake；接入时core/loader/renderer/既有插件零差异。"
+    ],
+    "requirements": [
+      "ATTR-01",
+      "ATTR-02",
+      "ATTR-03",
+      "BOX-01",
+      "BOX-02",
+      "BOX-03",
+      "BOX-04",
+      "BOX-05",
+      "TREE-01"
+    ],
+    "deliverables": ["box插件及三类贡献", "独立不变量/事务/恢复测试", "会话、ADR与接入证据"]
+  },
+  {
+    "key": "TASK-TREE-01",
+    "title": "[T] 实现 modified-star 内容脏状态标签",
+    "area": "T",
+    "priority": "p1",
+    "summary": "以保存/读入内容基准比较，显示实例级未保存变化并向祖先传播。",
+    "depends_on": ["TASK-FRAME-01"],
+    "paths": [
+      "plugins/tree-modified/（拟建）",
+      "plugins/tree-modified/test/（拟建）",
+      "doc/adr/dirty语义ADR"
+    ],
+    "scope": [
+      "实例持有指纹基准与差异集，消费公开投影和成功提交事件；新建空文档为初始基准。",
+      "新节点立即标星，结构/叶子变化向祖先与根传播，删除使用旧父链。",
+      "独立返回后缀，不读取box标签或其他插件状态，遵守注册顺序。"
+    ],
+    "out_of_scope": ["不用模块全局变量或XML格式串指纹，不改变P1保存屏障。"],
+    "interfaces": [
+      "FRAME-01为合并/关闭硬门槛；CORE-01后fake事件可先开发，通用行和提交事件在F内已完成。"
+    ],
+    "acceptance": [
+      "编辑→保存→再编辑→undo回保存点清星，再redo恢复，失败编辑/保存不改基准。",
+      "覆盖init/read、新建/删除/重排/画布变化及祖先传播，ADR明确规则。",
+      "两个编辑器/标签实例不泄漏，双标签互不感知且顺序固定。",
+      "禁用后tree回基线字节，接入不改内核/renderer。"
+    ],
+    "requirements": ["TREE-01", "TREE-02", "TREE-03"],
+    "deliverables": ["modified-star插件", "独立状态机测试", "dirty及标签顺序ADR"]
+  },
+  {
+    "key": "TASK-VSC-01",
+    "title": "[V] 建立 VSCode 扩展并实现 SVG 文件标记",
+    "area": "V",
+    "priority": "p1",
+    "summary": "先交付独立Extension Host原型，仅SVG普通文件显示[]附加标记。",
+    "depends_on": [],
+    "paths": [
+      "apps/vscode-svg/（拟建）",
+      "apps/vscode-svg/test/（拟建）",
+      "apps/vscode-svg/examples/（拟建）",
+      "doc/vscode.md（拟建）"
+    ],
+    "scope": [
+      "注册FileDecorationProvider，非SVG和目录无标记。",
+      "提供示例、启动/调试步骤、实际运行证据，观察原生Outline行为。",
+      "包内骨架可独立开发，根workspace/锁文件合入与ENG-01协调。"
+    ],
+    "out_of_scope": ["不改文件名/内容，不建替代Explorer或图形预览，不等CLI插件。"],
+    "interfaces": ["无硬依赖，可立即认领；workspace未建立时先做功能分支包内原型。"],
+    "acceptance": [
+      "实际Extension Host中SVG旁显示[]，文本文件和目录无标记。",
+      "前后文件名和内容不变，多目录/隐藏示例不会抛异常。",
+      "真实badge截图与步骤齐全，不能用设计图代替。",
+      "说明宿主注册/回调职责及Decorator/Adapter角色和差异。"
+    ],
+    "requirements": ["VS-01", "VS-03"],
+    "deliverables": ["扩展骨架/装饰器", "示例/测试/截图", "启动与模式分析文档"]
+  },
+  {
+    "key": "TASK-VSC-02",
+    "title": "[V] 实现原生 SVG Outline、定位并验证 VSIX 安装",
+    "area": "V",
+    "priority": "p1",
+    "summary": "消费中立XML树实现DocumentSymbolProvider，完成编辑刷新和独立分发。",
+    "depends_on": ["TASK-VSC-01", "TASK-XML-01"],
+    "paths": [
+      "apps/vscode-svg/Outline与打包（拟建）",
+      "apps/vscode-svg/test/（拟建）",
+      "doc/evidence/vscode/（拟建）",
+      "doc/vscode.md（拟建）"
+    ],
+    "scope": [
+      "显示根/容器/叶子，有ID显示标签#id，无ID显示标签，转换Range/selectionRange。",
+      "编辑刷新，不完整XML可清空但不崩溃；打包携带全部运行依赖。",
+      "补齐Phase1解析/模型/遍历复用评估与真实演示。"
+    ],
+    "out_of_scope": ["不使用CLI严格导入器补ID/限制标签，不按文本猜定位，不实现SVG预览。"],
+    "interfaces": [
+      "硬依赖扩展骨架和语法API；XML实现未就绪可按契约先用fake写符号映射，真实集成后关闭。"
+    ],
+    "acceptance": [
+      "嵌套分组、无ID、编辑和不完整XML均测试并实测，点击准确定位开始标签。",
+      "中文/emoji、CRLF、同一行多元素及重复标签的范围正确。",
+      "VSIX在无源码workspace软链接的干净环境安装运行，依赖完整。",
+      "两项真实截图、异常证据、安装步骤和复用分析与矩阵关联。"
+    ],
+    "requirements": ["VS-02", "VS-03", "PKG-01", "DOC-01"],
+    "deliverables": ["Outline及range测试", "VSIX与干净安装记录", "截图/复用分析"]
+  },
+  {
+    "key": "TASK-DSH-01",
+    "title": "[D] 固定 DSH 版本并验证最小插件加载与卸载",
+    "area": "D",
+    "priority": "p1",
+    "summary": "先验证真实DSH生命周期和版本，再用编辑服务fake开发工具契约。",
+    "depends_on": [],
+    "paths": [
+      "apps/dsh-plugin/（拟建）",
+      "apps/dsh-plugin/test/（拟建）",
+      "doc/dsh.md（拟建）",
+      "doc/evidence/dsh/（拟建）"
+    ],
+    "scope": [
+      "固定发行版/commit、Node要求、profile与官方入口，注册最小测试工具并卸载。",
+      "定义结构化输入输出和EditorSessionPort消费适配，fake逻辑独立于CLI。"
+    ],
+    "out_of_scope": ["不套用CLI activate/contributes，不做市场发布/UI或模型后端。"],
+    "interfaces": ["无硬依赖，可立即认领；编辑端口签名与CORE-01同步，缺真实服务先fake开发。"],
+    "acceptance": [
+      "固定版本真实加载/工具调用/卸载成功，卸载无注册或监听残留。",
+      "schema和结果可fake独立测试，不启动CLI子进程或解析回显。",
+      "版本、安装命令、边界和恢复方法可复现，官方API差异有记录。",
+      "第三部分验收歧义明确记录，不把市场发布列硬要求。"
+    ],
+    "requirements": ["DSH-01", "PKG-02", "DOC-01"],
+    "deliverables": ["最小DSH插件和fake端口", "版本/生命周期证据", "工具契约"]
+  },
+  {
+    "key": "TASK-DSH-02",
+    "title": "[D] 实现 SVG 检查和流程图生成工具并独立安装",
+    "area": "D",
+    "priority": "p1",
+    "summary": "实现svg_inspect及svg_create_flowchart，通过公开运行时调用默认图形能力。",
+    "depends_on": ["TASK-DSH-01", "TASK-CLI-01"],
+    "paths": [
+      "apps/dsh-plugin/工具与适配（拟建）",
+      "apps/dsh-plugin/test/（拟建）",
+      "doc/evidence/dsh/install/（拟建）",
+      "doc/dsh.md（拟建）"
+    ],
+    "scope": [
+      "检查工具返回画布/结构/类型统计，生成工具接受节点/标签/坐标/连线的schema参数并保存SVG。",
+      "使用公开EditorSessionPort/codec与独立会话，运行依赖可随包正式安装。",
+      "完成真实DSH会话、SVG结果核对、安装卸载和fake业务测试。"
+    ],
+    "out_of_scope": ["不解析CLI文本或拼shell，不必依赖box，不做市场上架/复杂UI。"],
+    "interfaces": [
+      "依赖最小DSH插件和公开运行时；CLI未完成前可用DSH-01端口fake开发，真实集成才关闭。"
+    ],
+    "acceptance": [
+      "有效输入生成带矩形/文字/连接线的可读SVG，检查输出稳定。",
+      "非法参数/读写失败明确报错且不污染后续调用，多会话不串文档。",
+      "无workspace链接的干净目录可安装、执行两个工具和卸载，记录版本命令产物。",
+      "fake测试独立运行，真实装配使用相同业务逻辑并提供真实会话证据。"
+    ],
+    "requirements": ["DSH-01", "PKG-02", "DOC-01"],
+    "deliverables": ["两个工具及运行时适配", "独立测试/真实会话", "安装包、SVG和文档"]
+  },
+  {
+    "key": "TASK-MET-01",
+    "title": "[Q] 实现 Git 历史指标脚本与目录迁移分类",
+    "area": "Q",
+    "priority": "p1",
+    "summary": "同一脚本从Git历史生成文件职责、三类行数和复杂度增量，数字可重算。",
+    "depends_on": ["TASK-ENG-01"],
+    "paths": [
+      "scripts/metrics/（拟建）",
+      "docs/metrics/（拟建）",
+      "doc/architecture.md",
+      "doc/maintenance.md"
+    ],
+    "scope": [
+      "锁定TS AST规则、版本和输入SHA，不读取混合工作区状态。",
+      "CLI内核/装配/插件分类，旧新路径迁移表，VSCode/DSH单列，排除测试/依赖/构建产物。",
+      "路径→分类→职责映射检查遗漏/重复，生成每文件与汇总。",
+      "支持候选测量及p2后重跑到临时目录，避免报告SHA循环。"
+    ],
+    "out_of_scope": ["不手填数字、改旧标签或引入多套无必要质量平台。"],
+    "interfaces": ["依赖目标工程分类明确；先测final/框架候选，最终p2报告由QA-03收口。"],
+    "acceptance": [
+      "相同SHA/工具版本输出数值相同，包含规则、输入和排除列表。",
+      "两端分类完整，原始列表/迁移表可审查，不把搬目录当消除复杂度。",
+      "指标全来自Git，CLI三类与其他应用分列，行数和复杂度口径明确。",
+      "p2可重跑，文档收尾提交可核对被测CLI源码相同。"
+    ],
+    "requirements": ["MET-01", "BASE-02", "DOC-01"],
+    "deliverables": ["指标脚本和映射清单", "原始/汇总指标", "重算说明"]
+  },
+  {
+    "key": "TASK-QA-02",
+    "title": "[Q] 保存插件接入差异并完成完整 A/B 回放",
+    "area": "Q",
+    "priority": "p1",
+    "summary": "分别证明单插件接入零内核改动和完整插件集A/B一致，两种证据分别保存。",
+    "depends_on": ["TASK-FRAME-01", "TASK-CMD-01", "TASK-CMD-02", "TASK-BOX-01", "TASK-TREE-01"],
+    "paths": [
+      "test/acceptance/（拟建）",
+      "doc/transcript/（拟建）",
+      "doc/evidence/assembly/（拟建）",
+      "doc/evidence-index.md（拟建）"
+    ],
+    "scope": [
+      "从共同F分叉evidence/box-code和box-config，保留同实现的C_A/C_B及完整SHA。",
+      "A只改一个组合根运行文件，B不改既有运行源码，元数据/测试/文档额外变化逐项解释。",
+      "对同一最终集成提交的完整插件集回放基础/box/stats-dir，原始字节比较stdout/stderr/退出码。",
+      "覆盖独立测试、各插件启停、双标签及失败继续，将实际代码/测试/日志关联需求。"
+    ],
+    "out_of_scope": ["不用merge提交/空路径diff冒充证明，不trim日志或只验box单分支。"],
+    "interfaces": [
+      "硬依赖框架F及正式插件，输入沿用QA-01；如需补框架，先重建F再重做证据。",
+      "可在FRAME-01后提前建立证据分支，用box候选提交先保存C_A/C_B再集成；依赖其他插件仅是最终完整回放与关闭门槛，不能等全部插件已合main后才补首次接入证据。"
+    ],
+    "acceptance": [
+      "新克隆可检出F/C_A/C_B复现原diff；真实内核/loader/旧插件路径存在且零变更。",
+      "A/B集合、顺序、options、SVG和cwd相同，三类会话逐字节一致。",
+      "dir目录固定且轮次间复原，日志在外；故意错误继续且退出码正确。",
+      "关闭所有可选插件回到final基线，help与未知命令/图形缺省行为可测。",
+      "证据索引列SHA、命令、输入输出、环境和元数据理由。"
+    ],
+    "requirements": [
+      "BASE-01",
+      "CMD-02",
+      "DIR-03",
+      "BOX-05",
+      "TREE-01",
+      "ASM-01",
+      "ASM-02",
+      "DOC-01"
+    ],
+    "deliverables": ["保留证据分支/SHA", "原始diff与全会话日志", "需求证据索引"]
+  },
+  {
+    "key": "TASK-QA-03",
+    "title": "[Q] 收口报告、指标和真实证据并发布 p2",
+    "area": "Q",
+    "priority": "p1",
+    "summary": "各板块通过后收口实际报告、指标和同仓库课程交付。",
+    "depends_on": ["TASK-QA-02", "TASK-VSC-02", "TASK-DSH-02", "TASK-MET-01"],
+    "paths": [
+      "doc/README.md",
+      "doc/architecture/",
+      "doc/adr/",
+      "doc/records/",
+      "doc/release-checklist.md（拟建）",
+      "docs/metrics/（最终产物）"
+    ],
+    "scope": [
+      "扩展点清单填真实文件/函数/实现/缺省/错误，更新并渲染实际PlantUML。",
+      "至少三条ADR且覆盖正文要求的所有取舍，关联AI纠错及VSCode/DSH安装演示。",
+      "运行最终检查和候选指标，源码核对后建立p2，同步最终提交/tag/证据refs回原仓库。",
+      "核对评阅访问、依赖自查和未完成项，过程节点保留普通commit。"
+    ],
+    "out_of_scope": ["不提前打p2、移动final或擅改仓库可见性，不自动发布市场。"],
+    "interfaces": ["所有列出的依赖为发布硬门槛；各功能板块交付自己的测试文档，Q统一复核。"],
+    "acceptance": [
+      "所有需求能定位实际代码、测试或证据，计划不冒充实现，所有明确要求的取舍均有ADR。",
+      "最终回归/独立插件/loader故障/双装配差异和两个真实宿主安装演示结果齐全。",
+      "脚本从final与候选/p2生成三类CLI指标，其他应用单列且可复算。",
+      "新旧仓库最终main/p2及报告引用证据refs一致，final不动，评阅访问验证。",
+      "发布清单记录最终SHA和命令，未满足验收项不能改名后续而宣称完成。"
+    ],
+    "requirements": ["EXT-02", "MET-01", "DOC-01", "VS-03", "PKG-01", "PKG-02", "REL-01"],
+    "deliverables": ["最终报告/图/ADR/记录", "脚本生成指标", "发布清单及p2引用"]
+  }
+]

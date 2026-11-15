@@ -1,0 +1,219 @@
+{
+  "date": "2026-11-15",
+  "repository": "zero0307/svg-editor-platform",
+  "task_issues": 22,
+  "dependency_edges": 35,
+  "created_edges_this_run": 35,
+  "verified": [
+    {
+      "issue": 5,
+      "blocked_by": 1,
+      "task": "TASK-ENG-01",
+      "dependency": "TASK-QA-01"
+    },
+    {
+      "issue": 5,
+      "blocked_by": 2,
+      "task": "TASK-ENG-01",
+      "dependency": "TASK-CORE-01"
+    },
+    {
+      "issue": 7,
+      "blocked_by": 5,
+      "task": "TASK-CORE-02",
+      "dependency": "TASK-ENG-01"
+    },
+    {
+      "issue": 6,
+      "blocked_by": 2,
+      "task": "TASK-XML-01",
+      "dependency": "TASK-CORE-01"
+    },
+    {
+      "issue": 13,
+      "blocked_by": 7,
+      "task": "TASK-XML-02",
+      "dependency": "TASK-CORE-02"
+    },
+    {
+      "issue": 13,
+      "blocked_by": 6,
+      "task": "TASK-XML-02",
+      "dependency": "TASK-XML-01"
+    },
+    {
+      "issue": 8,
+      "blocked_by": 5,
+      "task": "TASK-HOST-01",
+      "dependency": "TASK-ENG-01"
+    },
+    {
+      "issue": 9,
+      "blocked_by": 5,
+      "task": "TASK-HOST-02",
+      "dependency": "TASK-ENG-01"
+    },
+    {
+      "issue": 10,
+      "blocked_by": 5,
+      "task": "TASK-CORE-03",
+      "dependency": "TASK-ENG-01"
+    },
+    {
+      "issue": 14,
+      "blocked_by": 7,
+      "task": "TASK-CLI-01",
+      "dependency": "TASK-CORE-02"
+    },
+    {
+      "issue": 14,
+      "blocked_by": 13,
+      "task": "TASK-CLI-01",
+      "dependency": "TASK-XML-02"
+    },
+    {
+      "issue": 14,
+      "blocked_by": 8,
+      "task": "TASK-CLI-01",
+      "dependency": "TASK-HOST-01"
+    },
+    {
+      "issue": 14,
+      "blocked_by": 9,
+      "task": "TASK-CLI-01",
+      "dependency": "TASK-HOST-02"
+    },
+    {
+      "issue": 14,
+      "blocked_by": 10,
+      "task": "TASK-CLI-01",
+      "dependency": "TASK-CORE-03"
+    },
+    {
+      "issue": 14,
+      "blocked_by": 1,
+      "task": "TASK-CLI-01",
+      "dependency": "TASK-QA-01"
+    },
+    {
+      "issue": 15,
+      "blocked_by": 14,
+      "task": "TASK-FRAME-01",
+      "dependency": "TASK-CLI-01"
+    },
+    {
+      "issue": 15,
+      "blocked_by": 12,
+      "task": "TASK-FRAME-01",
+      "dependency": "TASK-MET-01"
+    },
+    {
+      "issue": 17,
+      "blocked_by": 15,
+      "task": "TASK-CMD-01",
+      "dependency": "TASK-FRAME-01"
+    },
+    {
+      "issue": 18,
+      "blocked_by": 15,
+      "task": "TASK-CMD-02",
+      "dependency": "TASK-FRAME-01"
+    },
+    {
+      "issue": 19,
+      "blocked_by": 15,
+      "task": "TASK-BOX-01",
+      "dependency": "TASK-FRAME-01"
+    },
+    {
+      "issue": 20,
+      "blocked_by": 15,
+      "task": "TASK-TREE-01",
+      "dependency": "TASK-FRAME-01"
+    },
+    {
+      "issue": 11,
+      "blocked_by": 3,
+      "task": "TASK-VSC-02",
+      "dependency": "TASK-VSC-01"
+    },
+    {
+      "issue": 11,
+      "blocked_by": 6,
+      "task": "TASK-VSC-02",
+      "dependency": "TASK-XML-01"
+    },
+    {
+      "issue": 16,
+      "blocked_by": 4,
+      "task": "TASK-DSH-02",
+      "dependency": "TASK-DSH-01"
+    },
+    {
+      "issue": 16,
+      "blocked_by": 14,
+      "task": "TASK-DSH-02",
+      "dependency": "TASK-CLI-01"
+    },
+    {
+      "issue": 12,
+      "blocked_by": 5,
+      "task": "TASK-MET-01",
+      "dependency": "TASK-ENG-01"
+    },
+    {
+      "issue": 21,
+      "blocked_by": 15,
+      "task": "TASK-QA-02",
+      "dependency": "TASK-FRAME-01"
+    },
+    {
+      "issue": 21,
+      "blocked_by": 17,
+      "task": "TASK-QA-02",
+      "dependency": "TASK-CMD-01"
+    },
+    {
+      "issue": 21,
+      "blocked_by": 18,
+      "task": "TASK-QA-02",
+      "dependency": "TASK-CMD-02"
+    },
+    {
+      "issue": 21,
+      "blocked_by": 19,
+      "task": "TASK-QA-02",
+      "dependency": "TASK-BOX-01"
+    },
+    {
+      "issue": 21,
+      "blocked_by": 20,
+      "task": "TASK-QA-02",
+      "dependency": "TASK-TREE-01"
+    },
+    {
+      "issue": 22,
+      "blocked_by": 21,
+      "task": "TASK-QA-03",
+      "dependency": "TASK-QA-02"
+    },
+    {
+      "issue": 22,
+      "blocked_by": 11,
+      "task": "TASK-QA-03",
+      "dependency": "TASK-VSC-02"
+    },
+    {
+      "issue": 22,
+      "blocked_by": 16,
+      "task": "TASK-QA-03",
+      "dependency": "TASK-DSH-02"
+    },
+    {
+      "issue": 22,
+      "blocked_by": 12,
+      "task": "TASK-QA-03",
+      "dependency": "TASK-MET-01"
+    }
+  ]
+}

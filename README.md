@@ -2,7 +2,7 @@
 
 高级软件开发 Lab1 的 SVG 编辑平台，基于 [svg-editor-cli](https://github.com/zero0307/svg-editor-cli) 的 Phase 1 完整历史继续开发。现有 CLI 使用 TypeScript、Command 与 Composite 模式，已具备六种内置图形、19 条命令、SVG 读写及撤销重做。
 
-当前运行代码仍为 Phase 1 实现；Phase 2 的插件框架、VSCode 扩展和 DSH 插件按已确定的开发方案逐步推进。原始 `final` 标签保留为兼容基线，最终验收后另建 `p2`。目标工作区目录和新增检查命令属于后续工程任务，尚未在本次初始化中实现。
+当前运行代码仍为 Phase 1 实现；Phase 2 的插件框架、VSCode 扩展和 DSH 插件按已确定的开发方案逐步推进。原始 `final` 标签保留为兼容基线，最终验收后另建 `p2`。目标工作区目录和Phase 2工作区专用检查属于后续工程任务；当前已提供根检查与文档/目录检查。
 
 ## 团队开发入口
 
@@ -12,6 +12,7 @@
 - [协作和分支规范](CONTRIBUTING.md)、[AI 开发约束](AGENTS.md)。
 - [报告与记录入口](doc/README.md)：ADR、过程记录、维护规则与 Phase 1 归档。
 - [本次初始化记录](doc/initialization.md)：历史、标签、环境、检查结果与推送核验。
+- [开发任务认领](doc/tasks/index.md)、[GitHub协作配置](doc/github-operations.md)、[文件组织规范](doc/repository-layout.md)。
 
 采用 `main` 配合短期任务分支，通过 PR 保留分步提交；公共接口和测试替身先合并，各插件板块独立开发后再集成。A/B 装配证据分支与原始接入提交单独保留，具体规则见贡献规范。
 
@@ -48,7 +49,7 @@ npm run test:coverage
 npm run verify:visual
 ```
 
-上述检查可在本地运行。[GitHub Actions 模板](ci/README.md) 随 Phase 1 继承，目前仍为模板；工作流启用和远程检查结果按后续实际配置记录。
+上述检查也由 [GitHub Actions](https://github.com/zero0307/svg-editor-platform/actions) 在Ubuntu/Windows、Node22/24上运行。合并门槛为 `CI required`，操作说明见 [CI文档](ci/README.md)。
 
 流程图和历史示例会生成 `examples/flowchart.svg`、`examples/history.svg`。构建后，也可以运行 `node dist/src/bootstrap/main.js`，从标准输入读取命令，或用 `--script "含空格的路径"` 读取脚本。脚本遇到错误后会继续处理剩余行；只要出现过错误，退出码就是 1，全部成功则为 0。
 

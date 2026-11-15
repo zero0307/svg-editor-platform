@@ -125,23 +125,12 @@ MVP 使用 rect/text/g/line 等默认图形能力，box 作为可选能力，DSH
 
 先完成“最小插件能加载 → 用 fake EditorSessionPort 测逻辑 → 接真实运行时 → 安装卸载与真实会话”的闭环。接口和安装方式以固定 DSH 版本的官方文档为准。DSH 的 `apply(ctx)`/生命周期与本项目 CLI 的默认导出 `activate`/manifest 完全分开；本阶段不做自定义聊天 UI、额外模型平台或市场发布流程。
 
-## 立即可以创建的任务
+## 已建立的开发任务
 
-| 编号         | 任务                                         | 依赖                                   |
-| ------------ | -------------------------------------------- | -------------------------------------- |
-| TASK-BOOT-01 | 继承原仓库历史、保存基线与环境记录           | 无                                     |
-| TASK-QA-01   | 原测试复跑、规格差异登记、固定回放夹具       | TASK-BOOT-01                           |
-| TASK-CORE-01 | 公开 API、命令元数据、四扩展点和契约测试替身 | TASK-BOOT-01                           |
-| TASK-HOST-01 | A/B公共注册事务和manifest校验                | TASK-CORE-01                           |
-| TASK-CORE-02 | 事务、容器保护、克隆、读回及事件通用化       | TASK-CORE-01                           |
-| TASK-CLI-01  | 默认图形和命令迁移及无插件兼容               | TASK-CORE-02、TASK-HOST-01、TASK-QA-01 |
-| TASK-CMD-01  | stats 深度优先统计                           | TASK-CORE-01                           |
-| TASK-CMD-02  | dir命令、替身测试及真实适配器集成测试        | TASK-CORE-01；真实集成待host适配器完成 |
-| TASK-BOX-01  | box provider、属性处理器、类型标签及不变量   | TASK-CORE-01                           |
-| TASK-TREE-01 | modified-star状态机与装饰器                  | TASK-CORE-01                           |
-| TASK-VSC-01  | 文件标记与无ID的Outline最小原型              | TASK-BOOT-01，可与框架并行             |
-| TASK-DSH-01  | 固定DSH版本、最小加载/卸载及工具替身         | TASK-BOOT-01，可与框架并行             |
-| TASK-QA-02   | A/B新插件接入提交、逐字节输出与差异证明      | TASK-CLI-01、TASK-QA-01及相关插件      |
-| TASK-QA-03   | 指标、报告、真实演示和最终交付自查           | 各板块功能完成                         |
+22个开发Issue和一个总览Issue已按本路线创建，入口为 [任务索引](tasks/index.md) 和 [GitHub总览#23](https://github.com/zero0307/svg-editor-platform/issues/23)。开发范围、接口、验收和实际依赖都写在对应Issue中，认领与完成状态以GitHub为准。
 
-TASK- 前缀用于区分开发任务与验收矩阵的需求 ID；每个 Issue 可关联多个需求条目。这些是任务编号建议，尚未在 GitHub 创建 Issue，也不代表已完成。
+起步可并行认领：#1 基线回放、#2 公开契约、#3 VSCode文件标记、#4 DSH最小加载。原初始化任务已完成，不重复创建待认领Issue。
+
+#15是框架冻结门槛，依赖#14默认CLI迁移和#12首版指标；插件可在#2后先用fake开发，正式接入等待#15。#21的A/B证据准备可在框架冻结后先做，最终完整回放等待插件齐备，不等全部实现合main后才补造首次接入提交。
+
+任务编号使用TASK-前缀，与验收需求ID分开。任务内容维护在 `doc/tasks/definitions.json`，编号对应维护在 `doc/tasks/github-issues.json`；范围或依赖变化同时更新实际Issue及原生blocked by关系。

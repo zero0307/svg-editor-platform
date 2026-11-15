@@ -1,6 +1,6 @@
 # SVG Editor Platform 开发方案
 
-状态：总体方案已由团队维护者于 2026-11-15 确认采用。当前仓库继承 Phase 1 运行代码；Phase 2 工作区、插件与公共接口仍待实施。GitHub 保护规则与人员映射尚未配置。
+状态：总体方案已由团队维护者于 2026-11-15 确认采用。当前仓库继承 Phase 1 运行代码；Phase 2 工作区、插件与公共接口仍待实施。GitHub协作规则按 [配置记录](github-operations.md) 维护，人员映射在认领后补齐。
 
 开发仓库：[zero0307/svg-editor-platform](https://github.com/zero0307/svg-editor-platform)。Phase 1 来源及最终课程交付仓库：[zero0307/svg-editor-cli](https://github.com/zero0307/svg-editor-cli)。
 
