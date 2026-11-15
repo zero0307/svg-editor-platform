@@ -1,0 +1,102 @@
+Command: npm run check
+Environment: Node.js 24.22.1; npm 11.6.2; macOS arm64
+Exit code: 0
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> svg-editor-cli@1.0.0 test
+> npm run build --silent && node --test dist/test/*.test.js
+
+✔ course transcript: save barrier, invalid ancestor grouping, restore and external import (6.700083ms)
+✔ course flowchart example replays and exports eight elements (2.189292ms)
+✔ deterministic edit sequence preserves complete undo/redo history (seed 7) (32.446292ms)
+✔ deterministic edit sequence preserves complete undo/redo history (seed 42) (18.491125ms)
+✔ deterministic edit sequence preserves complete undo/redo history (seed 2026) (13.901041ms)
+✔ deterministic edit sequence preserves complete undo/redo history (seed 65535) (15.248125ms)
+✔ tokenizer supports empty quoted text, literal paths, escaped quotes, colors and comments (0.729667ms)
+✔ quoted in text is not a container clause; empty and escaped text survives (0.738833ms)
+✔ bad argument counts produce one-line errors without mutations (1.168375ms)
+✔ REPL processes input serially, continues after errors and emits prompt only interactively (1.92625ms)
+✔ real filesystem writes atomically, replaces a file and cleans failed temporaries (10.70225ms)
+✔ compiled executable supports pipes, scripts with spaces, help and failure exit codes (195.368416ms)
+✔ all six create types, optional presentation and create-in work (1.773833ms)
+✔ each edit is one undo unit and undo/redo round-trip exact structure (7.721667ms)
+✔ group preserves paint order and ungroup occupies the former slot (0.507417ms)
+✔ cross-parent group uses lowest common ancestor and document order (0.322583ms)
+✔ front/back change only sibling paint order; reparent appends (0.305083ms)
+✔ successful new edit discards redo, queries and failed edits preserve redo (0.5015ms)
+✔ IO barriers block both stacks; a successful edit starts fresh history (2.488542ms)
+✔ explicit save keeps the original read path as the parameterless save target (0.694291ms)
+✔ failed IO preserves document, history and remembered save path (0.326084ms)
+✔ errors are atomic across geometry, ids, hierarchy, parsing and cycles (0.769125ms)
+✔ overflow partway through recursive group mutation leaves all children intact (0.15825ms)
+✔ group presentation uses SVG inheritance; ungroup preserves explicit inherited values (0.131625ms)
+✔ before initialization all operational commands fail, help and comments work (0.138833ms)
+✔ successful CLI edits always remain within the readable SVG nesting limit (29.66925ms)
+✔ history can undo and redo every edit beyond 100 steps (1.060916ms)
+✔ ungroup resolves explicit inherit before the child changes parent (0.149042ms)
+✔ ungroup resolves inherit chains and falls back to SVG initial values (0.127083ms)
+✔ each leaf owns move, scale, geometry validation and clone behavior (1.501041ms)
+✔ Composite traverses nested children exactly once, independent of ids (0.599666ms)
+✔ dimensions, numeric grammar, finite arithmetic and attributes are validated (0.1535ms)
+✔ document ids include descendants, remain case-sensitive and do not reserve canvas (0.187458ms)
+✔ SVG strings reject XML 1.0 forbidden characters and unpaired surrogates (3.432833ms)
+✔ illegal strings fail atomically and preserve redo history (10.04575ms)
+✔ legal Unicode, Chinese, emoji, tabs and newlines remain valid SVG content (1.746708ms)
+✔ carriage returns and attribute whitespace survive standard XML normalization (0.508084ms)
+✔ SVG round-trip preserves six types, styles, order, nesting and escaped text (4.71175ms)
+✔ missing ids skip every explicit id, including later and nested elements (0.34ms)
+✔ import preserves text typography, custom metadata and degrades box to g (0.34775ms)
+✔ invalid/unsupported SVG is rejected atomically: prefixed attributes (0.278584ms)
+✔ invalid/unsupported SVG is rejected atomically: malformed (0.204125ms)
+✔ invalid/unsupported SVG is rejected atomically: duplicate ids (0.138125ms)
+✔ invalid/unsupported SVG is rejected atomically: unknown type (0.161541ms)
+✔ invalid/unsupported SVG is rejected atomically: wrong root (0.110791ms)
+✔ invalid/unsupported SVG is rejected atomically: wrong namespace (0.160584ms)
+✔ invalid/unsupported SVG is rejected atomically: nested namespace (0.181875ms)
+✔ invalid/unsupported SVG is rejected atomically: unsupported transforms (0.249041ms)
+✔ invalid/unsupported SVG is rejected atomically: external CSS (0.147958ms)
+✔ invalid/unsupported SVG is rejected atomically: nested CSS instruction (0.127875ms)
+✔ invalid/unsupported SVG is rejected atomically: CSS (1.577375ms)
+✔ invalid/unsupported SVG is rejected atomically: root styles (0.148459ms)
+✔ invalid/unsupported SVG is rejected atomically: tspan (0.182458ms)
+✔ invalid/unsupported SVG is rejected atomically: unexpected text (0.104125ms)
+✔ invalid/unsupported SVG is rejected atomically: group text (1.865667ms)
+✔ invalid/unsupported SVG is rejected atomically: different coordinates (0.126084ms)
+✔ invalid/unsupported SVG is rejected atomically: mismatched dimensions (0.097167ms)
+✔ invalid/unsupported SVG is rejected atomically: percent sizes (0.104875ms)
+✔ invalid/unsupported SVG is rejected atomically: negative size (0.104ms)
+✔ invalid/unsupported SVG is rejected atomically: DTD (0.068833ms)
+✔ invalid/unsupported SVG is rejected atomically: events (0.090417ms)
+✔ ungroup preserves inherited text styles without spreading group metadata (1.634833ms)
+✔ nesting limit fails before traversal can exhaust the call stack (0.614167ms)
+✔ successful read publishes warnings once; save without path remembers read target (0.263959ms)
+✔ transform lists use SVG matrix order, including nested composition (1.040958ms)
+✔ course transform example imports to canvas geometry and round-trips canonically (6.635625ms)
+✔ normalization preserves inheritance and resets a cancelling local scale (0.493417ms)
+✔ all six types normalize uniformly; stroke and text lengths scale during import (0.299042ms)
+✔ explicit inherit remains inherited after normalization, including whitespace (0.171ms)
+✔ default text and stroke sizes are materialized when scaling has no explicit styles (0.109666ms)
+✔ invalid transform preserves document and history: rotate(30) (0.714334ms)
+✔ invalid transform preserves document and history: matrix(1,0,0,1,0,0) (0.3905ms)
+✔ invalid transform preserves document and history: scale(2,3) (0.325834ms)
+✔ invalid transform preserves document and history: scale(-1) (0.364542ms)
+✔ invalid transform preserves document and history: scale(0) (0.201709ms)
+✔ invalid transform preserves document and history: translate(1,,2) (0.123916ms)
+✔ invalid transform preserves document and history: translate(1,) (0.126333ms)
+✔ invalid transform preserves document and history: ,scale(2) (0.113125ms)
+✔ invalid transform preserves document and history: scale(2), (0.093667ms)
+✔ invalid transform preserves document and history: scale(NaN) (0.110208ms)
+✔ invalid transform preserves document and history: translate(1) trailing (0.087125ms)
+✔ invalid transform preserves document and history: scale(1e308) scale(2) (0.111958ms)
+✔ unhandled length-sensitive attributes and relative font sizes fail explicitly under scaling (0.558583ms)
+ℹ tests 83
+ℹ suites 0
+ℹ pass 83
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 283.539625
+Architecture check passed: 38 files, 115 internal imports, matching class filenames.

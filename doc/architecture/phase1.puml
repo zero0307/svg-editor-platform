@@ -1,0 +1,23 @@
+@startuml
+skinparam componentStyle rectangle
+component bootstrap
+component cli
+component application
+component infrastructure
+component domain
+bootstrap --> cli
+bootstrap --> application
+bootstrap --> infrastructure
+cli --> application
+cli --> domain
+application --> domain
+infrastructure --> application
+infrastructure --> domain
+note right of application
+ShapeFactory 显式枚举六种图形
+end note
+note right of cli
+CommandRouter 装配具体命令
+help 枚举具体图形语法
+end note
+@enduml

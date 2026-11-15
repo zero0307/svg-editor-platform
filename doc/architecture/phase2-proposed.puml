@@ -1,0 +1,27 @@
+@startuml
+skinparam componentStyle rectangle
+component "apps/cli\n组合根" as CLI
+component "packages/host\n加载器与IO适配器" as HOST
+component "packages/core\n公开抽象与四扩展点" as CORE
+component "packages/builtins" as BUILTIN
+component "plugins/*" as PLUGIN
+component "packages/svg-xml" as XML
+component "apps/vscode-svg" as VSCODE
+component "apps/dsh-plugin" as DSH
+CLI --> HOST
+CLI --> XML
+CLI --> BUILTIN
+CLI --> CORE
+CLI --> PLUGIN : 仅A组合根
+HOST --> CORE
+XML --> CORE
+BUILTIN --> CORE
+PLUGIN --> CORE
+VSCODE --> XML : 中立XML语法入口
+DSH --> CORE : EditorSessionPort
+DSH --> XML : 运行装配
+DSH --> BUILTIN : 运行装配
+DSH --> HOST : 运行装配
+HOST ..> PLUGIN : 根据模块路径加载
+CORE ..> PLUGIN : 调用已注册接口
+@enduml

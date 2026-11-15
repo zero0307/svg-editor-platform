@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-15",
+  "source_repository": "https://github.com/zero0307/svg-editor-cli",
+  "target_repository": "https://github.com/zero0307/svg-editor-platform",
+  "source_commit": "e5621a68afd4731626d54566f17ba55885d1bc0f",
+  "source_commits": [
+    "1ec7c72f2a6c31e856d800859685bccc54be9b0e",
+    "2048af719daf9131827a878e0bcd427a86a8ccc3",
+    "340500fbb7a08d9b246df53af1d8c21912195aa2",
+    "71c969e368f6bf9e205d55244e83df55ff78bb9f",
+    "72adba47f226c77a5e0dd4f8f9a7ac3154bc0ecf",
+    "87c9d022be612294edfe5d98562aa219a3695e89",
+    "970fdad60df7cb085b2ec999507f77f1bf91a065",
+    "c209e663e848f29fd2a1a16d1b706338470c1b8c",
+    "e5475c16167a10dffc72b71b40f7a04b471c30b9",
+    "e5621a68afd4731626d54566f17ba55885d1bc0f",
+    "ee7be3c1df96eee0c9c230899980004cee655653"
+  ],
+  "tag_objects": {
+    "refs/tags/final": "25c263bda5515816d59efb383a3790dd2c77df3a",
+    "refs/tags/final-20261020": "1836e9143c9391b5bde434720b852f5fed1bd94d",
+    "refs/tags/final-20261021-r1": "ac925b8d04017236c1c733390fa26a518b8e03a2",
+    "refs/tags/final-20261027-before-docs": "f8364ec3f80fb8a839b241cc92d3a03bf10ecb13",
+    "refs/tags/final-20261027-before-public": "a077dad5ef5f3dcbae9f6ed7cd6ef684da7d5b44"
+  },
+  "complete_history": true,
+  "protected_paths": [
+    "src",
+    "test",
+    "examples",
+    "scripts",
+    "package.json",
+    "package-lock.json",
+    "tsconfig.json",
+    ".npmrc",
+    ".prettierrc.json",
+    "phase_cli_1.md"
+  ],
+  "protected_runtime_diff": [],
+  "phase1_report_sha256": "13d0ad9c3ae4ee1dd866e1ff8680d72e13da39e9b48b1b69101d97ee284ceddb",
+  "phase2_spec_sha256": "10b7e0ea84c4afc876d8d9edcfb9b7637f27b2817bdfc7a5a44a8cf29fc18270"
+}

@@ -5,3 +5,5 @@ artifacts/
 package-lock.json
 phase_cli_1.md
 examples/*.svg
+phase_cli_2-研-1.md
+doc/phase1-report.md

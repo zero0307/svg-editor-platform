@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-15",
+  "environment": {
+    "node": "24.22.1",
+    "npm": "11.6.2",
+    "platform": "darwin",
+    "architecture": "arm64"
+  },
+  "npm_ci": {
+    "exit_code": 0,
+    "lockfile_changed": false
+  },
+  "npm_run_check": {
+    "exit_code": 0,
+    "tests": 83,
+    "passed": 83,
+    "failed": 0,
+    "architecture_files": 38,
+    "internal_imports": 115
+  },
+  "visual": {
+    "exit_code": 0,
+    "differingChannels": 0,
+    "meanAbsoluteChannelDifference": 0
+  },
+  "documents": {
+    "files": 23,
+    "local_links_checked": 93,
+    "issues": [],
+    "plantuml_sources": 2
+  },
+  "source_spec_missing_example_images": [
+    "docs/images/vscode-svg-badge.jpg",
+    "docs/images/vscode-svg-outline.jpg"
+  ],
+  "remote_ci_enabled": false,
+  "phase2_runtime_implemented": false
+}
