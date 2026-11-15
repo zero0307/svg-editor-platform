@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-15",
+  "method": "fresh bare clone from target remote",
+  "initialization_commit": "bf172cae06305a0a9ecb8166490dc49d9c247fe9",
+  "source_commit": "e5621a68afd4731626d54566f17ba55885d1bc0f",
+  "preserved_source_commits": 11,
+  "target_commits_at_first_push": 12,
+  "preserved_tags": 5,
+  "tag_objects": {
+    "refs/tags/final": "25c263bda5515816d59efb383a3790dd2c77df3a",
+    "refs/tags/final-20261020": "1836e9143c9391b5bde434720b852f5fed1bd94d",
+    "refs/tags/final-20261021-r1": "ac925b8d04017236c1c733390fa26a518b8e03a2",
+    "refs/tags/final-20261027-before-docs": "f8364ec3f80fb8a839b241cc92d3a03bf10ecb13",
+    "refs/tags/final-20261027-before-public": "a077dad5ef5f3dcbae9f6ed7cd6ef684da7d5b44"
+  },
+  "final_commit": "e5621a68afd4731626d54566f17ba55885d1bc0f",
+  "protected_runtime_diff": [],
+  "phase1_report_byte_identical": true,
+  "source_remote_main_unchanged": true
+}
