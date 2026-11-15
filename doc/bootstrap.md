@@ -42,7 +42,7 @@ git switch -c feat/123-short-description
 
 已纳入开发方案、板块划分、需求矩阵、Issue/PR模板、ADR与过程模板、两份原始规格、架构源图以及Phase1报告归档。`apps/`、`packages/`、`plugins/` 是目标布局，尚未建立运行包。
 
-CI 沿用 `ci/github-actions.yml` 模板，尚未启用远程工作流。分支保护、required checks、成员权限、CODEOWNERS和看板待实际配置；先验证工作流能运行，再设 required，避免引用不存在的检查。此次不创建占位成员账号或虚构完成状态。
+CI实际入口为 `.github/workflows/ci.yml`；保护门槛、仓库合并设置见 [GitHub协作配置](github-operations.md)。任务已建立在 [Issues索引](tasks/index.md)，成员认领后补Assignee和审阅者；CODEOWNERS等待实际账号映射，不创建占位账号。
 
 ## 4. 保留验收证据
 
@@ -52,4 +52,4 @@ CI 沿用 `ci/github-actions.yml` 模板，尚未启用远程工作流。分支�
 
 开发期间以 `origin` 为主协作入口。最终发布前 fetch 原仓库最新主分支；若存在新的改动，先合并并重新验证，再同步同一最终提交，不能强推覆盖。
 
-正式交付时将最终 `main`、`p2`，以及报告引用的 `evidence/*` 分支同步到原仓库；新旧仓库中的验收引用保持一致。当前初始化只写入新仓库，原仓库保留原状。新仓库为私有，最终报告、标签和证据按评阅路径核对访问权限。
+正式交付时将最终 `main`、`p2`，以及报告引用的 `evidence/*` 分支同步到原仓库；新旧仓库中的验收引用保持一致。当前初始化只写入新仓库，原仓库保留原状。维护者已明确选择公开新仓库，最终报告、标签和证据按评阅路径核对可访问性。

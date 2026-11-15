@@ -1,9 +1,23 @@
-# GitHub Actions 配置模板
+# 持续集成与合并检查
 
-CI 是 Continuous Integration，即持续集成。代码推送或创建 PR 后，服务器会自动安装依赖、构建并运行测试，检查修改是否引入问题。本实验没有要求必须启用 CI。
+实际工作流唯一维护在 [.github/workflows/ci.yml](../.github/workflows/ci.yml)。原 `ci/github-actions.yml` 模板已迁出当前树，历史版本保留在 `final`；不要同时维护两份CI配置。
 
-`github-actions.yml` 模板会在 Ubuntu/Windows、Node 22/24 上执行 `npm ci`、`npm run check` 和 `npm run verify:visual`。目前尚未启用，跨平台运行结果也未验证；这些命令可以先在本地手动执行。
+## 检查范围
 
-Phase 1 曾因当时的 GitHub OAuth 缺少 `workflow` 权限而无法推送工作流，因此保留此模板。该记录不代表新仓库当前授权状态；本次初始化未启用 `.github/workflows/ci.yml`，不会触发 Actions。后续由维护者核对当前权限后配置。
+工作流对推送到main、针对main的Pull Request及手动触发运行，不按文件路径跳过。Ubuntu与Windows各验证Node22、24，矩阵失败时其他组仍继续。
 
-取得工作流写权限后，将模板复制到 `.github/workflows/ci.yml` 并提交即可启用，应用源码和测试无需修改。工作流运行时只需要读取仓库内容。
+每组执行 `npm ci`、`npm run check`、`npm run verify:visual`。其中check包括格式、文档/文件组织、严格编译、83项现有测试及架构检查；后续模块通过同一入口增加测试。CLI仍兼容Node22；DSH后续集成的独立版本要求不能由这个矩阵代替。
+
+固定汇总检查名为 `CI required`。它始终等待全部矩阵组，只有上游结果为success时才通过；失败、取消或跳过均不能变为通过。分支保护只绑定这一稳定检查，矩阵展示名可随任务增加，但不能绕过汇总检查。
+
+## 运行与故障处理
+
+从仓库Actions页面查看当前提交和PR的真实结果。日志报错时先在相同Node版本运行本地命令，提交修复后重新等待CI；不把红色检查改为可选或直接跳过测试。文档变更也需要通过链接和格式检查。
+
+工作流使用GitHub托管runner、只读contents权限、完整Git历史和锁文件缓存。checkout不保留写入凭据；并发更新同一PR时取消旧运行，保留最新提交。文本文件采用仓库既有LF规则，并明确二进制文件类型。
+
+## 维护约定
+
+只修改实际工作流，不恢复旧模板。新增npm脚本同时更新文档；新增依赖提交锁文件。更新required检查名称时先让新检查真实成功运行，再更新保护规则，避免把所有PR锁在不存在的检查上。
+
+仓库设置、分支保护和实际验证记录见 [GitHub协作配置](../doc/github-operations.md)；本地文件组织要求见 [目录规范](../doc/repository-layout.md)。

@@ -1,0 +1,72 @@
+[
+  {
+    "name": "area:box",
+    "color": "5319e7",
+    "description": "B box与属性语义"
+  },
+  {
+    "name": "area:commands",
+    "color": "0e8a16",
+    "description": "C stats/dir命令插件"
+  },
+  {
+    "name": "area:dsh",
+    "color": "fbca04",
+    "description": "D DSH插件"
+  },
+  {
+    "name": "area:framework",
+    "color": "1d76db",
+    "description": "F 公共框架与宿主"
+  },
+  {
+    "name": "area:quality",
+    "color": "d4c5f9",
+    "description": "Q 基线、验收与交付"
+  },
+  {
+    "name": "area:tree",
+    "color": "006b75",
+    "description": "T 修改状态与树标签"
+  },
+  {
+    "name": "area:vscode",
+    "color": "0052cc",
+    "description": "V VSCode扩展"
+  },
+  {
+    "name": "priority:p0",
+    "color": "b60205",
+    "description": "阻塞公共主线或发布"
+  },
+  {
+    "name": "priority:p1",
+    "color": "d93f0b",
+    "description": "课程必需能力"
+  },
+  {
+    "name": "priority:p2",
+    "color": "fbca04",
+    "description": "后续完善"
+  },
+  {
+    "name": "type:docs",
+    "color": "0075ca",
+    "description": "规范与文档"
+  },
+  {
+    "name": "type:feature",
+    "color": "a2eeef",
+    "description": "功能开发"
+  },
+  {
+    "name": "type:setup",
+    "color": "bfdadc",
+    "description": "工程和协作基础"
+  },
+  {
+    "name": "type:test",
+    "color": "c5def5",
+    "description": "回归与验收"
+  }
+]

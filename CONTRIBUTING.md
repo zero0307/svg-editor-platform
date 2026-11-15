@@ -1,6 +1,6 @@
 # 开发与协作规范
 
-本文是团队已采用的 Phase 2 开发规范。仓库已继承 Phase 1 历史并开始维护；分支保护、CI 和人员映射仍待配置。架构以 [架构方案](doc/architecture.md) 为准，验证方式以 [验收计划](doc/acceptance.md) 为准；接口或行为变化先更新对应设计，再与代码一并提交。
+本文是团队已采用的 Phase 2 开发规范。仓库已继承 Phase 1 历史并开始维护；CI、分支保护与合并策略按 [GitHub协作配置](doc/github-operations.md) 维护；人员映射由成员认领后补充。架构以 [架构方案](doc/architecture.md) 为准，验证方式以 [验收计划](doc/acceptance.md) 为准；接口或行为变化先更新对应设计，再与代码一并提交。
 
 ## 仓库与历史
 
@@ -65,7 +65,7 @@ VSCode 和 dsh 可在 CLI 接口设计阶段独立推进。dsh 的实现深度�
 
 Issue 用 [任务模板](.github/ISSUE_TEMPLATE/task.md)，至少包括目标、需求章节、边界、依赖、负责人、评审人和可执行验收条件。任务状态依次为 `Todo → In progress → In review → Done`；受阻时标为 `Blocked` 并写明所需决策，不能以状态代替沟通。一个人通常只同时推进一个主任务。
 
-建议标签：`area:core`、`area:host`、`area:plugin`、`area:vscode`、`area:dsh`、`area:quality`、`area:docs`；`type:feature`、`type:bug`、`type:test`、`type:decision`；`priority:p0`、`priority:p1`、`priority:p2`。优先级 P0 用于阻塞主线或破坏状态的缺陷，不给所有任务都标最高优先级。
+任务标签：`area:framework`、`area:commands`、`area:box`、`area:tree`、`area:vscode`、`area:dsh`、`area:quality`；`type:feature`、`type:test`、`type:docs`、`type:setup`；`priority:p0`、`priority:p1`、`priority:p2`。优先级 P0 用于阻塞主线或破坏状态的缺陷，不给所有任务都标最高优先级。
 
 PR 用 [PR 模板](.github/pull_request_template.md)。至少一位非作者评审；公开接口、历史回滚、插件加载器等改动由内核或宿主板块的相关负责人复核。自测证据应含实际命令和结果；未执行的检查明确写“未执行”及原因，不能把预期结果写成通过。
 
@@ -94,13 +94,10 @@ PR 用 [PR 模板](.github/pull_request_template.md)。至少一位非作者评�
 
 记录有代表性的 AI 协作即可，无需保存全部聊天：任务与日期、AI 提议、发现的问题、如何核验、最终修正、关联提交或测试。尤其保留一次不正确的依赖方向、输出兼容性、事务边界等建议如何被识别和纠正的证据。提交记录可以说明 AI 协助，但贡献者仍对代码和事实负责。
 
-## 拟配置的 GitHub 设置
+## GitHub设置与认领入口
 
-由维护者后续逐项配置并记录结果，初始化阶段仅提交规范与模板，以下保护与协作设置仍待落地：
+任务已按板块建立，入口为 [任务索引](doc/tasks/index.md)。认领、依赖与验收状态以实际Issues为准；仓库中的定义与索引用于复核任务范围，不手抄一份成员状态。
 
-- 默认分支 `main`，允许 merge commit，禁止 force push 和删除主分支。
-- 主分支改动通过 PR，至少一人批准；相关必需检查在实际 workflow 稳定运行后再设为 required，名称以真实检查为准。
-- 不要求线性历史，不采用仅 squash 的合并策略；不配置会无差别删除证据分支的规则。
-- 使用 Issues 和简单项目看板管理状态；里程碑对应框架、命令、box、标签、交付，不虚构截止日期。
-- 待板块认领与成员 GitHub 账号明确后，把目录映射为真实账号，再建立 `.github/CODEOWNERS`；暂不把板块名称占位符当作有效评审人。
-- 在新仓库、原提交仓库中分别确认协作者权限、工作流能否启用和标签可推送权限，避免到交付当天才发现无法同步。
+主分支保护、CI、合并策略的来源及维护方法见 [GitHub协作配置](doc/github-operations.md)。`CI required`成功、分支更新、讨论解决和非作者批准共同构成合并门槛。只允许merge commit，禁止squash/rebase；不全局自动删除evidence分支。
+
+实际成员GitHub账号和板块认领确定后再填写CODEOWNERS，不把角色名称当作有效账号。现有目录与目标目录见 [文件组织规范](doc/repository-layout.md)，功能任务不要顺带移动无关材料。

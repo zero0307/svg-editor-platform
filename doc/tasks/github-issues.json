@@ -1,0 +1,189 @@
+{
+  "repository": "zero0307/svg-editor-platform",
+  "created_on": "2026-11-15",
+  "issues": [
+    {
+      "key": "TASK-QA-01",
+      "number": 1,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/1",
+      "title": "[Q] 固定 Phase 1 行为基线、输入夹具和规格差异",
+      "area": "Q",
+      "depends_on": []
+    },
+    {
+      "key": "TASK-CORE-01",
+      "number": 2,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/2",
+      "title": "[F] 发布四扩展点、公开领域契约和测试替身",
+      "area": "F",
+      "depends_on": []
+    },
+    {
+      "key": "TASK-ENG-01",
+      "number": 5,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/5",
+      "title": "[F] 建立 npm workspaces、构建顺序和包边界检查",
+      "area": "F",
+      "depends_on": ["TASK-QA-01", "TASK-CORE-01"]
+    },
+    {
+      "key": "TASK-CORE-02",
+      "number": 7,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/7",
+      "title": "[F] 实现候选文档事务、属性分派和通用结构不变量",
+      "area": "F",
+      "depends_on": ["TASK-ENG-01"]
+    },
+    {
+      "key": "TASK-XML-01",
+      "number": 6,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/6",
+      "title": "[F] 建立保留源码范围的中立 XML 语法入口",
+      "area": "F",
+      "depends_on": ["TASK-CORE-01"]
+    },
+    {
+      "key": "TASK-XML-02",
+      "number": 13,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/13",
+      "title": "[F] 通过 provider 恢复完整 SVG 子树并保留导入语义",
+      "area": "F",
+      "depends_on": ["TASK-CORE-02", "TASK-XML-01"]
+    },
+    {
+      "key": "TASK-HOST-01",
+      "number": 8,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/8",
+      "title": "[F] 实现双装配共享加载器、清单校验和注册回滚",
+      "area": "F",
+      "depends_on": ["TASK-ENG-01"]
+    },
+    {
+      "key": "TASK-HOST-02",
+      "number": 9,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/9",
+      "title": "[F] 提供文件、目录和运行会话的真实宿主适配器",
+      "area": "F",
+      "depends_on": ["TASK-ENG-01"]
+    },
+    {
+      "key": "TASK-CORE-03",
+      "number": 10,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/10",
+      "title": "[F] 建立通用树展示与行尾装饰管线",
+      "area": "F",
+      "depends_on": ["TASK-ENG-01"]
+    },
+    {
+      "key": "TASK-CLI-01",
+      "number": 14,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/14",
+      "title": "[F] 插件化默认命令和六种图形并接通 CLI",
+      "area": "F",
+      "depends_on": [
+        "TASK-CORE-02",
+        "TASK-XML-02",
+        "TASK-HOST-01",
+        "TASK-HOST-02",
+        "TASK-CORE-03",
+        "TASK-QA-01"
+      ]
+    },
+    {
+      "key": "TASK-FRAME-01",
+      "number": 15,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/15",
+      "title": "[Q] 验收并冻结 M2 通用框架基线",
+      "area": "Q",
+      "depends_on": ["TASK-CLI-01", "TASK-MET-01"]
+    },
+    {
+      "key": "TASK-CMD-01",
+      "number": 17,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/17",
+      "title": "[C] 实现可独立启停的 stats 命令插件",
+      "area": "C",
+      "depends_on": ["TASK-FRAME-01"]
+    },
+    {
+      "key": "TASK-CMD-02",
+      "number": 18,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/18",
+      "title": "[C] 实现 dir 命令与真实目录组合测试",
+      "area": "C",
+      "depends_on": ["TASK-FRAME-01"]
+    },
+    {
+      "key": "TASK-BOX-01",
+      "number": 19,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/19",
+      "title": "[B] 实现 box 图形、属性处理器与类型标签",
+      "area": "B",
+      "depends_on": ["TASK-FRAME-01"]
+    },
+    {
+      "key": "TASK-TREE-01",
+      "number": 20,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/20",
+      "title": "[T] 实现 modified-star 内容脏状态标签",
+      "area": "T",
+      "depends_on": ["TASK-FRAME-01"]
+    },
+    {
+      "key": "TASK-VSC-01",
+      "number": 3,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/3",
+      "title": "[V] 建立 VSCode 扩展并实现 SVG 文件标记",
+      "area": "V",
+      "depends_on": []
+    },
+    {
+      "key": "TASK-VSC-02",
+      "number": 11,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/11",
+      "title": "[V] 实现原生 SVG Outline、定位并验证 VSIX 安装",
+      "area": "V",
+      "depends_on": ["TASK-VSC-01", "TASK-XML-01"]
+    },
+    {
+      "key": "TASK-DSH-01",
+      "number": 4,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/4",
+      "title": "[D] 固定 DSH 版本并验证最小插件加载与卸载",
+      "area": "D",
+      "depends_on": []
+    },
+    {
+      "key": "TASK-DSH-02",
+      "number": 16,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/16",
+      "title": "[D] 实现 SVG 检查和流程图生成工具并独立安装",
+      "area": "D",
+      "depends_on": ["TASK-DSH-01", "TASK-CLI-01"]
+    },
+    {
+      "key": "TASK-MET-01",
+      "number": 12,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/12",
+      "title": "[Q] 实现 Git 历史指标脚本与目录迁移分类",
+      "area": "Q",
+      "depends_on": ["TASK-ENG-01"]
+    },
+    {
+      "key": "TASK-QA-02",
+      "number": 21,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/21",
+      "title": "[Q] 保存插件接入差异并完成完整 A/B 回放",
+      "area": "Q",
+      "depends_on": ["TASK-FRAME-01", "TASK-CMD-01", "TASK-CMD-02", "TASK-BOX-01", "TASK-TREE-01"]
+    },
+    {
+      "key": "TASK-QA-03",
+      "number": 22,
+      "url": "https://github.com/zero0307/svg-editor-platform/issues/22",
+      "title": "[Q] 收口报告、指标和真实证据并发布 p2",
+      "area": "Q",
+      "depends_on": ["TASK-QA-02", "TASK-VSC-02", "TASK-DSH-02", "TASK-MET-01"]
+    }
+  ]
+}
