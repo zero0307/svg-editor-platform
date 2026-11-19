@@ -19,6 +19,7 @@
     "check:docs": "node scripts/check-docs.mjs",
     "verify:baseline": "npm run build --silent && node scripts/replay-baseline.mjs",
     "check:architecture": "node scripts/check-architecture.mjs && node scripts/check-workspaces.mjs",
+    "demo:dsh": "node apps/dsh-plugin/verification/run.mjs --demo",
     "verify:dsh": "node apps/dsh-plugin/verification/run.mjs"
   },
   "dependencies": {

@@ -1,0 +1,304 @@
+{
+  "pluginPackage": "dsh-svg-editor-0.2.0.tgz",
+  "dsh": "0.2.2-rc.5",
+  "node": "v24.22.3",
+  "platform": "darwin",
+  "profile": "sdk-minimal",
+  "packageSha256": "0e56fb1e0370389fd5191ce1f453f7a5343446536636f71bce4dab53c2eaf849",
+  "demo": {
+    "directory": "agent-workspace",
+    "graph": {
+      "nodes": [
+        {
+          "id": "submit",
+          "label": "提交"
+        },
+        {
+          "id": "review",
+          "label": "评审"
+        },
+        {
+          "id": "check",
+          "label": "复核"
+        },
+        {
+          "id": "pass",
+          "label": "通过"
+        }
+      ],
+      "edges": [
+        {
+          "id": "submit-review",
+          "from": "submit",
+          "to": "review"
+        },
+        {
+          "id": "submit-check",
+          "from": "submit",
+          "to": "check"
+        },
+        {
+          "id": "review-pass",
+          "from": "review",
+          "to": "pass"
+        },
+        {
+          "id": "check-pass",
+          "from": "check",
+          "to": "pass"
+        }
+      ]
+    },
+    "layout": {
+      "width": 448,
+      "height": 172,
+      "nodes": [
+        {
+          "id": "submit",
+          "label": "提交",
+          "x": 24,
+          "y": 62,
+          "width": 96,
+          "height": 48
+        },
+        {
+          "id": "review",
+          "label": "评审",
+          "x": 176,
+          "y": 24,
+          "width": 96,
+          "height": 48
+        },
+        {
+          "id": "check",
+          "label": "复核",
+          "x": 176,
+          "y": 100,
+          "width": 96,
+          "height": 48
+        },
+        {
+          "id": "pass",
+          "label": "通过",
+          "x": 328,
+          "y": 62,
+          "width": 96,
+          "height": 48
+        }
+      ],
+      "edges": [
+        {
+          "id": "submit-review",
+          "from": "submit",
+          "to": "review"
+        },
+        {
+          "id": "submit-check",
+          "from": "submit",
+          "to": "check"
+        },
+        {
+          "id": "review-pass",
+          "from": "review",
+          "to": "pass"
+        },
+        {
+          "id": "check-pass",
+          "from": "check",
+          "to": "pass"
+        }
+      ]
+    },
+    "created": {
+      "path": "demo.svg",
+      "nodes": 4,
+      "edges": 4
+    },
+    "inspected": {
+      "path": "demo.svg",
+      "width": 448,
+      "height": 172,
+      "counts": {
+        "line": 4,
+        "g": 4,
+        "rect": 4,
+        "text": 4
+      },
+      "structure": [
+        {
+          "id": "submit-review",
+          "type": "line",
+          "parent": null,
+          "text": null
+        },
+        {
+          "id": "submit-check",
+          "type": "line",
+          "parent": null,
+          "text": null
+        },
+        {
+          "id": "review-pass",
+          "type": "line",
+          "parent": null,
+          "text": null
+        },
+        {
+          "id": "check-pass",
+          "type": "line",
+          "parent": null,
+          "text": null
+        },
+        {
+          "id": "submit",
+          "type": "g",
+          "parent": null,
+          "text": null
+        },
+        {
+          "id": "submit-rect",
+          "type": "rect",
+          "parent": "submit",
+          "text": null
+        },
+        {
+          "id": "submit-label",
+          "type": "text",
+          "parent": "submit",
+          "text": "提交"
+        },
+        {
+          "id": "review",
+          "type": "g",
+          "parent": null,
+          "text": null
+        },
+        {
+          "id": "review-rect",
+          "type": "rect",
+          "parent": "review",
+          "text": null
+        },
+        {
+          "id": "review-label",
+          "type": "text",
+          "parent": "review",
+          "text": "评审"
+        },
+        {
+          "id": "check",
+          "type": "g",
+          "parent": null,
+          "text": null
+        },
+        {
+          "id": "check-rect",
+          "type": "rect",
+          "parent": "check",
+          "text": null
+        },
+        {
+          "id": "check-label",
+          "type": "text",
+          "parent": "check",
+          "text": "复核"
+        },
+        {
+          "id": "pass",
+          "type": "g",
+          "parent": null,
+          "text": null
+        },
+        {
+          "id": "pass-rect",
+          "type": "rect",
+          "parent": "pass",
+          "text": null
+        },
+        {
+          "id": "pass-label",
+          "type": "text",
+          "parent": "pass",
+          "text": "通过"
+        }
+      ],
+      "warnings": []
+    }
+  },
+  "created": {
+    "path": "流程图 demo.svg",
+    "nodes": 2,
+    "edges": 1
+  },
+  "inspected": {
+    "path": "流程图 demo.svg",
+    "width": 320,
+    "height": 160,
+    "counts": {
+      "line": 1,
+      "g": 2,
+      "rect": 2,
+      "text": 2
+    },
+    "structure": [
+      {
+        "id": "link",
+        "type": "line",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "start",
+        "type": "g",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "start-rect",
+        "type": "rect",
+        "parent": "start",
+        "text": null
+      },
+      {
+        "id": "start-label",
+        "type": "text",
+        "parent": "start",
+        "text": "开始 & 检查"
+      },
+      {
+        "id": "end",
+        "type": "g",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "end-rect",
+        "type": "rect",
+        "parent": "end",
+        "text": null
+      },
+      {
+        "id": "end-label",
+        "type": "text",
+        "parent": "end",
+        "text": "结束"
+      }
+    ],
+    "warnings": []
+  },
+  "recoveryWarnings": [
+    "warning: assigned id rect1 to unnamed <rect>"
+  ],
+  "independentElementCounts": [
+    7,
+    3
+  ],
+  "checkedFailures": [
+    "missing endpoint",
+    "schema",
+    "existing output",
+    "missing input"
+  ],
+  "afterLiveUnload": [],
+  "afterUninstall": []
+}

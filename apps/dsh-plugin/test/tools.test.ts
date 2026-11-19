@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import type { DocumentView, FileStore } from '@svgframe/core';
 import { FakeEditorSession } from '@svgframe/core/testing';
-import { SvgTools, type Chart } from '../src/SvgTools.js';
+import type { Chart } from '../src/flowchart.js';
+import { SvgTools } from '../src/SvgTools.js';
 import { Phase1EditorSession } from '../src/session.cjs';
 
 const chart: Chart = {

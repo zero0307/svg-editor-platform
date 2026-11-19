@@ -1,6 +1,18 @@
 # DeepSeek Harness SVG 插件
 
-在 DSH 会话中，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
+当前验收版为 0.2.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
+
+## 先跑四节点 demo
+
+具备 Node 24、仓库依赖和下文所列的 DSH、pnpm 后，在仓库根运行：
+
+```sh
+npm run demo:dsh
+```
+
+运行时真实创建 Agent，工作目录与宿主启动目录独立。它根据[输入文件](../apps/dsh-plugin/demo/review.json)依次调用布局、生成和检查工具。打开终端输出目录中的 `demo.svg`，从左到右应是「提交 → 评审／复核 → 通过」。在同目录的 `verification.json` 查看 `demo.inspected`，应为 4 个组、4 个矩形、4 个文本和 4 条线。修改输入后可运行 `npm run demo:dsh -- --input my-graph.json`。安装到自己的会话试用时，使用同目录中的 .tgz 和[插件使用说明](../apps/dsh-plugin/README.md)。
+
+本次交付留存了[实际生成的 SVG](evidence/dsh/demo/demo.svg) 和[三工具验收结果](evidence/dsh/demo/verification.json)。
 
 ## 安装与使用
 
@@ -10,7 +22,7 @@
 npm ci
 npm pack --workspace dsh-svg-editor --pack-destination .
 dsh --profile svg-demo --from-default-profile sdk-minimal --dump-config
-dsh plugin --profile svg-demo add ./dsh-svg-editor-0.1.0.tgz
+dsh plugin --profile svg-demo add ./dsh-svg-editor-0.2.0.tgz
 dsh --profile svg-demo --dump-config
 ```
 
@@ -35,12 +47,12 @@ dsh --profile svg-demo --dump-config
 
 [实验第三部分](../phase_cli_2-研-1.md)要求结合智能体使用场景开发 DSH 插件，建议开源和发布市场。这里以直接调度真实工具来验收，能重复验证同一组参数和错误路径，无需模型账号。模型自主选用工具和市场上架不计入本次证据。
 
-| 检查              | 验证方式与结果                                                                                                                  |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| DSH-01 加载与调用 | CLI 在新的 sdk-minimal profile 中安装 npm tarball。通过宿主原生工具注册表执行两个工具，生成并读回中文 SVG。                     |
-| 业务契约与失败    | 测试替身和真实 codec 分别调用相同业务逻辑。在宿主中验证类型错、缺失端点、已有目标、读取失败，再成功读取缺 ID 样例并得到警告。   |
-| PKG-02 安装与卸载 | 安装目录与源码工作区独立。在运行中的 Cordis 释放插件实例，两个注册消失。通过 dsh plugin remove 卸载，重新启动后再次检查注册表。 |
-| CLI 兼容          | 原 CLI 继续渲染自己的文本。只抽出返回结构化结果的 openFile 和 saveFile，三组会话与 final 逐字节比较。                           |
+| 检查              | 验证方式与结果                                                                                                                      |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| DSH-01 加载与调用 | CLI 在新的 sdk-minimal profile 中安装 npm tarball。通过宿主原生工具注册表执行布局、生成和读回，验证四节点菱形图。                   |
+| 业务契约与失败    | 测试替身和真实 codec 分别调用相同业务逻辑。在宿主中验证类型错、缺失端点、已有目标、读取失败，再成功读取缺 ID 样例并得到警告。       |
+| PKG-02 安装与卸载 | 安装目录与源码工作区独立。在运行中的 Cordis 释放插件实例，三个工具注册消失。通过 dsh plugin remove 卸载，重新启动后再次检查注册表。 |
+| CLI 兼容          | 原 CLI 继续渲染自己的文本。只抽出返回结构化结果的 openFile 和 saveFile，三组会话与 final 逐字节比较。                               |
 
 从项目根执行单包和整仓检查：
 
@@ -55,15 +67,17 @@ npm run verify:visual
 ```sh
 runtime=$(mktemp -d)
 npm install --prefix "$runtime" --ignore-scripts @deepseek-ai/dsh@0.2.2-rc.5 pnpm@10.32.1
-PATH="$runtime/node_modules/.bin:$PATH" DSH_CLI="$runtime/node_modules/@deepseek-ai/dsh/lib/bin.js" npm run verify:dsh
+export PATH="$runtime/node_modules/.bin:$PATH"
+npm run demo:dsh
+npm run verify:dsh
 ```
 
-验收程序会新建临时 DSH_HOME、profile 和工作目录。要留存结果，在最后一条命令后追加 `-- --evidence <新目录>`。Ubuntu / Node 24 的 CI 也运行这项验证。[真实调度结果](evidence/dsh/install/verification.json) · [生成的 SVG](evidence/dsh/install/flowchart.svg) · [卸载验证记录](records/2026-11-19-dsh.md)
+验收程序会新建临时 DSH_HOME、profile 和工作目录。要留存结果，在最后一条命令后追加 `-- --evidence <新目录>`。Ubuntu / Node 24 的 CI 也运行这项验证。[0.1.0 双工具验收记录](evidence/dsh/install/verification.json) · [生成的 SVG](evidence/dsh/install/flowchart.svg) · [卸载验证记录](records/2026-11-19-dsh.md)
 
 ## Phase 边界与交接
 
-本组下一项推荐开发自动布局。输入输出、独立认领范围及分支合并顺序见[DSH 开发方案](architecture/dsh-development.md)。
+已实现自动布局并接入三工具 demo。输入输出、独立认领范围及分支合并顺序见[DSH 开发方案](architecture/dsh-development.md)。
 
 工具消费[公开会话接口](../packages/core/src/model.ts)。当前由[Phase 1 适配器](../src/bootstrap/Phase1EditorSession.ts)连接既有图形、编辑器和 XML codec，每次调用拥有独立文档。DSH 的[文件适配](../apps/dsh-plugin/src/DshFileStore.ts)使用宿主的路径解析、取消信号和写入策略。本次无需更改 Phase 1 的命令、输出或 final 标签。
 
-两个工具已使用这一适配器完成真实文件验证。等 #14 的默认插件运行时合入后，将打包入口中的会话实现切到新运行时，重跑同一套 `verify:dsh`，然后按既有依赖关闭 #16。其余 CLI 插件和 VSCode 板块按各自 Issue 继续开发。
+生成和读回工具已使用这一适配器完成真实文件验证。等 #14 的默认插件运行时合入后，将打包入口中的会话实现切到新运行时，重跑同一套 `verify:dsh`，然后按既有依赖关闭 #16。其余 CLI 插件和 VSCode 板块按各自 Issue 继续开发。

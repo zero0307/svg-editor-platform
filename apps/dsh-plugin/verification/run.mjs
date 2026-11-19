@@ -6,6 +6,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  readdirSync,
   realpathSync,
   rmSync,
   writeFileSync,
@@ -17,16 +18,37 @@ import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '../../..');
 const {
-  values: { evidence },
-} = parseArgs({ options: { evidence: { type: 'string' } } });
-const cli = process.env.DSH_CLI;
+  values: { evidence, input, demo },
+} = parseArgs({
+  options: { evidence: { type: 'string' }, input: { type: 'string' }, demo: { type: 'boolean' } },
+});
 const npm = process.env.npm_execpath;
+// Locate the official npm/pnpm install behind a PATH entry, including Windows shims.
+function findCli() {
+  if (process.env.DSH_CLI) return path.resolve(process.env.DSH_CLI);
+  for (const dir of (process.env.PATH ?? '').split(path.delimiter)) {
+    const executable = path.join(dir, process.platform === 'win32' ? 'dsh.cmd' : 'dsh');
+    if (!existsSync(executable)) continue;
+    const entry = realpathSync(executable);
+    if (path.basename(entry) === 'bin.js') return entry;
+    for (const modules of [path.resolve(dir, '..'), path.join(dir, 'node_modules')]) {
+      const candidate = path.join(modules, '@deepseek-ai/dsh/lib/bin.js');
+      if (existsSync(candidate)) return candidate;
+    }
+  }
+}
+const cli = findCli();
 if (!cli || !npm)
-  throw new Error('Set DSH_CLI to the installed dsh/lib/bin.js and run npm run verify:dsh.');
+  throw new Error(
+    'Install the pinned DSH and pnpm from doc/dsh.md or set DSH_CLI to dsh/lib/bin.js. Start the demo using npm.',
+  );
 const temp = mkdtempSync(path.join(tmpdir(), 'dsh-svg-check-'));
 const cwd = path.join(temp, 'workspace');
 const env = {
   ...process.env,
+  SVG_DEMO_INPUT: input
+    ? path.resolve(input)
+    : path.resolve(import.meta.dirname, '../demo/review.json'),
   DSH_HOME: path.join(temp, 'home'),
   XDG_CONFIG_HOME: path.join(temp, 'config'),
   XDG_DATA_HOME: path.join(temp, 'data'),
@@ -51,7 +73,10 @@ try {
   assert.equal(version, '0.2.2-rc.5');
   run(npm, ['pack', '--silent', '--workspace', 'dsh-svg-editor', '--pack-destination', temp], root);
   run(cli, ['--profile', profile, '--from-default-profile', 'sdk-minimal', '--dump-config']);
-  run(cli, ['plugin', '--profile', profile, 'add', path.join(temp, 'dsh-svg-editor-0.1.0.tgz')]);
+  const archives = readdirSync(temp).filter((name) => name.endsWith('.tgz'));
+  assert.equal(archives.length, 1);
+  const archive = path.join(temp, archives[0]);
+  run(cli, ['plugin', '--profile', profile, 'add', archive]);
   const profileDir = path.join(env.DSH_HOME, 'profiles', profile);
   const installed = path.join(profileDir, 'node_modules', 'dsh-svg-editor');
   assert.ok(realpathSync(installed).startsWith(realpathSync(temp) + path.sep));
@@ -81,10 +106,11 @@ try {
   );
   assert.ok(!existsSync(installed));
   const removed = boot('removed');
-  const tarball = readFileSync(path.join(temp, 'dsh-svg-editor-0.1.0.tgz'));
+  const tarball = readFileSync(archive);
   const report =
     JSON.stringify(
       {
+        pluginPackage: archives[0],
         dsh: version,
         node: process.version,
         platform: process.platform,
@@ -96,12 +122,31 @@ try {
       null,
       2,
     ) + '\n';
+  let destination;
   if (evidence) {
-    mkdirSync(evidence); // Preserve earlier evidence by requiring a new output directory.
-    writeFileSync(path.join(evidence, 'verification.json'), report);
-    copyFileSync(path.join(cwd, result.created.path), path.join(evidence, 'flowchart.svg'));
+    destination = path.resolve(evidence);
+    mkdirSync(destination); // Preserve existing evidence.
+  } else if (demo) {
+    const artifacts = path.join(root, 'artifacts');
+    mkdirSync(artifacts, { recursive: true });
+    destination = mkdtempSync(path.join(artifacts, 'dsh-demo-'));
   }
-  process.stdout.write(report);
+  if (destination) {
+    writeFileSync(path.join(destination, 'verification.json'), report);
+    copyFileSync(
+      path.join(cwd, result.demo.directory, result.demo.created.path),
+      path.join(destination, 'demo.svg'),
+    );
+    if (demo) copyFileSync(archive, path.join(destination, archives[0]));
+    else copyFileSync(path.join(cwd, result.created.path), path.join(destination, 'flowchart.svg'));
+  }
+  if (demo) {
+    const { nodes, edges } = result.demo.created;
+    console.log(`DSH ${version}: svg_layout_flowchart → svg_create_flowchart → svg_inspect`);
+    console.log(`${nodes} nodes, ${edges} edges. Install, read-back and uninstall verified.`);
+    console.log(`SVG: ${path.join(destination, 'demo.svg')}
+Report and installable package: ${destination}`);
+  } else process.stdout.write(report);
 } finally {
   rmSync(temp, { recursive: true, force: true });
 }
