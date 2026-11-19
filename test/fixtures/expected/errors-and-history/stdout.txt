@@ -1,0 +1,11 @@
+error: no document. use 'init' or 'read' first
+error: unknown command: unknown
+canvas 800x600 created
+g#a created
+undone: g#a created
+error: no such shape: missing
+canvas 800x600
+redone: g#a created
+error: cannot read file: missing.svg
+svg (800x600)
+└── g#a

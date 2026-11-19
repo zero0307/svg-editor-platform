@@ -1,0 +1,10 @@
+move
+unknown
+init
+create g a
+undo
+set missing fill red
+canvas
+redo
+read missing.svg
+tree
