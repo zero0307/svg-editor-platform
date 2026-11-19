@@ -2,7 +2,22 @@
 
 全部任务已创建为GitHub Issues，范围和依赖可在仓库复核，认领与完成状态以Issues为准。总览入口：[任务总览 #23](https://github.com/zero0307/svg-editor-platform/issues/23)。
 
-初始并行入口为 [#1 基线回放](https://github.com/zero0307/svg-editor-platform/issues/1)、[#2 公共契约](https://github.com/zero0307/svg-editor-platform/issues/2)、[#3 VSCode文件标记](https://github.com/zero0307/svg-editor-platform/issues/3)、[#4 DSH最小插件](https://github.com/zero0307/svg-editor-platform/issues/4)；打开后确认当前状态再认领，不在此另抄一份人员表。
+## 本轮基建之后的分工
+
+本轮提交包含 #1 的基线回放、#2 的公开契约与测试替身、#5 的工作区构建，以及本组选择的 #9 文件与目录适配器。合并状态和认领人以 GitHub 为准。其他小组可从包含该实现的分支开发，依赖按下表验收。
+
+| 可认领工作                             | 主要改动位置                            | 成员能独立演示的结果                                                                                                 |
+| -------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| #3 VSCode 文件标记、#4 DSH 最小插件    | 各自的应用目录                          | 在真实 VSCode 中给 SVG 文件加标记；在固定版本的 DSH 中调用一个最小工具，卸载后工具消失。两项都可立即开工。           |
+| #6 XML 语法与定位                      | `packages/svg-xml/`                     | 直接对字符串验证嵌套、无 ID、同行重复标签、UTF-16 范围和残缺 XML。使用 core 的 LocatedSvgElement。                   |
+| #7 事务与属性                          | `packages/core/` 事务实现               | 向候选树写两处后抛错，原内容、dirty 和已有 redo 完整保留。成功的复合修改一次 undo 即可恢复。可复用 FaultAfterWrite。 |
+| #8 A/B 插件加载器                      | `packages/host/` 加载与装配             | 用正常、故障、正常三个夹具插件启动，检查清单、重复名与回滚，第三个插件仍可调用。I/O 适配器已有单独入口。             |
+| #10 树展示、#12 Git 指标               | 分别在 core 展示代码、脚本与指标目录    | 给假树添加两个独立标签，再全部关闭并比较树输出；指标组在固定的两个提交上验证文件分类与统计可复现。                   |
+| #13 SVG 恢复、#14 默认 CLI、#15 冻结   | svg-xml、builtins、CLI 组合根和验收     | #6+#7 后验证完整子树读回；#14 集成后跑真实默认 CLI；#12+#14 后用测试插件验收并记录框架提交。                         |
+| #11 Outline、#16 DSH 双工具            | 各自应用目录                            | #3+#6 后点击 Outline 定位到源码；#4+#14 后在干净 DSH 中生成流程图并读回。DSH 现可用 FakeEditorSession 开发工具逻辑。 |
+| #17–#20 CLI 业务插件，#21–#22 集成交付 | stats、dir、box、修改标签各包及验收目录 | 各包先用契约替身验收，正式接入等 #15。#18 使用现成 DirectoryReader 验排序、输出及历史；其余插件按下方依赖独立接入。  |
+
+从干净检出执行 `npm ci`。单独验收本组模块用 `npm test -w @svgframe/host`，契约用 `npm test -w @svgframe/core`。整仓执行 `npm run check` 和 `npm run verify:visual`。文件、目录分类和错误路径的断言均使用真实临时目录。[宿主适配器测试](../../packages/host/test/io.test.ts) · [基线复现记录](../evidence/baseline/README.md)
 
 ## 依赖与完成口径
 

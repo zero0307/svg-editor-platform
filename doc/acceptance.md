@@ -1,6 +1,6 @@
 # 质量保证与验收计划
 
-状态：设计方案，尚未执行 Phase 2 验证。责任按项目板块划分，不预先绑定个人；实施时在 Issue 中填写负责人和复核人。
+已落地的检查包括[三组基线回放](evidence/baseline/README.md)、[核心契约用例](../packages/core/test/contracts.test.ts)和[宿主 I/O 用例](../packages/host/test/io.test.ts)。下列矩阵给出全阶段完成条件，各后续板块凭实际结果验收。
 
 本计划把课程要求落实到可回放的命令、独立测试和证据文件。自动检查通过与人工验收通过分别记录；没有日志、截图或提交链接的项目保留为“待验证”。
 
@@ -22,9 +22,7 @@
 
 `test/TestHarness.ts` 已用内存 `FileStore` 隔离文件 IO，但直接创建 `ShapeFactory`、`XmlSvgCodec` 和 `CommandRouter`。迁移时先增加兼容装配帮助器，再分离内核、内置实现和宿主测试，保留既有断言。不得先删除测试，再用仅覆盖新实现的测试替换。
 
-现有 `scripts/check-architecture.mjs` 只认识旧的 `src/` 分层，不能直接证明新包边界正确；框架阶段须升级为检查包依赖、公开导出和禁止跨包内部路径导入。`ci/github-actions.yml` 目前是模板，不是已启用的工作流；其历史权限说明不代表新仓库当前权限状态。
-
-基线准备步骤：保留完整 Git 历史和原始 `final`；在独立工作树运行原提交的 `npm ci`、`npm run check` 和既有视觉验证，保存环境与结果；生成固定会话输出及 SVG 后再开始重构。当前方案不把这些检查记为已通过。
+旧分层使用 `scripts/check-architecture.mjs` 检查，工作区的公开导出、项目引用和依赖方向由 `scripts/check-workspaces.mjs` 检查。两者均纳入根命令和[现行 CI](../.github/workflows/ci.yml)。独立检出 final 的环境、回放步骤及已记录的规格差异见[基线记录](evidence/baseline/README.md)。
 
 ## 2. 需求追踪矩阵
 
