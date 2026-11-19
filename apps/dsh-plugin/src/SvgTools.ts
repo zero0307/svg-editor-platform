@@ -1,20 +1,6 @@
 import type { DocumentView, EditorSessionPort, ShapeView } from '@svgframe/core';
 
-export interface ChartNode {
-  id: string;
-  label: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-export interface Chart {
-  path: string;
-  width: number;
-  height: number;
-  nodes: readonly ChartNode[];
-  edges: readonly { id: string; from: string; to: string }[];
-}
+import { indexFlowchart, type Chart } from './flowchart.js';
 
 function summarize(doc: DocumentView) {
   const counts = new Map<string, number>();
@@ -37,14 +23,7 @@ export class SvgTools {
   async createFlowchart(chart: Chart) {
     if (![chart.width, chart.height].every((n) => Number.isFinite(n) && n > 0))
       throw new RangeError('Canvas dimensions must be positive.');
-    if (!chart.nodes.length) throw new RangeError('Provide at least one flowchart node.');
-    const ids = new Set<string>();
-    const reserve = (id: string): void => {
-      if (!id || /\s/u.test(id) || ids.has(id))
-        throw new RangeError('Invalid or duplicate SVG id: ' + id);
-      ids.add(id);
-    };
-    const nodes = new Map<string, ChartNode>();
+    const nodes = indexFlowchart(chart);
     for (const node of chart.nodes) {
       if (
         ![node.x, node.y, node.width, node.height].every(Number.isFinite) ||
@@ -52,20 +31,13 @@ export class SvgTools {
         node.height <= 0
       )
         throw new RangeError('Invalid node geometry: ' + node.id);
-      reserve(node.id);
-      reserve(node.id + '-rect');
-      reserve(node.id + '-label');
-      nodes.set(node.id, node);
     }
     const session = this.newSession();
     session.init(chart.width, chart.height);
     // Edges go behind node bodies in SVG paint order.
     for (const edge of chart.edges) {
-      reserve(edge.id);
-      const from = nodes.get(edge.from),
-        to = nodes.get(edge.to);
-      if (!from || !to) throw new RangeError('Unknown endpoint for edge ' + edge.id);
-      if (from === to) throw new RangeError('Self-loops require explicit routing: ' + edge.id);
+      const from = nodes.get(edge.from)!;
+      const to = nodes.get(edge.to)!;
       const args = [
         from.x + from.width / 2,
         from.y + from.height / 2,

@@ -1,0 +1,14 @@
+{
+  "nodes": [
+    { "id": "submit", "label": "提交" },
+    { "id": "review", "label": "评审" },
+    { "id": "check", "label": "复核" },
+    { "id": "pass", "label": "通过" }
+  ],
+  "edges": [
+    { "id": "submit-review", "from": "submit", "to": "review" },
+    { "id": "submit-check", "from": "submit", "to": "check" },
+    { "id": "review-pass", "from": "review", "to": "pass" },
+    { "id": "check-pass", "from": "check", "to": "pass" }
+  ]
+}

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="448" height="172" viewBox="0 0 448 172">
+  <line id="submit-review" x1="72" y1="86" x2="224" y2="48" stroke="black"/>
+  <line id="submit-check" x1="72" y1="86" x2="224" y2="124" stroke="black"/>
+  <line id="review-pass" x1="224" y1="48" x2="376" y2="86" stroke="black"/>
+  <line id="check-pass" x1="224" y1="124" x2="376" y2="86" stroke="black"/>
+  <g id="submit">
+    <rect id="submit-rect" x="24" y="62" width="96" height="48" fill="#e8f2ff"/>
+    <text id="submit-label" x="28" y="86">提交</text>
+  </g>
+  <g id="review">
+    <rect id="review-rect" x="176" y="24" width="96" height="48" fill="#e8f2ff"/>
+    <text id="review-label" x="180" y="48">评审</text>
+  </g>
+  <g id="check">
+    <rect id="check-rect" x="176" y="100" width="96" height="48" fill="#e8f2ff"/>
+    <text id="check-label" x="180" y="124">复核</text>
+  </g>
+  <g id="pass">
+    <rect id="pass-rect" x="328" y="62" width="96" height="48" fill="#e8f2ff"/>
+    <text id="pass-label" x="332" y="86">通过</text>
+  </g>
+</svg>

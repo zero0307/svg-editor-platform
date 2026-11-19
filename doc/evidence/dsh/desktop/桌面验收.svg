@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="448" height="96" viewBox="0 0 448 96">
+  <line id="start-process" x1="72" y1="48" x2="224" y2="48" stroke="black"/>
+  <line id="process-done" x1="224" y1="48" x2="376" y2="48" stroke="black"/>
+  <g id="start">
+    <rect id="start-rect" x="24" y="24" width="96" height="48" fill="#e8f2ff"/>
+    <text id="start-label" x="28" y="48">开始</text>
+  </g>
+  <g id="process">
+    <rect id="process-rect" x="176" y="24" width="96" height="48" fill="#e8f2ff"/>
+    <text id="process-label" x="180" y="48">处理</text>
+  </g>
+  <g id="done">
+    <rect id="done-rect" x="328" y="24" width="96" height="48" fill="#e8f2ff"/>
+    <text id="done-label" x="332" y="48">完成</text>
+  </g>
+</svg>

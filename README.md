@@ -4,7 +4,7 @@
 
 当前 CLI 保留 Phase 1 的命令和回显。工作区已经提供公共扩展契约、测试替身和真实文件系统适配器。旧 CLI 的读写使用同一宿主实现。三组会话对照 `final` 逐字节回放。下一批可独立开发的任务见[分块交接清单](doc/tasks/index.md#本轮基建之后的分工)。
 
-DeepSeek Harness 可生成流程图并检查 SVG，见[安装、使用与验收](doc/dsh.md)。
+DeepSeek Harness 插件可以自动布局、生成并检查 SVG。运行 `npm run demo:dsh` 可体验四节点流程图，见[环境准备、安装与验收](doc/dsh.md)。
 
 ## 团队开发入口
 
