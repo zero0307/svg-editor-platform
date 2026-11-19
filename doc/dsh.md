@@ -62,6 +62,8 @@ PATH="$runtime/node_modules/.bin:$PATH" DSH_CLI="$runtime/node_modules/@deepseek
 
 ## Phase 边界与交接
 
+本组下一项推荐开发自动布局。输入输出、独立认领范围及分支合并顺序见[DSH 开发方案](architecture/dsh-development.md)。
+
 工具消费[公开会话接口](../packages/core/src/model.ts)。当前由[Phase 1 适配器](../src/bootstrap/Phase1EditorSession.ts)连接既有图形、编辑器和 XML codec，每次调用拥有独立文档。DSH 的[文件适配](../apps/dsh-plugin/src/DshFileStore.ts)使用宿主的路径解析、取消信号和写入策略。本次无需更改 Phase 1 的命令、输出或 final 标签。
 
 两个工具已使用这一适配器完成真实文件验证。等 #14 的默认插件运行时合入后，将打包入口中的会话实现切到新运行时，重跑同一套 `verify:dsh`，然后按既有依赖关闭 #16。其余 CLI 插件和 VSCode 板块按各自 Issue 继续开发。
