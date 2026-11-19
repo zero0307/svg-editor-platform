@@ -37,5 +37,22 @@
 ## 评审与交付顺序
 
 1. 本轮插件 PR 以基建 PR 的 `feat/009-host-io` 为 base，以 `feat/004-dsh-plugin` 为 head。评审范围从 DSH 实现开始。[基建 PR #25](https://github.com/zero0307/svg-editor-platform/pull/25)
-2. 基建完成评审后，先用 merge commit 把 #25 合入 `main`，保留基建分支，直到插件 PR 已切换 base。将同一插件 PR 的 base 改为 `main`，核对文件差异，再通过针对 `main` 的 CI 和非作者评审后合并。#4 随插件 PR 交付，#16 等默认运行时复验。
+2. 基建完成评审后，先用 merge commit 把 #25 合入 `main`，保留基建分支，直到插件 PR 已切换 base。将[插件 PR #26](https://github.com/zero0307/svg-editor-platform/pull/26) 的 base 改为 `main`，核对文件差异。若保护规则提示分支落后，在插件分支合入最新 `origin/main` 并推送，然后等待针对 `main` 的 CI 和非作者评审。#4 随插件 PR 交付，#16 等默认运行时复验。
 3. 布局、演示和运行时切换分别提交小 PR。功能分支按仓库规范以实际 Issue 编号命名。单包验收运行 `npm test -w dsh-svg-editor`，整仓运行 `npm run check` 与 `npm run verify:visual`；宿主改动再按指南运行 `npm run verify:dsh`。[贡献规范](../../CONTRIBUTING.md)
+
+## 什么时候建集成分支
+
+**现在直接在各功能分支修复。** #26 已包含 #25 的基建提交，插件在这一组合上完成了真实宿主验收。评审发现 SVG 生成问题时，向 `feat/004-dsh-plugin` 追加修复，原 PR 自动更新。若问题出在共享文件适配器，就在 #25 修复，测试通过后把更新的基建分支合入插件分支并复验。Git 中的已推送提交可按 SHA 找回，受保护的 `main` 保留已交付版本。
+
+**出现尚未合并的跨模块依赖时，再做一次预合并。** 例如 #14 准备好默认运行时，而 DSH 已在另一个 PR 中依赖它。集成负责人从 `origin/main` 建短期本地分支。用独立工作目录可保留各自正在开发的现场：
+
+```sh
+git fetch origin
+git worktree add --no-track -b test/016-dsh-integration ../svg-dsh-integration origin/main
+cd ../svg-dsh-integration
+```
+
+1. 对每个尚未进入 `main` 的候选，按“基建、运行时、DSH”顺序执行 `git merge --no-ff --no-edit <远端分支>`。分支名从相应 PR 的 head 读取，例如当前插件的 head 是 `origin/feat/004-dsh-plugin`。记录各输入 SHA，保证其他人能复现。
+2. 合并后执行 `npm ci`、`npm run check`、`npm run verify:visual`，再按[插件指南](../dsh.md)运行 `npm run verify:dsh`。遇到文本冲突，用 `git status` 定位双方改动；需要重新开始本次合并时可执行 `git merge --abort`。
+3. 测试发现的问题回到负责的 PR 修复，并把暴露问题的用例一同提交。若问题只在运行时与 DSH 的组合中出现，由 #16 的适配 PR 承接。更新试验分支并复跑，确保每一处最终修复都有进入 `main` 的 PR。
+4. 团队需要共同复现时才推送这个试验分支，并在 #16 记录候选 SHA 和失败用例。验收完成后按各功能 PR 的顺序合入 `main`，确认修复均已落库，再清理试验工作目录和分支。
