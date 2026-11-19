@@ -39,6 +39,13 @@ jobs:
         run: npm run check
       - name: Verify SVG rendering
         run: npm run verify:visual
+      - name: Install and verify the DSH plugin in a fresh profile
+        if: matrix.os == 'ubuntu-latest' && matrix.node == 24
+        shell: bash
+        run: |
+          runtime="$RUNNER_TEMP/svg-dsh"
+          npm install --prefix "$runtime" --ignore-scripts --no-audit --no-fund @deepseek-ai/dsh@0.2.2-rc.5 pnpm@10.32.1
+          PATH="$runtime/node_modules/.bin:$PATH" DSH_CLI="$runtime/node_modules/@deepseek-ai/dsh/lib/bin.js" npm run verify:dsh
 
   required:
     name: CI required

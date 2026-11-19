@@ -12,6 +12,9 @@
     },
     {
       "path": "packages/host"
+    },
+    {
+      "path": "apps/dsh-plugin"
     }
   ],
   "include": ["src/**/*.ts", "test/**/*.ts"]

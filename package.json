@@ -8,7 +8,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && npm run bundle --workspaces --if-present --silent",
     "cli": "npm run build --silent && node dist/src/bootstrap/main.js",
     "test": "npm run build --silent && node --test dist/test/*.test.js && npm run test --workspaces --if-present",
     "test:coverage": "npm run build --silent && node --experimental-test-coverage --test dist/test/*.test.js && npm run test --workspaces --if-present",
@@ -18,7 +18,8 @@
     "check": "npm run format:check && npm run check:docs && npm test && node scripts/replay-baseline.mjs && npm run check:architecture",
     "check:docs": "node scripts/check-docs.mjs",
     "verify:baseline": "npm run build --silent && node scripts/replay-baseline.mjs",
-    "check:architecture": "node scripts/check-architecture.mjs && node scripts/check-workspaces.mjs"
+    "check:architecture": "node scripts/check-architecture.mjs && node scripts/check-workspaces.mjs",
+    "verify:dsh": "node apps/dsh-plugin/verification/run.mjs"
   },
   "dependencies": {
     "@svgframe/core": "0.1.0",
