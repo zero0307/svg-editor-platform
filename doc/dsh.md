@@ -45,7 +45,7 @@ dsh --profile svg-demo --dump-config
 
 ## 按课程要求复验
 
-[实验第三部分](../phase_cli_2-研-1.md)要求结合智能体使用场景开发 DSH 插件，建议开源和发布市场。这里以直接调度真实工具来验收，能重复验证同一组参数和错误路径，无需模型账号。模型自主选用工具和市场上架不计入本次证据。
+[实验第三部分](../phase_cli_2-研-1.md)要求结合智能体使用场景开发 DSH 插件，建议开源和发布市场。自动验收直接调度宿主工具，可重复验证参数和错误路径。下方的桌面验收记录了真实模型按用户指令调用工具的结果。
 
 | 检查              | 验证方式与结果                                                                                                                      |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -73,6 +73,44 @@ npm run verify:dsh
 ```
 
 验收程序会新建临时 DSH_HOME、profile 和工作目录。要留存结果，在最后一条命令后追加 `-- --evidence <新目录>`。Ubuntu / Node 24 的 CI 也运行这项验证。[0.1.0 双工具验收记录](evidence/dsh/install/verification.json) · [生成的 SVG](evidence/dsh/install/flowchart.svg) · [卸载验证记录](records/2026-11-19-dsh.md)
+
+## macOS 桌面版验收
+
+2026-11-19 在 Apple Silicon Mac 上使用官方 DeepSeek Harness Desktop 0.2.2-rc.5、插件 `dsh-svg-editor@0.2.0` 和模型 DeepSeek-V4.1-Flash 完成。桌面应用使用自己的 `desktop` profile。[官方桌面版说明](https://github.com/deepseek-ai/deepseek-harness/blob/master/apps/desktop/README.zh.md#bundled-command-runtime)
+
+1. 在仓库根目录按上文安装依赖并运行 `npm pack --workspace dsh-svg-editor --pack-destination .`。首次使用桌面版时先启动一次，再用 ⌘Q 退出。从同一目录执行以下命令，将验收包安装到桌面版。
+
+   ```sh
+   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.2.0.tgz"
+   ```
+
+2. 重新打开桌面应用，确认插件已启用并选择可用模型。在可写的工作区打开会话。首次复验请选择尚无 `桌面验收.svg` 的目录，后续复跑也可以换新的工作区。
+3. 输入下面的复验提示。完成后，在会话轨迹中依次展开三个工具。核对生成工具收到布局返回的画布、坐标和边，检查工具读取刚生成的同一路径。
+
+   > 请用 svg_layout_flowchart 布局「开始 → 处理 → 完成」，将布局传给 svg_create_flowchart 新建「桌面验收.svg」。最后用 svg_inspect 从工作区读回这个文件，报告节点数、连线数和导入警告。
+
+| 桌面会话中的实际调用   | 本次观测结果                                                                                                              |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `svg_layout_flowchart` | 返回 448 × 96 画布。三个节点从左到右排列，标签依次为「开始」「处理」「完成」。                                            |
+| `svg_create_flowchart` | 在工作区新建 `桌面验收.svg`。磁盘文件含 `start-process` 和 `process-done` 两条连接线。                                    |
+| `svg_inspect`          | 读回同一文件，得到 3 个 `g`、3 个 `rect`、3 个 `text`、2 条 `line`，导入警告为 `[]`。每个节点组内各有一个矩形和一个标签。 |
+
+验收结论为 **3 个节点、2 条连线、0 条导入警告**。可下载本次桌面生成的原文件，对照从会话记录提取的三次工具入参和读回结果。[桌面验收.svg](evidence/dsh/desktop/桌面验收.svg) · [工具调用与读回结果](evidence/dsh/desktop/verification.json)
+
+## 社区市场发布清单
+
+以课程列举的 `dsh-market` 为投稿目标。DSH 官方桌面版支持按 profile 添加第三方索引。此社区市场的目录由 `awesome-dsh-plugin` 维护，也可作为索引源添加到官方「发现」页。[课程原文](../phase_cli_2-研-1.md) · [官方索引规范](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/plugin-market.zh.md) · [市场投稿入口](https://github.com/dsh-market/dsh-market#submit-your-plugin)
+
+截至 2026-11-19，仓库公开、仍在维护，创建于 11 月 15 日，已满足目录要求的仓龄。子包已声明 `dsh.bundle.patch`，包含对应 patch、三个工具及桌面验收证据。兼容声明精确限定 DSH 0.2.2-rc.5。社区目录接受 `apps/` 子包，可沿用当前仓库。[包清单](../apps/dsh-plugin/package.json) · [社区收录与评审规则](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)
+
+| 待办                       | 完成标志                                                                                                                                                                                                                                                                                                                                                                          |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 让发布源码可从默认分支访问 | 当前 `main` 尚无插件。按依赖顺序评审并合入 #25、#26、#27，确认 `main/apps/dsh-plugin` 可浏览。团队按开源目标确认自有代码的许可证，打包时保留已有的 `xmldom-LICENSE`。                                                                                                                                                                                                             |
+| 补全仓库与分发入口         | 仓库尚无 `dsh-plugin` topic、公开 Release 或同名 npm 包。添加目录要求的 topic。建议从选定发布提交打包，把预构建的 `.tgz` 附到固定标签的 GitHub Release，在干净 profile 从公开产物验证安装、三工具和卸载。子包构建引用仓库内的运行时，市场用户可以直接安装编译好的产物。                                                                                                           |
+| 提交一条社区目录记录       | 在 `awesome-dsh-plugin/awesome-dsh-plugin` 提 PR，仅新增 `data/plugins/zero0307__svg-editor-platform--apps-dsh-plugin.yml`。填写指向本仓库 `tree/main/apps/dsh-plugin` 的 URL、名称 `zero0307/svg-editor-platform#dsh-svg-editor`、分类 `tools`、一句准确的英文功能描述，以及指向本次 Release 资产的 HTTPS `tarball` 链接。可附中文描述。核对相近条目，等待目录 CI 和维护者审核。 |
+| 从市场完成最终复验         | 条目合并并同步后，在干净且版本匹配的 DSH profile 打开 `dsh-market`，搜索插件、确认安装来源、安装启用并重跑上面的三节点用例，再卸载。记录条目链接、发布版本及实测结果。                                                                                                                                                                                                            |
+
+如团队选择发布到 npm，需要先调整**插件子包**当前的 `private: true`，补充指向本仓库及子目录的 `repository`，用发布账号验证包名和权限，再发布、验证具体版本。上表推荐的 GitHub Release 路径可直接利用现有打包流程。官方「发现」索引的版本来源仅支持 npm 或固定提交的 Git 子目录，社区条目的 Release `tarball` 字段属于 `dsh-market` 的安装机制。若也要支持原生「发现」安装，须另验索引中的实际 npm/Git 来源。#14/#16 跟踪团队的默认运行时迁移，后续替换运行时需要重跑验收。[官方版本来源格式](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/plugin-market.zh.md#index-format) · [社区分发选项](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)
 
 ## Phase 边界与交接
 

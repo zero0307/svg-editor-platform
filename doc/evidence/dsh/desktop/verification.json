@@ -1,0 +1,167 @@
+{
+  "calls": [
+    {
+      "tool": "svg_layout_flowchart",
+      "input": {
+        "nodes": [
+          {
+            "id": "start",
+            "label": "开始"
+          },
+          {
+            "id": "process",
+            "label": "处理"
+          },
+          {
+            "id": "done",
+            "label": "完成"
+          }
+        ],
+        "edges": [
+          {
+            "id": "start-process",
+            "from": "start",
+            "to": "process"
+          },
+          {
+            "id": "process-done",
+            "from": "process",
+            "to": "done"
+          }
+        ]
+      }
+    },
+    {
+      "tool": "svg_create_flowchart",
+      "input": {
+        "path": "桌面验收.svg",
+        "width": 448,
+        "height": 96,
+        "nodes": [
+          {
+            "id": "start",
+            "label": "开始",
+            "x": 24,
+            "y": 24,
+            "width": 96,
+            "height": 48
+          },
+          {
+            "id": "process",
+            "label": "处理",
+            "x": 176,
+            "y": 24,
+            "width": 96,
+            "height": 48
+          },
+          {
+            "id": "done",
+            "label": "完成",
+            "x": 328,
+            "y": 24,
+            "width": 96,
+            "height": 48
+          }
+        ],
+        "edges": [
+          {
+            "id": "start-process",
+            "from": "start",
+            "to": "process"
+          },
+          {
+            "id": "process-done",
+            "from": "process",
+            "to": "done"
+          }
+        ]
+      }
+    },
+    {
+      "tool": "svg_inspect",
+      "input": {
+        "path": "桌面验收.svg"
+      }
+    }
+  ],
+  "inspectResult": {
+    "path": "桌面验收.svg",
+    "width": 448,
+    "height": 96,
+    "counts": {
+      "line": 2,
+      "g": 3,
+      "rect": 3,
+      "text": 3
+    },
+    "structure": [
+      {
+        "id": "start-process",
+        "type": "line",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "process-done",
+        "type": "line",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "start",
+        "type": "g",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "start-rect",
+        "type": "rect",
+        "parent": "start",
+        "text": null
+      },
+      {
+        "id": "start-label",
+        "type": "text",
+        "parent": "start",
+        "text": "开始"
+      },
+      {
+        "id": "process",
+        "type": "g",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "process-rect",
+        "type": "rect",
+        "parent": "process",
+        "text": null
+      },
+      {
+        "id": "process-label",
+        "type": "text",
+        "parent": "process",
+        "text": "处理"
+      },
+      {
+        "id": "done",
+        "type": "g",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "done-rect",
+        "type": "rect",
+        "parent": "done",
+        "text": null
+      },
+      {
+        "id": "done-label",
+        "type": "text",
+        "parent": "done",
+        "text": "完成"
+      }
+    ],
+    "warnings": []
+  }
+}
