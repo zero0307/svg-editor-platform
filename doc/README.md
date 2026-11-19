@@ -6,6 +6,8 @@
 
 任务认领从 [GitHub Issues索引](tasks/index.md) 开始；实际配置见 [GitHub协作配置](github-operations.md)，目录要求见 [文件组织规范](repository-layout.md)。
 
+首轮框架开发的接口样例、合并顺序和 DSH 接入条件见[框架实施方案](architecture/framework-implementation.md)。
+
 | 文档                                               | 内容                                             |
 | -------------------------------------------------- | ------------------------------------------------ |
 | [完整开发方案](development-plan.md)                | 项目目标、关键约定和开发入口                     |

@@ -1,6 +1,8 @@
 # SVG Editor Platform 架构与接口方案
 
-状态：总体架构方向已确认采用；以下接口和目标包仍为实施设计，尚未实现。方案面向 `zero0307/svg-editor-platform`，采用 npm workspaces，保留 TypeScript、面向对象、Node 内置测试运行器与现有 Prettier；团队统一 Node 24 LTS，具体补丁版本在开工时锁定。是否继续验证原 CLI 的 Node 22 兼容性作为单独决策，不能默认由旧配置推出。
+总体架构方向已确认采用，下文的接口和目标包为实施设计。方案面向 `zero0307/svg-editor-platform`，采用 npm workspaces，沿用 TypeScript、面向对象、Node 内置测试运行器与 Prettier。开发用 Node 版本见[仓库版本文件](../.nvmrc)，CLI 兼容性由 [CI 矩阵](../.github/workflows/ci.yml)验证。
+
+首轮 PR 的拆分、接口交付样例、Phase 1 迁移步骤及冻结条件见[框架实施方案](architecture/framework-implementation.md)。
 
 本方案从 Phase 1 的 `final^{commit}` 开始渐进重构。已核对的基线提交为 `e5621a68afd4731626d54566f17ba55885d1bc0f`。先冻结基线并建立回归，再完成框架通用能力，最后用独立提交接入插件。新增 `box` 或标签时，内核、加载器与既有插件均不再修改。
 
