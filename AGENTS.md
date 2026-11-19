@@ -4,7 +4,7 @@
 
 ## 状态
 
-本仓库已初始化并继承 Phase 1 历史。旧 CLI 在 src/、test/，公共契约及其替身在 packages/core/。npm workspaces 通过 TypeScript 项目引用构建。根 npm run check 执行旧测试、新包测试、Phase 1 字节回放、文档和依赖边界检查。业务插件与应用按 Issue 逐步接入。
+本仓库已初始化并继承 Phase 1 历史。旧 CLI 在 src/、test/，公共契约及其替身在 packages/core/，真实文件与目录适配器在 packages/host/。npm workspaces 通过 TypeScript 项目引用构建。根 npm run check 执行旧测试、新包测试、Phase 1 字节回放、文档和依赖边界检查。业务插件与应用按 Issue 逐步接入。
 
 ## 修改范围
 

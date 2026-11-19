@@ -21,6 +21,8 @@
     "check:architecture": "node scripts/check-architecture.mjs && node scripts/check-workspaces.mjs"
   },
   "dependencies": {
+    "@svgframe/core": "0.1.0",
+    "@svgframe/host": "0.1.0",
     "@xmldom/xmldom": "0.9.12"
   },
   "devDependencies": {

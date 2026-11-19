@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { EditorSessionPort, EditableDocument } from '@svgframe/core';
+import type { EditorSessionPort, EditableDocument, DocumentView } from '@svgframe/core';
 import { FakeEditorSession, TestPluginContext, FaultAfterWrite } from '@svgframe/core/testing';
 import { ProbePlugin } from './ProbePlugin.js';
 import { ProbeShape } from './ProbeShape.js';
@@ -63,7 +63,7 @@ test('four extension points can be consumed using only the public API', async ()
 });
 
 test('structured session consumer creates, saves and reads independently of CLI or host', async () => {
-  const files = new Map();
+  const files = new Map<string, DocumentView>();
   const makeSession = (): EditorSessionPort =>
     new FakeEditorSession((req) => new ProbeShape(req.id).snapshot(), files);
   const writer = makeSession();

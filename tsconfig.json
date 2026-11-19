@@ -9,6 +9,9 @@
   "references": [
     {
       "path": "packages/core"
+    },
+    {
+      "path": "packages/host"
     }
   ],
   "include": ["src/**/*.ts", "test/**/*.ts"]
