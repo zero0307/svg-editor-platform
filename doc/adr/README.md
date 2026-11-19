@@ -45,3 +45,5 @@ DEC-04 中“undo回保存点”指保存后又编辑、再undo回到该状态�
 
 需要调整的条件；如被替代，链接后继ADR。
 ```
+
+公开契约的首个实现和事务调用约定见 [ADR-0003](0003-public-extension-contracts.md)，状态为 Proposed。
