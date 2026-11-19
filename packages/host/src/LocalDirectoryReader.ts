@@ -16,8 +16,8 @@ export class LocalDirectoryReader implements DirectoryReader {
         else if (entry.isFile()) kind = 'file';
         return { name: entry.name, kind };
       });
-    } catch {
-      throw new DomainError(`cannot read directory: ${path}`);
+    } catch (cause) {
+      throw new DomainError(`cannot read directory: ${path}`, { cause });
     }
   }
 }

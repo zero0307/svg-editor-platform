@@ -1,14 +1,15 @@
 import { randomUUID } from 'node:crypto';
 import { open, readFile, rename, unlink } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { setTimeout as delay } from 'node:timers/promises';
 import { DomainError, type FileStore } from '@svgframe/core';
 
 export class LocalFileStore implements FileStore {
   async read(path: string): Promise<string> {
     try {
       return await readFile(path, 'utf8');
-    } catch {
-      throw new DomainError(`cannot read file: ${path}`);
+    } catch (cause) {
+      throw new DomainError(`cannot read file: ${path}`, { cause });
     }
   }
 
@@ -24,10 +25,25 @@ export class LocalFileStore implements FileStore {
       } finally {
         await handle.close();
       }
-      await rename(temporary, path);
-    } catch {
+      await this.replace(temporary, path);
+    } catch (cause) {
       if (owned) await unlink(temporary).catch(() => undefined);
-      throw new DomainError(`cannot write file: ${path}`);
+      throw new DomainError(`cannot write file: ${path}`, { cause });
     }
+  }
+
+  private async replace(temporary: string, target: string): Promise<void> {
+    // Concurrent Windows replacements can briefly deny delete sharing on the target.
+    for (const waitMs of [10, 25, 50, 100, 200]) {
+      try {
+        return await rename(temporary, target);
+      } catch (error) {
+        const code = (error as NodeJS.ErrnoException).code;
+        if (process.platform !== 'win32' || !['EPERM', 'EACCES', 'EBUSY'].includes(code ?? ''))
+          throw error;
+        await delay(waitMs);
+      }
+    }
+    await rename(temporary, target);
   }
 }

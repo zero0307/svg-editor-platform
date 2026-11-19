@@ -97,7 +97,11 @@ test('failed replacement preserves destination and removes only the temporary fi
   });
   assert.equal(await readFile(join(dir, 'keep'), 'utf8'), 'original');
   assert.deepEqual(await readdir(root), ['existing']);
-  await assert.rejects(store.read(join(root, 'absent')), DomainError);
+  await assert.rejects(store.read(join(root, 'absent')), (error: unknown) => {
+    assert.ok(error instanceof DomainError);
+    assert.equal((error.cause as NodeJS.ErrnoException).code, 'ENOENT');
+    return true;
+  });
   await store.write(join(root, 'later.svg'), 'ok');
   assert.equal(await store.read(join(root, 'later.svg')), 'ok');
 });
