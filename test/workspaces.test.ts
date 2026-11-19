@@ -26,7 +26,7 @@ test('workspace check rejects private paths, reverse dependencies, plugin coupli
         JSON.stringify({
           name,
           exports: { '.': './dist/index.js' },
-          dependencies: dir === 'packages/core' ? {} : { '@svgframe/core': '0.1.0' },
+          devDependencies: dir === 'packages/core' ? {} : { '@svgframe/core': '0.1.0' },
         }),
       );
       await writeFile(join(root, dir, 'tsconfig.json'), '{}');
@@ -39,7 +39,7 @@ test('workspace check rejects private paths, reverse dependencies, plugin coupli
     assert.equal(run().status, 0);
     await writeFile(
       join(root, 'plugins/one/src/index.ts'),
-      "export * from '@svgframe/core/src/private'; import('@svgframe/two'); import '../../../packages/core/src/value';",
+      "export * from '@svgframe/core/src/private'; export { X } from '@svgframe/core'; import('@svgframe/two'); import '../../../packages/core/src/value';",
     );
     await writeFile(
       join(root, 'packages/core/src/index.ts'),
@@ -50,6 +50,7 @@ test('workspace check rejects private paths, reverse dependencies, plugin coupli
     assert.equal(failure.status, 1);
     for (const message of [
       'non-public package path',
+      'undeclared package dependency (@svgframe/core)',
       'relative import escapes workspace',
       '(@svgframe/two)',
       '(@svgframe/host)',

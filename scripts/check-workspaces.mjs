@@ -40,7 +40,7 @@ function allowed(source, target) {
   return false;
 }
 
-function dependencyProblem(pkg, file, specifier, testing) {
+function dependencyProblem(pkg, file, specifier, testing, typeOnly) {
   if (specifier.startsWith('.') || path.isAbsolute(specifier)) {
     const target = path.resolve(path.dirname(file), specifier);
     if (!target.startsWith(path.resolve(pkg.dir) + path.sep))
@@ -62,7 +62,8 @@ function dependencyProblem(pkg, file, specifier, testing) {
     if (
       target !== pkg &&
       !Object.hasOwn(pkg.manifest.dependencies ?? {}, name) &&
-      !(testing && Object.hasOwn(pkg.manifest.devDependencies ?? {}, name))
+      !Object.hasOwn(pkg.manifest.peerDependencies ?? {}, name) &&
+      !((testing || typeOnly) && Object.hasOwn(pkg.manifest.devDependencies ?? {}, name))
     )
       return 'undeclared package dependency';
     return;
@@ -74,7 +75,8 @@ function dependencyProblem(pkg, file, specifier, testing) {
   if (specifier === 'vscode' && pkg.name === 'vscode-svg') return;
   if (
     !Object.hasOwn(pkg.manifest.dependencies ?? {}, name) &&
-    !(testing && Object.hasOwn(pkg.manifest.devDependencies ?? {}, name))
+    !Object.hasOwn(pkg.manifest.peerDependencies ?? {}, name) &&
+    !((testing || typeOnly) && Object.hasOwn(pkg.manifest.devDependencies ?? {}, name))
   )
     return 'undeclared external dependency';
 }
@@ -136,6 +138,7 @@ for (const pkg of packages.values()) {
           file,
           value,
           subtree === 'test' || relative.startsWith('testing' + path.sep),
+          node.importKind === 'type' || node.exportKind === 'type',
         );
         if (problem) failures.push(file + ': ' + problem + ' (' + value + ')');
       });

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="160" viewBox="0 0 320 160">
+  <line id="link" x1="55" y1="32" x2="210" y2="110" stroke="black"/>
+  <g id="start">
+    <rect id="start-rect" x="10" y="12" width="90" height="40" fill="#e8f2ff"/>
+    <text id="start-label" x="14" y="32">开始 &amp; 检查</text>
+  </g>
+  <g id="end">
+    <rect id="end-rect" x="170" y="90" width="80" height="40" fill="#e8f2ff"/>
+    <text id="end-label" x="174" y="110">结束</text>
+  </g>
+</svg>

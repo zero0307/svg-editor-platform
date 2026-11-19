@@ -2,6 +2,8 @@
 
 本仓库在 Phase 1 的完整 Git 历史和 `final` 标签基础上推进 Phase 2。旧 CLI 已接入共享文件适配器。公开契约、工作区检查和 Phase 1 原始字节回放已具备。当前可执行的验证与其余板块见[分块交接清单](tasks/index.md#本轮基建之后的分工)。
 
+DeepSeek Harness 的安装、两项工具和真实宿主验收见[DSH 插件指南](dsh.md)。
+
 ## 开发与协作导航
 
 任务认领从 [GitHub Issues索引](tasks/index.md) 开始；实际配置见 [GitHub协作配置](github-operations.md)，目录要求见 [文件组织规范](repository-layout.md)。

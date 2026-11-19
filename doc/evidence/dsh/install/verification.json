@@ -1,0 +1,83 @@
+{
+  "dsh": "0.2.2-rc.5",
+  "node": "v24.22.3",
+  "platform": "darwin",
+  "profile": "sdk-minimal",
+  "packageSha256": "b67e7631a2e66a4758a0846833f8062f653312886b7a2d87993a11b3bbe40f66",
+  "created": {
+    "path": "流程图 demo.svg",
+    "nodes": 2,
+    "edges": 1
+  },
+  "inspected": {
+    "path": "流程图 demo.svg",
+    "width": 320,
+    "height": 160,
+    "counts": {
+      "line": 1,
+      "g": 2,
+      "rect": 2,
+      "text": 2
+    },
+    "structure": [
+      {
+        "id": "link",
+        "type": "line",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "start",
+        "type": "g",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "start-rect",
+        "type": "rect",
+        "parent": "start",
+        "text": null
+      },
+      {
+        "id": "start-label",
+        "type": "text",
+        "parent": "start",
+        "text": "开始 & 检查"
+      },
+      {
+        "id": "end",
+        "type": "g",
+        "parent": null,
+        "text": null
+      },
+      {
+        "id": "end-rect",
+        "type": "rect",
+        "parent": "end",
+        "text": null
+      },
+      {
+        "id": "end-label",
+        "type": "text",
+        "parent": "end",
+        "text": "结束"
+      }
+    ],
+    "warnings": []
+  },
+  "recoveryWarnings": [
+    "warning: assigned id rect1 to unnamed <rect>"
+  ],
+  "independentElementCounts": [
+    7,
+    3
+  ],
+  "checkedFailures": [
+    "missing endpoint",
+    "schema",
+    "existing output",
+    "missing input"
+  ],
+  "afterLiveUnload": [],
+  "afterUninstall": []
+}

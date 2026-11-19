@@ -6,7 +6,7 @@
 
 工作流对推送到main、针对main的Pull Request及手动触发运行，不按文件路径跳过。Ubuntu与Windows各验证Node22、24，矩阵失败时其他组仍继续。
 
-每组执行 `npm ci`、`npm run check`、`npm run verify:visual`。根检查覆盖格式、文档、严格编译、83 项 Phase 1 测试、工作区测试、三组逐字节回放及依赖边界。单包可运行 `npm test -w @svgframe/core`。新增 TypeScript 包须登记根项目引用与公开 exports。CLI仍兼容Node22；DSH后续集成的独立版本要求不能由这个矩阵代替。
+每组执行 `npm ci`、`npm run check`、`npm run verify:visual`。根检查覆盖格式、文档、严格编译、Phase 1 测试、工作区测试、三组逐字节回放及依赖边界。单包可运行 `npm test -w @svgframe/core`。新增 TypeScript 包须登记根项目引用与公开 exports。Ubuntu 的 Node 24 组另安装固定版 DSH 与 pnpm，运行 `npm run verify:dsh` 验证打包、安装、调用及卸载。[DSH 验收说明](../doc/dsh.md)
 
 固定汇总检查名为 `CI required`。它始终等待全部矩阵组，只有上游结果为success时才通过；失败、取消或跳过均不能变为通过。分支保护只绑定这一稳定检查，矩阵展示名可随任务增加，但不能绕过汇总检查。
 
