@@ -1,0 +1,209 @@
+{
+  "dsh": "0.2.2-rc.5",
+  "plugin": "dsh-svg-editor-0.6.1.tgz",
+  "packageSha256": "d00c28d1b2947db13af7685e314c14c1651ca44f22297b31416b0630d25ee9c5",
+  "profile": "sdk-minimal",
+  "node": "v24.22.3",
+  "platform": "darwin",
+  "hostRuns": [
+    {
+      "input": "reference",
+      "nodes": 21,
+      "edges": 25,
+      "nativeCurves": 10,
+      "importWarnings": [],
+      "unresolvedEdges": [],
+      "svgSha256": "a8844f135f5baf0e83d4ae451aadded79609de2618d9566c06cee0fe35c6c06e"
+    },
+    {
+      "input": "24-layer-arc",
+      "nodes": 271,
+      "edges": 413,
+      "nativeCurves": 580,
+      "importWarnings": [],
+      "unresolvedEdges": [],
+      "svgSha256": "b036a4a50acfe66f93e987f0b6e73baef99e8db1140ff21a0c23c6e356864670"
+    }
+  ],
+  "raster": {
+    "renderer": "resvg-js 2.6.2",
+    "font": "macOS system fonts (PingFang SC fallback)",
+    "beforeDecoderOverlapPixelsAt2x": 241,
+    "afterOverlapPixels": 0,
+    "minimumTestedClearanceInSvgUnits": 3,
+    "themes": ["studio", "print"],
+    "zoom": [1, 2]
+  },
+  "benchmarks": {
+    "ref": {
+      "0.6.0": {
+        "node": "v24.22.3",
+        "cpu": "Apple M5",
+        "style": "rounded",
+        "warmupsPerSize": 1,
+        "samplesPerSize": 21,
+        "runs": [
+          {
+            "sample": "positioned-reference",
+            "nodes": 21,
+            "edges": 25,
+            "bytes": 27086,
+            "paths": 10,
+            "graphSha256": "2dcc6fb46e7dcc089f93d1a2eed24b658fdb787ec930c29a050a78022531a94c",
+            "medianMs": {
+              "layout": 0,
+              "generate": 1.91,
+              "inspect": 2.11
+            }
+          }
+        ]
+      },
+      "0.6.1": {
+        "node": "v24.22.3",
+        "cpu": "Apple M5",
+        "style": "rounded",
+        "warmupsPerSize": 1,
+        "samplesPerSize": 21,
+        "runs": [
+          {
+            "sample": "positioned-reference",
+            "nodes": 21,
+            "edges": 25,
+            "bytes": 27086,
+            "paths": 10,
+            "graphSha256": "2dcc6fb46e7dcc089f93d1a2eed24b658fdb787ec930c29a050a78022531a94c",
+            "medianMs": {
+              "layout": 0,
+              "generate": 1.86,
+              "inspect": 1.99
+            }
+          }
+        ]
+      }
+    },
+    "arc": {
+      "0.6.0": {
+        "node": "v24.22.3",
+        "cpu": "Apple M5",
+        "style": "arc",
+        "warmupsPerSize": 1,
+        "samplesPerSize": 15,
+        "runs": [
+          {
+            "layers": 1,
+            "nodes": 18,
+            "edges": 22,
+            "bytes": 24380,
+            "paths": 28,
+            "graphSha256": "c5082d42c7de33ea949a10eef04910b422e8d93f5479562e05bd5b73f426ced6",
+            "medianMs": {
+              "layout": 0.18,
+              "generate": 1.58,
+              "inspect": 1.72
+            }
+          },
+          {
+            "layers": 6,
+            "nodes": 73,
+            "edges": 107,
+            "bytes": 118380,
+            "paths": 148,
+            "graphSha256": "3579122148e736fc7ef6fa175a80eafe868f4eba001a6c74b0c008d4275dfc93",
+            "medianMs": {
+              "layout": 0.58,
+              "generate": 8.02,
+              "inspect": 6.95
+            }
+          },
+          {
+            "layers": 12,
+            "nodes": 139,
+            "edges": 209,
+            "bytes": 232366,
+            "paths": 292,
+            "graphSha256": "c4d41a91373c1437463288eab25f105764a17fa8b934ae7a39625e5cafcfbfd5",
+            "medianMs": {
+              "layout": 0.95,
+              "generate": 18.7,
+              "inspect": 13.05
+            }
+          },
+          {
+            "layers": 24,
+            "nodes": 271,
+            "edges": 413,
+            "bytes": 461488,
+            "paths": 580,
+            "graphSha256": "a9a09b94f7530e4d768565aa791b62d15bed76b64622964904a274ca5914d853",
+            "medianMs": {
+              "layout": 1.75,
+              "generate": 51.14,
+              "inspect": 26.42
+            }
+          }
+        ]
+      },
+      "0.6.1": {
+        "node": "v24.22.3",
+        "cpu": "Apple M5",
+        "style": "arc",
+        "warmupsPerSize": 1,
+        "samplesPerSize": 15,
+        "runs": [
+          {
+            "layers": 1,
+            "nodes": 18,
+            "edges": 22,
+            "bytes": 24380,
+            "paths": 28,
+            "graphSha256": "c5082d42c7de33ea949a10eef04910b422e8d93f5479562e05bd5b73f426ced6",
+            "medianMs": {
+              "layout": 0.13,
+              "generate": 1.51,
+              "inspect": 1.7
+            }
+          },
+          {
+            "layers": 6,
+            "nodes": 73,
+            "edges": 107,
+            "bytes": 118380,
+            "paths": 148,
+            "graphSha256": "3579122148e736fc7ef6fa175a80eafe868f4eba001a6c74b0c008d4275dfc93",
+            "medianMs": {
+              "layout": 0.23,
+              "generate": 7.76,
+              "inspect": 7.36
+            }
+          },
+          {
+            "layers": 12,
+            "nodes": 139,
+            "edges": 209,
+            "bytes": 232366,
+            "paths": 292,
+            "graphSha256": "c4d41a91373c1437463288eab25f105764a17fa8b934ae7a39625e5cafcfbfd5",
+            "medianMs": {
+              "layout": 0.27,
+              "generate": 18.21,
+              "inspect": 13.04
+            }
+          },
+          {
+            "layers": 24,
+            "nodes": 271,
+            "edges": 413,
+            "bytes": 461488,
+            "paths": 580,
+            "graphSha256": "a9a09b94f7530e4d768565aa791b62d15bed76b64622964904a274ca5914d853",
+            "medianMs": {
+              "layout": 0.36,
+              "generate": 51.05,
+              "inspect": 26.09
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -7,8 +7,15 @@ import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
 
 const { values } = parseArgs({
-  options: { 'package-dir': { type: 'string' }, 'export-layers': { type: 'string' } },
+  options: {
+    style: { type: 'string', default: 'angular' },
+    'package-dir': { type: 'string' },
+    reference: { type: 'boolean' },
+    samples: { type: 'string', default: '5' },
+    'export-layers': { type: 'string' },
+  },
 });
+assert.ok(['angular', 'rounded', 'arc'].includes(values.style));
 const runtime = values['package-dir']
   ? pathToFileURL(resolve(values['package-dir'], 'dist/src') + '/')
   : new URL('../dist/src/', import.meta.url);
@@ -46,58 +53,86 @@ async function measure(graph) {
   let svg;
   const tools = new SvgTools(
     () =>
-      new Phase1EditorSession({
-        read: async () => svg,
-        write: async (_p, data) => {
-          svg = data;
+      new Phase1EditorSession(
+        {
+          read: async () => svg,
+          write: async (_p, data) => {
+            svg = data;
+          },
         },
-      }),
+        { quadraticPaths: true },
+      ),
   );
+  const topology = {
+    nodes: graph.nodes.map(({ id, label }) => ({ id, label })),
+    edges: graph.edges,
+  };
   const start = performance.now();
-  const layout = layoutFlowchart(graph);
+  const layout = graph.width === undefined ? layoutFlowchart(graph) : graph;
   const laidOut = performance.now();
-  await tools.createFlowchart({ ...layout, path: 'stress.svg' });
+  await tools.createFlowchart({ ...layout, connectorStyle: values.style, path: 'stress.svg' });
   const written = performance.now();
   const view = await tools.inspect('stress.svg');
   const inspected = performance.now();
-  assert.deepEqual(view.graph, { ...graph, inferredEdges: [], unresolvedEdges: [] });
+  assert.deepEqual(view.graph, { ...topology, inferredEdges: [], unresolvedEdges: [] });
   assert.deepEqual(view.warnings, []);
   return {
     layout: laidOut - start,
     generate: written - laidOut,
     inspect: inspected - written,
     bytes: Buffer.byteLength(svg),
+    paths: view.counts.path ?? 0,
     graphSha256: createHash('sha256').update(JSON.stringify(view.graph)).digest('hex'),
   };
 }
 if (values['export-layers'] !== undefined) {
   const layers = Number(values['export-layers']);
   assert.ok([1, 6, 12, 24].includes(layers), 'Choose 1, 6, 12 or 24 layers per stack.');
-  console.log(JSON.stringify(unroll(layers)));
+  console.log(JSON.stringify({ ...unroll(layers), connectorStyle: values.style }));
   process.exit(0);
 }
 const median = (values) => values.sort((a, b) => a - b)[Math.floor(values.length / 2)];
 const runs = [];
-for (const layers of [1, 6, 12, 24]) {
-  const graph = unroll(layers);
+const sampleCount = Number(values.samples);
+assert.ok(Number.isInteger(sampleCount) && sampleCount >= 1 && sampleCount <= 100);
+for (const layers of values.reference ? [null] : [1, 6, 12, 24]) {
+  const graph =
+    layers === null
+      ? JSON.parse(
+          await readFile(new URL('../demo/transformer-reference.json', import.meta.url), 'utf8'),
+        )
+      : unroll(layers);
   await measure(graph);
   const samples = [];
-  for (let i = 0; i < 5; i++) samples.push(await measure(graph));
+  for (let i = 0; i < sampleCount; i++) samples.push(await measure(graph));
+  if (values.style === 'arc')
+    assert.ok(
+      samples.every((s) => s.paths > 0),
+      'Stress run must exercise native curves',
+    );
   const medianMs = {};
   for (const stage of ['layout', 'generate', 'inspect'])
     medianMs[stage] = Number(median(samples.map((s) => s[stage])).toFixed(2));
   runs.push({
-    layers,
+    ...(layers === null ? { sample: 'positioned-reference' } : { layers }),
     nodes: graph.nodes.length,
     edges: graph.edges.length,
     bytes: samples[0].bytes,
+    paths: samples[0].paths,
     graphSha256: samples[0].graphSha256,
     medianMs,
   });
 }
 console.log(
   JSON.stringify(
-    { node: process.version, cpu: cpus()[0]?.model, warmupsPerSize: 1, samplesPerSize: 5, runs },
+    {
+      node: process.version,
+      cpu: cpus()[0]?.model,
+      style: values.style,
+      warmupsPerSize: 1,
+      samplesPerSize: sampleCount,
+      runs,
+    },
     null,
     2,
   ),

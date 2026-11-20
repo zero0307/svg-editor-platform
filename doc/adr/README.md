@@ -51,3 +51,5 @@ DEC-04 中“undo回保存点”指保存后又编辑、再undo回到该状态�
 会话创建图形时传递 SVG 数据属性的约定见 [ADR-0004](0004-session-shape-data.md)。
 
 会话创建图形时设置描边、圆角、填充和文字的约定见 [ADR-0005](0005-session-presentation.md)。
+
+DSH 二次曲线的选择、读回和兼容范围见 [ADR-0006](0006-dsh-quadratic.md)。

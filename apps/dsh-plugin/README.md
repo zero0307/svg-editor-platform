@@ -1,13 +1,13 @@
 # DSH SVG 流程图插件
 
-在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.5.0 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
+在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.7.0 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
 
 ## 在已有 DSH 中试用
 
 将验收包下载到当前目录，指定自己实际使用的 profile，以下以 web 为例。
 
 ```sh
-dsh plugin --profile web add ./dsh-svg-editor-0.5.0.tgz
+dsh plugin --profile web add ./dsh-svg-editor-0.7.0.tgz
 ```
 
 打开该 profile 的 DSH 会话，给智能体这段指令（模型会话需要配置可用模型）：
@@ -32,6 +32,29 @@ dsh plugin --profile web add ./dsh-svg-editor-0.5.0.tgz
 
 `print` 使用灰阶填充、深色描边与相同的箭头，适合黑白讲义。下面是同一份输入实际生成的两张图。[彩色示例](../../doc/evidence/dsh/design/studio.svg) · [打印示例](../../doc/evidence/dsh/design/print.svg)
 
+## 按参考图决定线型
+
+将参考图与任务一起交给 DSH 模型。例如“按这张图的方向和分区画，模块以中文为主，保留 Add & Norm 和 Softmax。主干保持直线，必要时绕行，最后读回核对每条残差与交叉注意力。”
+
+生成工具可选 `connectorStyle`。默认 `angular` 支持直线和避障折线，`rounded` 将已有折线的转角圆滑化，`arc` 尝试二次贝塞尔弧线。用 `edgeStyles` 按业务边 ID 局部覆盖，主流程可以沿用默认。空间受限时回退到经验证的安全路线。插件自 0.6.0 起支持读回生成的 SVG 原生二次曲线。需要交给 Phase 1 CLI 时将图和边的线型均设为 `angular`。
+
+```sh
+npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-reference.json
+npm run demo:dsh -- --input apps/dsh-plugin/demo/release-curves.json
+```
+
+[参考图版 Transformer](../../doc/evidence/dsh/captions/Transformer.svg) · [自动布局的发布流程](../../doc/evidence/dsh/curves/release.svg) · [标题避让验收](../../doc/dsh.md#标题避让与本地性能) · [性能对照](../../doc/dsh.md#线型与读回性能)
+
+## 绘制 Q、K、V 分叉箭头
+
+在一条边上指定有序的 `inputs`。例如 `{"id":"self-in","from":"embedding","to":"attention","inputs":["Q","K","V"]}` 会从一个来源绘制一根主线，在目标矩形前分出三支具名箭头。交叉注意力需要两条边，解码器边指定 `["Q"]`，编码器边指定 `["K","V"]`。同一目标的每个端口名称应唯一。重新打开文件后，查看 `graph.edges[].inputs` 可核对每个输入的名称与来源。
+
+```sh
+npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-qkv.json
+```
+
+这张图保持 21 个节点、25 条逻辑连接，最终有 30 个可见箭头，其中 9 个标注了注意力输入。[可编辑架构图](../../doc/evidence/dsh/qkv/Transformer.svg) · [输入与验证](../../doc/dsh.md#qkv-分叉箭头)
+
 ## 用 Transformer 架构图验收
 
 在源码仓库运行以下命令。打开输出目录的 `demo.svg`，沿左栏可看到编码器生成记忆表示，沿右栏可看到移位的目标输入、掩码自注意力和交叉注意力。图中折叠显示每侧六层；五条旁路对应五个子层的残差连接。
@@ -40,7 +63,7 @@ dsh plugin --profile web add ./dsh-svg-editor-0.5.0.tgz
 npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer.json
 ```
 
-向 `svg_create_flowchart` 传入明确的坐标、可选 `title` 和 `panels` 可以保留双栏排版。面板接受标题、可选说明和矩形范围。请在左上角为标题和说明留出空间。读回业务关系用 `graph`，背景板与标题只进入 SVG 元素统计。本例有 18 个节点、22 条有向边。[可编辑架构图](../../doc/evidence/dsh/transformer/Transformer.svg) · [多层压力测试与数据](../../doc/dsh.md#transformer-架构图与性能验证)
+向 `svg_create_flowchart` 传入明确的坐标、可选 `title` 和 `panels` 可以保留双栏排版。面板接受标题、可选说明和矩形范围。请在面板顶部为标题和说明留白。0.6.1 会根据实际连线、箭头和节点位置选择可用位置；标题和说明一起移动。空间不足时，工具会指出需要扩大的面板。读回业务关系用 `graph`，背景板与标题只进入 SVG 元素统计。本例有 18 个节点、22 条有向边。[可编辑架构图](../../doc/evidence/dsh/transformer/Transformer.svg) · [多层压力测试与数据](../../doc/dsh.md#transformer-架构图与性能验证)
 
 ## 检查直达路线与箭头
 

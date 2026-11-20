@@ -7,7 +7,7 @@ import { drawEdges } from './drawEdges.js';
 import { readFlowchart } from './readFlowchart.js';
 
 import { chartPaint } from './chartTheme.js';
-import { fitLabel } from './chartText.js';
+import { cachedWrap, fitLabel } from './chartText.js';
 
 function summarize(doc: DocumentView) {
   const counts = new Map<string, number>();
@@ -48,10 +48,21 @@ export class SvgTools {
     session.init(chart.width, chart.height);
     const paint = chartPaint(chart);
     const graphicId = graphicIds(chart);
-    drawPanels(session, chart, graphicId);
-    drawEdges(session, chart, nodes, paint.connector, graphicId);
+    const captions = drawPanels(session, chart, graphicId);
+    drawEdges(
+      session,
+      chart,
+      nodes,
+      paint.connector,
+      graphicId,
+      captions?.spans,
+      captions?.occupied,
+    );
+    captions?.render();
+    const wrap = cachedWrap();
     for (const n of nodes.values()) {
-      const nodePaint = paint.node(n.id);
+      const oval = n.shape === 'ellipse';
+      const nodePaint = paint.node(n.id, n.tone);
       session.create({
         type: 'g',
         id: n.id,
@@ -60,18 +71,24 @@ export class SvgTools {
       });
       session.create(
         {
-          type: 'rect',
-          id: n.id + '-rect',
-          args: [...[n.x, n.y, n.width, n.height].map(String), nodePaint.fill],
+          type: oval ? 'ellipse' : 'rect',
+          id: n.id + (oval ? '-ellipse' : '-rect'),
+          args: [
+            ...(oval
+              ? [n.x + n.width / 2, n.y + n.height / 2, n.width / 2, n.height / 2]
+              : [n.x, n.y, n.width, n.height]
+            ).map(String),
+            nodePaint.fill,
+          ],
           presentation: {
             stroke: nodePaint.stroke,
             'stroke-width': '1.5',
-            rx: String(Math.min(nodePaint.radius, n.width / 4, n.height / 4)),
+            ...(oval ? {} : { rx: String(Math.min(nodePaint.radius, n.width / 4, n.height / 4)) }),
           },
         },
         n.id,
       );
-      const { lines, size, step } = fitLabel(n.label, n.width, n.height);
+      const { lines, size, step } = fitLabel(n.label, n.width, n.height, wrap);
       const firstBaseline = n.y + n.height / 2 - ((lines.length - 1) * step) / 2 + size * 0.34;
       lines.forEach((line, index) => {
         const separator =

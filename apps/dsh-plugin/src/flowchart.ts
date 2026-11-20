@@ -9,9 +9,13 @@ export interface GraphEdge {
   id: string;
   from: string;
   to: string;
+  inputs?: string[];
 }
 
+export type Tone = 'normal' | 'muted' | 'accent' | 'strong';
 export interface ChartNode extends GraphNode {
+  tone?: Tone | 'warm';
+  shape?: 'box' | 'ellipse';
   x: number;
   y: number;
   width: number;
@@ -25,10 +29,18 @@ export interface FlowchartGraph<T extends GraphNode = GraphNode> {
 
 export interface Chart extends FlowchartGraph<ChartNode> {
   theme?: ChartTheme;
+  connectorStyle?: import('./curveRoute.js').ConnectorStyle;
+  edgeStyles?: readonly {
+    ids: readonly string[];
+    style?: import('./curveRoute.js').ConnectorStyle;
+    tone?: Tone;
+  }[];
   title?: string;
   panels?: readonly {
     label: string;
     description?: string;
+    headingAlign?: 'start' | 'end';
+    tone?: Tone;
     x: number;
     y: number;
     width: number;
@@ -37,6 +49,10 @@ export interface Chart extends FlowchartGraph<ChartNode> {
   path: string;
   width: number;
   height: number;
+}
+
+export function validPortName(name: unknown): name is string {
+  return typeof name === 'string' && /^[\p{L}\p{N}_-]{1,8}$/u.test(name);
 }
 
 // The projected IDs are also real SVG IDs, shared by nodes and edges.
@@ -52,15 +68,27 @@ export function indexFlowchart<T extends GraphNode>(graph: FlowchartGraph<T>): M
   const nodes = new Map<string, T>();
   for (const node of graph.nodes) {
     reserve(node.id);
-    reserve(node.id + '-rect');
+    reserve(node.id + ('shape' in node && node.shape === 'ellipse' ? '-ellipse' : '-rect'));
     reserve(node.id + '-label');
     if (illegalXml.test(node.label)) throw new RangeError('Invalid XML text in node ' + node.id);
     nodes.set(node.id, node);
   }
+  const inputNames = new Map<string, Set<string>>();
   for (const edge of graph.edges) {
     reserve(edge.id);
     for (const id of [edge.from, edge.to]) {
       if (!nodes.has(id)) throw new RangeError('Unknown endpoint ' + id + ' for edge ' + edge.id);
+    }
+    if (edge.inputs !== undefined) {
+      if (!Array.isArray(edge.inputs) || !edge.inputs.length)
+        throw new RangeError('Specify at least one named input on ' + edge.id);
+      const used = inputNames.get(edge.to) ?? new Set<string>();
+      for (const name of edge.inputs) {
+        if (!validPortName(name) || used.has(name))
+          throw new RangeError('Invalid or duplicate input port on ' + edge.to + ': ' + name);
+        used.add(name);
+      }
+      inputNames.set(edge.to, used);
     }
     if (edge.from === edge.to)
       throw new RangeError('Self-loop at node ' + edge.from + ' on edge ' + edge.id);
@@ -71,8 +99,13 @@ export function indexFlowchart<T extends GraphNode>(graph: FlowchartGraph<T>): M
 // Additional graphical pieces must not collide with user IDs or the stable rect/label IDs.
 export function graphicIds(chart: Chart) {
   const taken = new Set(chart.edges.map((e) => e.id));
-  for (const { id } of chart.nodes)
-    for (const value of [id, id + '-rect', id + '-label']) taken.add(value);
+  for (const node of chart.nodes)
+    for (const value of [
+      node.id,
+      node.id + (node.shape === 'ellipse' ? '-ellipse' : '-rect'),
+      node.id + '-label',
+    ])
+      taken.add(value);
   return (preferred: string) => {
     let id = preferred,
       index = 1;

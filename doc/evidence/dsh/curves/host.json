@@ -1,0 +1,58 @@
+{
+  "dsh": "0.2.2-rc.5",
+  "package": "dsh-svg-editor-0.6.0.tgz",
+  "node": "v24.22.3",
+  "afterLiveUnload": [],
+  "afterUninstall": [],
+  "runs": [
+    {
+      "case": "reference",
+      "nodes": 21,
+      "edges": 25,
+      "svgCounts": {
+        "text": 27,
+        "rect": 22,
+        "g": 46,
+        "line": 85,
+        "path": 10,
+        "ellipse": 2
+      },
+      "warnings": [],
+      "unresolvedEdges": [],
+      "sha256": "f71431fb778778decf49a926f84ad0fc5810d3b6c19e75c884622e086db08b55",
+      "packageSha256": "222782b5131aa1288a1dbfb5a7484a468426433b98cf367e2b3b16d9c096012c"
+    },
+    {
+      "case": "workflow",
+      "nodes": 6,
+      "edges": 6,
+      "svgCounts": {
+        "g": 12,
+        "line": 16,
+        "path": 2,
+        "rect": 6,
+        "text": 7
+      },
+      "warnings": [],
+      "unresolvedEdges": [],
+      "sha256": "b999c86c1030cd6f164b784fe006d411848cb27e2bc77ec1c8a61251822bd765",
+      "packageSha256": "222782b5131aa1288a1dbfb5a7484a468426433b98cf367e2b3b16d9c096012c"
+    },
+    {
+      "case": "24-layer-arc",
+      "nodes": 271,
+      "edges": 413,
+      "svgCounts": {
+        "g": 684,
+        "path": 580,
+        "line": 1281,
+        "rect": 271,
+        "text": 272
+      },
+      "warnings": [],
+      "unresolvedEdges": [],
+      "sha256": "b036a4a50acfe66f93e987f0b6e73baef99e8db1140ff21a0c23c6e356864670",
+      "packageSha256": "222782b5131aa1288a1dbfb5a7484a468426433b98cf367e2b3b16d9c096012c"
+    }
+  ]
+}

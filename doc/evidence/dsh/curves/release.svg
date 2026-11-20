@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="198" viewBox="0 0 960 198">
+  <g id="e1" data-dsh-role="edge" data-dsh-from="request" data-dsh-to="triage">
+    <line id="dsh-line-1" data-dsh-part="route" stroke-linecap="round" x1="156" y1="99" x2="214" y2="99" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-2" data-dsh-part="arrow" stroke-linecap="round" x1="206" y1="102.6" x2="214" y2="99" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-3" data-dsh-part="arrow" stroke-linecap="round" x1="206" y1="95.4" x2="214" y2="99" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e2" data-dsh-role="edge" data-dsh-from="triage" data-dsh-to="tests">
+    <line id="dsh-line-4" data-dsh-part="route" stroke-linecap="round" x1="342" y1="86" x2="434" y2="65.57142857142857" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-5" data-dsh-part="arrow" stroke-linecap="round" x1="426.97059010531535" y1="70.81998994884516" x2="434" y2="65.57142857142857" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-6" data-dsh-part="arrow" stroke-linecap="round" x1="425.409846460968" y1="63.79118640367266" x2="434" y2="65.57142857142857" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e3" data-dsh-role="edge" data-dsh-from="triage" data-dsh-to="privacy">
+    <path id="dsh-curve-7" data-dsh-part="route" stroke-linecap="round" d="M 342 110.88571428571429 Q 374.44685714285714 97.71142857142857 400 121.65714285714286" stroke="#08766F" fill="none" stroke-width="2.6"/>
+    <line id="dsh-line-8" data-dsh-part="arrow" stroke-linecap="round" x1="391.70090060627587" y1="118.81373833912431" x2="400" y2="121.65714285714286" stroke="#08766F" stroke-width="2.6"/>
+    <line id="dsh-line-9" data-dsh-part="arrow" stroke-linecap="round" x1="396.62414328459187" y1="113.5600080900148" x2="400" y2="121.65714285714286" stroke="#08766F" stroke-width="2.6"/>
+  </g>
+  <g id="e4" data-dsh-role="edge" data-dsh-from="tests" data-dsh-to="signoff">
+    <line id="dsh-line-10" data-dsh-part="route" stroke-linecap="round" x1="542" y1="65.57142857142857" x2="634" y2="86" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-11" data-dsh-part="arrow" stroke-linecap="round" x1="625.4098464609681" y1="87.78024216775592" x2="634" y2="86" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-12" data-dsh-part="arrow" stroke-linecap="round" x1="626.9705901053153" y1="80.75143862258341" x2="634" y2="86" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e5" data-dsh-role="edge" data-dsh-from="privacy" data-dsh-to="signoff">
+    <path id="dsh-curve-13" data-dsh-part="route" stroke-linecap="round" d="M 576 121.65714285714286 Q 601.5531428571428 97.71142857142857 634 110.88571428571429" stroke="#08766F" fill="none" stroke-width="2.6"/>
+    <line id="dsh-line-14" data-dsh-part="arrow" stroke-linecap="round" x1="625.2333723703882" y1="111.21165907202956" x2="634" y2="110.88571428571429" stroke="#08766F" stroke-width="2.6"/>
+    <line id="dsh-line-15" data-dsh-part="arrow" stroke-linecap="round" x1="627.9420076155516" y1="104.54058006570244" x2="634" y2="110.88571428571429" stroke="#08766F" stroke-width="2.6"/>
+  </g>
+  <g id="e6" data-dsh-role="edge" data-dsh-from="signoff" data-dsh-to="release">
+    <line id="dsh-line-16" data-dsh-part="route" stroke-linecap="round" x1="762" y1="99" x2="820" y2="99" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-17" data-dsh-part="arrow" stroke-linecap="round" x1="812" y1="102.6" x2="820" y2="99" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-18" data-dsh-part="arrow" stroke-linecap="round" x1="812" y1="95.4" x2="820" y2="99" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="request" data-dsh-role="node">
+    <rect id="request-rect" rx="13" x="28" y="73" width="128" height="52" fill="#193B50" stroke="#193B50" stroke-width="1.5"/>
+    <text id="request-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="92" y="104.1" fill="#FFFFFF">提交发布申请</text>
+  </g>
+  <g id="triage" data-dsh-role="node">
+    <rect id="triage-rect" rx="8" x="214" y="73" width="128" height="52" fill="#FFF0D8" stroke="#B67B2E" stroke-width="1.5"/>
+    <text id="triage-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="278" y="104.1" fill="#684013">评估变更风险</text>
+  </g>
+  <g id="tests" data-dsh-role="node">
+    <rect id="tests-rect" rx="8" x="434" y="28" width="108" height="52" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="tests-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="488" y="59.1" fill="#18384A">回归测试</text>
+  </g>
+  <g id="privacy" data-dsh-role="node">
+    <rect id="privacy-rect" rx="8" x="400" y="106" width="176" height="64" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="privacy-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="488" y="132.6" fill="#18384A">核对数据保留策略与</text>
+    <text id="privacy-label-2" data-dsh-part="label-continuation" data-dsh-break="soft" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="488" y="153.6" fill="#18384A">隐私合规要求</text>
+  </g>
+  <g id="signoff" data-dsh-role="node">
+    <rect id="signoff-rect" rx="8" x="634" y="73" width="128" height="52" fill="#DFEFED" stroke="#59978F" stroke-width="1.5"/>
+    <text id="signoff-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="698" y="104.1" fill="#174D47">汇总验证结果</text>
+  </g>
+  <g id="release" data-dsh-role="node">
+    <rect id="release-rect" rx="13" x="820" y="73" width="112" height="52" fill="#166758" stroke="#166758" stroke-width="1.5"/>
+    <text id="release-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="876" y="104.1" fill="#FFFFFF">发布到生产</text>
+  </g>
+</svg>

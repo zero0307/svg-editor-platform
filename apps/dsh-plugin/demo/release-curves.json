@@ -1,0 +1,68 @@
+{
+  "nodes": [
+    {
+      "id": "request",
+      "label": "提交发布申请"
+    },
+    {
+      "id": "triage",
+      "label": "评估变更风险"
+    },
+    {
+      "id": "tests",
+      "label": "回归测试"
+    },
+    {
+      "id": "privacy",
+      "label": "核对数据保留策略与隐私合规要求"
+    },
+    {
+      "id": "signoff",
+      "label": "汇总验证结果"
+    },
+    {
+      "id": "release",
+      "label": "发布到生产"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "request",
+      "to": "triage"
+    },
+    {
+      "id": "e2",
+      "from": "triage",
+      "to": "tests"
+    },
+    {
+      "id": "e3",
+      "from": "triage",
+      "to": "privacy"
+    },
+    {
+      "id": "e4",
+      "from": "tests",
+      "to": "signoff"
+    },
+    {
+      "id": "e5",
+      "from": "privacy",
+      "to": "signoff"
+    },
+    {
+      "id": "e6",
+      "from": "signoff",
+      "to": "release"
+    }
+  ],
+  "connectorStyle": "rounded",
+  "edgeStyles": [
+    {
+      "ids": ["e3", "e5"],
+      "tone": "accent",
+      "style": "arc"
+    }
+  ]
+}
