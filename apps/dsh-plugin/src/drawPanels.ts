@@ -1,4 +1,7 @@
 import type { EditorSessionPort } from '@svgframe/core';
+import type { Bounds } from './edgeRouting.js';
+import type { Span } from './curveRoute.js';
+import { placeCaption } from './placeCaption.js';
 import type { Chart } from './flowchart.js';
 import { fontSize, wrapLabel } from './chartText.js';
 
@@ -8,6 +11,10 @@ export function drawPanels(
   chart: Chart,
   id: (preferred: string) => string,
 ) {
+  if (chart.title === undefined && !chart.panels?.length) return;
+  const spans: Span[] = [];
+  const occupied: Bounds[] = [...chart.nodes];
+  const captions: (() => void)[] = [];
   const print = chart.theme === 'print';
   const ink = print ? '#292929' : '#193B50';
   const family = 'Inter, PingFang SC, Microsoft YaHei, sans-serif';
@@ -36,29 +43,66 @@ export function drawPanels(
   function heading(
     name: string,
     label: string,
-    x: number,
-    y: number,
-    width: number,
-    size: number,
+    area: Bounds,
+    inset: number,
+    baseline: number,
+    requestedSize: number,
     align: 'start' | 'end' = 'start',
+    description?: string,
   ) {
     if (!label.trim() || /[\r\n]/.test(label))
       throw new RangeError('Title and panel headings must fit on a single line.');
+    const available = area.width - inset * 2;
     const measured = wrapLabel(label, Infinity)[0]!.width;
-    text(
-      name,
-      label,
-      x,
-      y,
-      Math.min(size, (fontSize * width) / Math.max(measured, 1)),
-      '700',
-      align,
-    );
+    const size = Math.min(requestedSize, (fontSize * available) / Math.max(measured, 1));
+    const notes = description ? wrapLabel(description, available) : [];
+    const noteWidth = notes.reduce((w, line) => Math.max(w, (line.width * 14) / fontSize), 0);
+    const belowBaseline = (s: number) =>
+      notes.length ? 22 + (notes.length - 1) * 20 + 4 : s * 0.3;
+    if (noteWidth > available || baseline + belowBaseline(size) + 2 > area.height)
+      throw new RangeError('Allow more space for panel text: ' + label);
+    captions.push(() => {
+      const variants = [{ size, inset }];
+      // Preserve a one-line heading on older, tightly packed manual layouts.
+      if (requestedSize === 17 && size > 13 && !notes.length) variants.push({ size: 13, inset: 7 });
+      for (const variant of variants) {
+        const width = Math.max((measured * variant.size) / fontSize, noteWidth);
+        const box = placeCaption(
+          area,
+          { ...variant, align, baseline, width, belowBaseline: belowBaseline(variant.size) },
+          occupied,
+          spans,
+        );
+        if (!box) continue;
+        occupied.push(box);
+        const y = box.y + variant.size;
+        text(name, label, align === 'end' ? box.x + width : box.x, y, variant.size, '700', align);
+        notes.forEach((line, j) =>
+          text(
+            name.replace(/-heading$/, '') + '-note-' + j,
+            line.text,
+            box.x,
+            y + 22 + j * 20,
+            14,
+            '400',
+          ),
+        );
+        return;
+      }
+      throw new RangeError('Allow more clear space near the top for the caption: ' + label);
+    });
   }
   if (chart.title !== undefined) {
     if (chart.width <= 56 || chart.height <= 52)
       throw new RangeError('Allow space at the top of the canvas for the title.');
-    heading('dsh-title', chart.title, 28, 46, chart.width - 56, 32);
+    heading(
+      'dsh-title',
+      chart.title,
+      { x: 0, y: 0, width: chart.width, height: chart.height },
+      28,
+      46,
+      32,
+    );
   }
   for (const [i, panel] of (chart.panels ?? []).entries()) {
     const { x, y, width, height, label, description } = panel;
@@ -97,25 +141,7 @@ export function drawPanels(
       args: [x, y, width, height].map(String).concat(fill),
       presentation: { rx: '14', stroke, 'stroke-width': '1' },
     });
-    heading(
-      key + '-heading',
-      label,
-      panel.headingAlign === 'end' ? x + width - 16 : x + 16,
-      y + 27,
-      width - 32,
-      17,
-      panel.headingAlign,
-    );
-    if (description) {
-      const lines = wrapLabel(description, width - 32);
-      if (
-        49 + (lines.length - 1) * 20 + 6 > height ||
-        lines.some((line) => line.width > width - 32)
-      )
-        throw new RangeError('Allow more space for panel text: ' + label);
-      lines.forEach((line, j) =>
-        text(key + '-note-' + j, line.text, x + 16, y + 49 + j * 20, 14, '400'),
-      );
-    }
+    heading(key + '-heading', label, panel, 16, 27, 17, panel.headingAlign, description);
   }
+  return { spans, render: () => captions.forEach((place) => place()) };
 }

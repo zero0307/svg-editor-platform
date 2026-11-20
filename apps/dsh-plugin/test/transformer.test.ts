@@ -96,3 +96,55 @@ test('append lookup follows document replacement, failed reads and nested import
   assert.throws(() => group('new', 'inner'), /no such container/);
   group('inner');
 });
+
+test('a connector through a preferred caption moves its heading and notes together', async () => {
+  const { tools, session, files } = fixture();
+  const panel = {
+    label: 'Receive',
+    description: 'Check input',
+    x: 80,
+    y: 55,
+    width: 250,
+    height: 92,
+  };
+  const chart: Chart = {
+    path: 'caption.svg',
+    width: 400,
+    height: 210,
+    panels: [panel],
+    nodes: [
+      { id: 'a', label: 'A', x: 100, y: 2, width: 40, height: 35 },
+      { id: 'b', label: 'B', x: 100, y: 158, width: 40, height: 35 },
+    ],
+    edges: [],
+  };
+  async function positions() {
+    const { document } = await session().read(chart.path);
+    return ['dsh-panel-1-heading', 'dsh-panel-1-note-0'].map(
+      (id) => document.children.find((s) => s.id === id)!.attributes,
+    );
+  }
+  await tools.createFlowchart(chart);
+  const [original] = await positions();
+  assert.equal(Number(original!.x), 96);
+  for (const connectorStyle of ['angular', 'rounded', 'arc'] as const) {
+    await tools.createFlowchart({
+      ...chart,
+      connectorStyle,
+      edges: [{ id: 'edge', from: 'a', to: 'b' }],
+    });
+    const [heading, note] = await positions();
+    assert.ok(Number(heading!.x) > 160);
+    assert.equal(note!.x, heading!.x);
+    assert.equal(Number(note!.y) - Number(heading!.y), 22);
+  }
+  const previous = files.get(chart.path);
+  await assert.rejects(
+    tools.createFlowchart({
+      ...chart,
+      nodes: [{ id: 'full', label: 'Full', x: 80, y: 55, width: 250, height: 92 }],
+    }),
+    /more clear space.*Receive/,
+  );
+  assert.equal(files.get(chart.path), previous);
+});

@@ -1,4 +1,4 @@
-import { nodeSize } from './chartText.js';
+import { cachedWrap, nodeSize } from './chartText.js';
 import { indexFlowchart, type FlowchartGraph } from './flowchart.js';
 
 export function layoutFlowchart(graph: FlowchartGraph) {
@@ -32,7 +32,8 @@ export function layoutFlowchart(graph: FlowchartGraph) {
   const margin = 28,
     columnGap = 58,
     rowGap = 26;
-  const sizes = graph.nodes.map((n) => nodeSize(n.label));
+  const wrap = cachedWrap();
+  const sizes = graph.nodes.map((n) => nodeSize(n.label, wrap));
   const columns: { width: number; height: number; left: number; top: number }[] = [];
   for (const [index, vertex] of vertices.entries()) {
     const layer = (columns[vertex.column] ??= { width: 0, height: 0, left: 0, top: 0 });

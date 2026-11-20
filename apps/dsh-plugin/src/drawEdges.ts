@@ -1,6 +1,6 @@
 import type { EditorSessionPort } from '@svgframe/core';
 import { arrowWings, makeEdgeRouter, type Point } from './edgeRouting.js';
-import { shapeRoute, type ConnectorStyle } from './curveRoute.js';
+import { shapeRoute, type ConnectorStyle, type Span } from './curveRoute.js';
 import type { Chart, ChartNode, Tone } from './flowchart.js';
 
 export function drawEdges(
@@ -9,6 +9,7 @@ export function drawEdges(
   nodes: ReadonlyMap<string, ChartNode>,
   color: string,
   graphicId: (preferred: string) => string,
+  captionObstacles?: Span[],
 ): void {
   const routeEdge = makeEdgeRouter(chart);
   const edgeIds = new Set(chart.edges.map((e) => e.id));
@@ -94,7 +95,9 @@ export function drawEdges(
       );
     }
     const spans = shapeRoute(route, style, chart, nodes.get(edge.from)!, nodes.get(edge.to)!);
-    for (const { start, end, control } of spans) {
+    for (const span of spans) {
+      captionObstacles?.push(span);
+      const { start, end, control } = span;
       if (!control) {
         line(start, end, 'route');
         continue;
@@ -112,7 +115,9 @@ export function drawEdges(
       );
     }
     const tail = spans.at(-1)!;
-    for (const wing of arrowWings(tail.control ?? tail.start, tail.end))
+    for (const wing of arrowWings(tail.control ?? tail.start, tail.end)) {
+      captionObstacles?.push({ start: wing, end: tail.end });
       line(wing, tail.end, 'arrow');
+    }
   }
 }

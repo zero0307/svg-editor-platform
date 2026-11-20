@@ -7,7 +7,7 @@ import { drawEdges } from './drawEdges.js';
 import { readFlowchart } from './readFlowchart.js';
 
 import { chartPaint } from './chartTheme.js';
-import { fitLabel } from './chartText.js';
+import { cachedWrap, fitLabel } from './chartText.js';
 
 function summarize(doc: DocumentView) {
   const counts = new Map<string, number>();
@@ -48,8 +48,10 @@ export class SvgTools {
     session.init(chart.width, chart.height);
     const paint = chartPaint(chart);
     const graphicId = graphicIds(chart);
-    drawPanels(session, chart, graphicId);
-    drawEdges(session, chart, nodes, paint.connector, graphicId);
+    const captions = drawPanels(session, chart, graphicId);
+    drawEdges(session, chart, nodes, paint.connector, graphicId, captions?.spans);
+    captions?.render();
+    const wrap = cachedWrap();
     for (const n of nodes.values()) {
       const oval = n.shape === 'ellipse';
       const nodePaint = paint.node(n.id, n.tone);
@@ -78,7 +80,7 @@ export class SvgTools {
         },
         n.id,
       );
-      const { lines, size, step } = fitLabel(n.label, n.width, n.height);
+      const { lines, size, step } = fitLabel(n.label, n.width, n.height, wrap);
       const firstBaseline = n.y + n.height / 2 - ((lines.length - 1) * step) / 2 + size * 0.34;
       lines.forEach((line, index) => {
         const separator =

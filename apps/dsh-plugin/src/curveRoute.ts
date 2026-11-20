@@ -1,5 +1,5 @@
 import type { Chart, ChartNode } from './flowchart.js';
-import { arrowWings, crosses, type Point } from './edgeRouting.js';
+import { arrowWings, crosses, type Point, type Bounds } from './edgeRouting.js';
 
 export type ConnectorStyle = 'angular' | 'rounded' | 'arc';
 export interface Span {
@@ -16,7 +16,14 @@ function towards(a: Point, b: Point, length: number): Point {
 
 // Each half of a quadratic lies inside the hull of its three control points.
 // Reject uncertain intersections at the recursion limit, keeping the known clear polyline.
-function clearOf(a: Point, c: Point, b: Point, node: ChartNode, gap: number, depth = 0): boolean {
+export function clearOf(
+  a: Point,
+  c: Point,
+  b: Point,
+  node: Bounds,
+  gap: number,
+  depth = 0,
+): boolean {
   if (
     Math.max(a.x, b.x, c.x) <= node.x - gap ||
     Math.min(a.x, b.x, c.x) >= node.x + node.width + gap ||

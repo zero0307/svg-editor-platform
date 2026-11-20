@@ -1,13 +1,13 @@
 # DSH SVG 流程图插件
 
-在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.6.0 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
+在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.6.1 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
 
 ## 在已有 DSH 中试用
 
 将验收包下载到当前目录，指定自己实际使用的 profile，以下以 web 为例。
 
 ```sh
-dsh plugin --profile web add ./dsh-svg-editor-0.6.0.tgz
+dsh plugin --profile web add ./dsh-svg-editor-0.6.1.tgz
 ```
 
 打开该 profile 的 DSH 会话，给智能体这段指令（模型会话需要配置可用模型）：
@@ -36,14 +36,14 @@ dsh plugin --profile web add ./dsh-svg-editor-0.6.0.tgz
 
 将参考图与任务一起交给 DSH 模型。例如“按这张图的方向和分区画，模块以中文为主，保留 Add & Norm 和 Softmax。主干保持直线，必要时绕行，最后读回核对每条残差与交叉注意力。”
 
-生成工具可选 `connectorStyle`。默认 `angular` 支持直线和避障折线，`rounded` 将已有折线的转角圆滑化，`arc` 尝试二次贝塞尔弧线。用 `edgeStyles` 按业务边 ID 局部覆盖，主流程可以沿用默认。空间受限时回退到经验证的安全路线。DSH 0.6.0 支持读回生成的 SVG 原生二次曲线。需要交给 Phase 1 CLI 时将图和边的线型均设为 `angular`。
+生成工具可选 `connectorStyle`。默认 `angular` 支持直线和避障折线，`rounded` 将已有折线的转角圆滑化，`arc` 尝试二次贝塞尔弧线。用 `edgeStyles` 按业务边 ID 局部覆盖，主流程可以沿用默认。空间受限时回退到经验证的安全路线。插件自 0.6.0 起支持读回生成的 SVG 原生二次曲线。需要交给 Phase 1 CLI 时将图和边的线型均设为 `angular`。
 
 ```sh
 npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-reference.json
 npm run demo:dsh -- --input apps/dsh-plugin/demo/release-curves.json
 ```
 
-[参考图版 Transformer](../../doc/evidence/dsh/curves/Transformer.svg) · [自动布局的发布流程](../../doc/evidence/dsh/curves/release.svg) · [性能对照](../../doc/dsh.md#线型与读回性能)
+[参考图版 Transformer](../../doc/evidence/dsh/captions/Transformer.svg) · [自动布局的发布流程](../../doc/evidence/dsh/curves/release.svg) · [标题避让验收](../../doc/dsh.md#标题避让与本地性能) · [性能对照](../../doc/dsh.md#线型与读回性能)
 
 ## 用 Transformer 架构图验收
 
@@ -53,7 +53,7 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/release-curves.json
 npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer.json
 ```
 
-向 `svg_create_flowchart` 传入明确的坐标、可选 `title` 和 `panels` 可以保留双栏排版。面板接受标题、可选说明和矩形范围。请在左上角为标题和说明留出空间。读回业务关系用 `graph`，背景板与标题只进入 SVG 元素统计。本例有 18 个节点、22 条有向边。[可编辑架构图](../../doc/evidence/dsh/transformer/Transformer.svg) · [多层压力测试与数据](../../doc/dsh.md#transformer-架构图与性能验证)
+向 `svg_create_flowchart` 传入明确的坐标、可选 `title` 和 `panels` 可以保留双栏排版。面板接受标题、可选说明和矩形范围。请在面板顶部为标题和说明留白。0.6.1 会根据实际连线、箭头和节点位置选择可用位置；标题和说明一起移动。空间不足时，工具会指出需要扩大的面板。读回业务关系用 `graph`，背景板与标题只进入 SVG 元素统计。本例有 18 个节点、22 条有向边。[可编辑架构图](../../doc/evidence/dsh/transformer/Transformer.svg) · [多层压力测试与数据](../../doc/dsh.md#transformer-架构图与性能验证)
 
 ## 检查直达路线与箭头
 

@@ -190,14 +190,14 @@ function audit(input, svg) {
 }
 
 for (const [sample, svgName] of [
-  ['transformer-reference', 'Transformer.svg'],
-  ['release-curves', 'release.svg'],
+  ['transformer-reference', 'captions/Transformer.svg'],
+  ['release-curves', 'curves/release.svg'],
 ]) {
   const input = JSON.parse(
     await readFile(new URL('../demo/' + sample + '.json', import.meta.url), 'utf8'),
   );
   const published = await readFile(
-    new URL('../../../doc/evidence/dsh/curves/' + svgName, import.meta.url),
+    new URL('../../../doc/evidence/dsh/' + svgName, import.meta.url),
     'utf8',
   );
   audit(input, published);

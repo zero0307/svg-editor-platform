@@ -66,8 +66,26 @@ export function wrapLabel(label: string, limit = maxContentWidth): LabelLine[] {
   return lines;
 }
 
-export function nodeSize(label: string) {
-  const lines = wrapLabel(label);
+// One request owns the cache. Different text widths can produce different line breaks.
+export function cachedWrap() {
+  const labels = new Map<string, Map<number, LabelLine[]>>();
+  return (label: string, limit = maxContentWidth) => {
+    let widths = labels.get(label);
+    if (!widths) {
+      widths = new Map();
+      labels.set(label, widths);
+    }
+    let lines = widths.get(limit);
+    if (!lines) {
+      lines = wrapLabel(label, limit);
+      widths.set(limit, lines);
+    }
+    return lines;
+  };
+}
+
+export function nodeSize(label: string, wrap = wrapLabel) {
+  const lines = wrap(label);
   const widest = lines.reduce((max, l) => Math.max(max, l.width), 0);
   return {
     width: Math.max(108, Math.ceil(widest) + padding * 2),
@@ -76,14 +94,14 @@ export function nodeSize(label: string) {
 }
 
 // Manual coordinates remain usable: scale the text to the supplied box if necessary.
-export function fitLabel(label: string, width: number, height: number) {
+export function fitLabel(label: string, width: number, height: number, wrap = wrapLabel) {
   const available = Math.max(width - Math.min(2 * padding, width * 0.2), width * 0.5);
   // A very short manually positioned box benefits more from one scaled line than forced wrapping.
   const limit =
     height < lineHeight * 2 + 12
       ? Math.max(maxContentWidth, available)
       : Math.min(maxContentWidth, available);
-  const lines = wrapLabel(label, limit);
+  const lines = wrap(label, limit);
   const widest = lines.reduce((max, l) => Math.max(max, l.width), 1);
   const scale = Math.min(1, available / widest, (height * 0.84) / (lines.length * lineHeight));
   return { lines, size: fontSize * scale, step: lineHeight * scale };

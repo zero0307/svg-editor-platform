@@ -5,6 +5,7 @@ export interface Point {
   x: number;
   y: number;
 }
+export type Bounds = Pick<ChartNode, 'x' | 'y' | 'width' | 'height'>;
 const clearance = 10;
 // A simple three-segment detour should beat a shorter path with crowded arrowheads.
 const bendPenalty = 56;
@@ -12,7 +13,12 @@ const epsilon = 1e-7;
 const distance = (a: Point, b: Point) => Math.hypot(b.x - a.x, b.y - a.y);
 
 // Clip a segment against the open interior. Touching a node at its port is allowed.
-export function crosses(a: Point, b: Point, node: ChartNode, gap = 0): boolean {
+export function crosses(
+  a: Point,
+  b: Point,
+  node: Bounds & Pick<ChartNode, 'shape'>,
+  gap = 0,
+): boolean {
   // Most nodes lie outside this segment's bounding box on an unrolled graph.
   if (
     Math.max(a.x, b.x) < node.x - gap ||

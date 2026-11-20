@@ -140,7 +140,7 @@ export function apply(ctx: Context): void {
         panels: {
           type: 'array',
           description:
-            'Background panels at explicit canvas coordinates. Allow space for the heading and optional notes above the nodes.',
+            'Background panels at explicit canvas coordinates. Reserve space near the top for the heading and optional notes. The tool repositions captions around nodes and connectors. If a caption cannot fit, enlarge the panel or leave more space above its nodes and retry.',
           items: {
             type: 'object',
             additionalProperties: false,

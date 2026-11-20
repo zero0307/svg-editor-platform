@@ -17,9 +17,9 @@
       "headingAlign": "start",
       "tone": "accent",
       "x": 374,
-      "y": 235,
+      "y": 215,
       "width": 294,
-      "height": 386
+      "height": 406
     },
     {
       "label": "交叉注意力",
@@ -200,7 +200,7 @@
       "id": "linear",
       "label": "线性投影",
       "x": 437.0,
-      "y": 193,
+      "y": 173,
       "width": 146,
       "height": 34,
       "tone": "normal"
@@ -209,7 +209,7 @@
       "id": "softmax",
       "label": "Softmax",
       "x": 437.0,
-      "y": 137,
+      "y": 117,
       "width": 146,
       "height": 34,
       "tone": "accent"
@@ -218,7 +218,7 @@
       "id": "probs",
       "label": "输出概率",
       "x": 437.0,
-      "y": 80,
+      "y": 60,
       "width": 146,
       "height": 34,
       "tone": "strong"
