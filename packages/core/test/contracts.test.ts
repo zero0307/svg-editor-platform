@@ -68,13 +68,21 @@ test('structured session consumer creates, saves and reads independently of CLI 
     new FakeEditorSession((req) => new ProbeShape(req.id).snapshot(), files);
   const writer = makeSession();
   writer.init(80, 60);
-  writer.create({ type: 'probe', id: 'p', args: [] });
+  const request = { type: 'probe', id: 'p', args: [] };
+  const invalid: Array<Record<string, string>> = [{ onclick: 'x' }, { 'data-role': '\u0000' }];
+  for (const dataAttributes of invalid)
+    assert.throws(
+      () => writer.create({ ...request, dataAttributes }),
+      /Invalid SVG data attribute/,
+    );
+  writer.create({ ...request, dataAttributes: { 'data-role': 'example' } });
   assert.equal((await writer.save('demo.svg')).path, 'demo.svg');
   const reader = makeSession();
   assert.throws(() => reader.snapshot(), /no document/);
   const result = await reader.read('demo.svg');
   assert.deepEqual(result.warnings, []);
   assert.equal(result.document.children[0]?.id, 'p');
+  assert.equal(result.document.children[0]?.attributes['data-role'], 'example');
   assert.equal(result.document.width, 80);
   await assert.rejects(reader.read('missing.svg'), /cannot read/);
   reader.init(10, 20);

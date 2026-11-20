@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="448" height="96" viewBox="0 0 448 96">
+  <g id="e1" data-dsh-role="edge" data-dsh-from="a" data-dsh-to="b">
+    <line id="dsh-line-1" data-dsh-part="route" x1="120" y1="48" x2="176" y2="48" stroke="black"/>
+    <line id="dsh-line-2" data-dsh-part="arrow" x1="168" y1="51.6" x2="176" y2="48" stroke="black"/>
+    <line id="dsh-line-3" data-dsh-part="arrow" x1="168" y1="44.4" x2="176" y2="48" stroke="black"/>
+  </g>
+  <g id="e2" data-dsh-role="edge" data-dsh-from="b" data-dsh-to="c">
+    <line id="dsh-line-4" data-dsh-part="route" x1="272" y1="48" x2="328" y2="48" stroke="black"/>
+    <line id="dsh-line-5" data-dsh-part="arrow" x1="320" y1="51.6" x2="328" y2="48" stroke="black"/>
+    <line id="dsh-line-6" data-dsh-part="arrow" x1="320" y1="44.4" x2="328" y2="48" stroke="black"/>
+  </g>
+  <g id="e3" data-dsh-role="edge" data-dsh-from="a" data-dsh-to="c">
+    <line id="dsh-line-7" data-dsh-part="route" x1="72" y1="24" x2="72" y2="14" stroke="black"/>
+    <line id="dsh-line-8" data-dsh-part="route" x1="72" y1="14" x2="376" y2="14" stroke="black"/>
+    <line id="dsh-line-9" data-dsh-part="route" x1="376" y1="14" x2="376" y2="24" stroke="black"/>
+    <line id="dsh-line-10" data-dsh-part="arrow" x1="372.85" y1="17" x2="376" y2="24" stroke="black"/>
+    <line id="dsh-line-11" data-dsh-part="arrow" x1="379.15" y1="17" x2="376" y2="24" stroke="black"/>
+  </g>
+  <g id="a" data-dsh-role="node">
+    <rect id="a-rect" x="24" y="24" width="96" height="48" fill="#e8f2ff"/>
+    <text id="a-label" x="36" y="53">提交</text>
+  </g>
+  <g id="b" data-dsh-role="node">
+    <rect id="b-rect" x="176" y="24" width="96" height="48" fill="#e8f2ff"/>
+    <text id="b-label" x="188" y="53">审核</text>
+  </g>
+  <g id="c" data-dsh-role="node">
+    <rect id="c-rect" x="328" y="24" width="96" height="48" fill="#e8f2ff"/>
+    <text id="c-label" x="340" y="53">通过</text>
+  </g>
+</svg>

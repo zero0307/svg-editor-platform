@@ -81,11 +81,15 @@ export interface ReadResult {
   readonly warnings: readonly string[];
 }
 
+export interface SessionShapeRequest extends CreateShapeRequest {
+  readonly dataAttributes?: Readonly<Record<`data-${string}`, string>>;
+}
+
 // Shared structured operations needed by external applications. Each factory call owns one session.
 export interface EditorSessionPort {
   init(width: number, height: number): void;
   snapshot(): DocumentView;
   read(path: string): Promise<ReadResult>;
-  create(request: CreateShapeRequest, parentId?: string): void;
+  create(request: SessionShapeRequest, parentId?: string): void;
   save(path?: string): Promise<{ readonly path: string }>;
 }

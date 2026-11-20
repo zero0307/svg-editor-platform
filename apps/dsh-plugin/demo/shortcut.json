@@ -1,0 +1,12 @@
+{
+  "nodes": [
+    { "id": "a", "label": "提交" },
+    { "id": "b", "label": "审核" },
+    { "id": "c", "label": "通过" }
+  ],
+  "edges": [
+    { "id": "e1", "from": "a", "to": "b" },
+    { "id": "e2", "from": "b", "to": "c" },
+    { "id": "e3", "from": "a", "to": "c" }
+  ]
+}

@@ -1,5 +1,6 @@
+import { sessionData } from '../sessionData.js';
 import type {
-  CreateShapeRequest,
+  SessionShapeRequest,
   DocumentView,
   EditorSessionPort,
   ReadResult,
@@ -11,7 +12,7 @@ export class FakeEditorSession implements EditorSessionPort {
   private current?: DocumentView;
   private path?: string;
   constructor(
-    private readonly project: (request: CreateShapeRequest) => ShapeView,
+    private readonly project: (request: SessionShapeRequest) => ShapeView,
     private readonly files = new Map<string, DocumentView>(),
   ) {}
   init(width: number, height: number): void {
@@ -29,9 +30,13 @@ export class FakeEditorSession implements EditorSessionPort {
     this.path = path;
     return { document: this.snapshot(), warnings: [] };
   }
-  create(request: CreateShapeRequest, parentId?: string): void {
+  create(request: SessionShapeRequest, parentId?: string): void {
     const doc = this.snapshot();
-    const shape = structuredClone(this.project(request));
+    const projected = structuredClone(this.project(request));
+    const shape = {
+      ...projected,
+      attributes: { ...projected.attributes, ...sessionData(request) },
+    };
     let inserted = false;
     const add = (node: ShapeView): ShapeView => {
       if (node.id === parentId) {

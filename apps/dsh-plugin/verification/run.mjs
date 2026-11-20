@@ -69,6 +69,10 @@ function run(entry, args, dir = cwd) {
 }
 try {
   mkdirSync(cwd);
+  copyFileSync(
+    path.join(root, 'doc/evidence/dsh/desktop/桌面验收.svg'),
+    path.join(cwd, 'legacy.svg'),
+  );
   const version = run(cli, ['--version']).trim();
   assert.equal(version, '0.2.2-rc.5');
   run(npm, ['pack', '--silent', '--workspace', 'dsh-svg-editor', '--pack-destination', temp], root);
