@@ -75,7 +75,22 @@ test('structured session consumer creates, saves and reads independently of CLI 
       () => writer.create({ ...request, dataAttributes }),
       /Invalid SVG data attribute/,
     );
-  writer.create({ ...request, dataAttributes: { 'data-role': 'example' } });
+  for (const presentation of [
+    { fill: 'currentColor' },
+    { rx: '-1' },
+    { rx: '1e999' },
+    { 'font-weight': 'unavailable' },
+  ]) {
+    assert.throws(
+      () => writer.create({ ...request, presentation }),
+      /Invalid SVG presentation attribute/,
+    );
+  }
+  writer.create({
+    ...request,
+    dataAttributes: { 'data-role': 'example' },
+    presentation: { rx: '5', stroke: '#345678' },
+  });
   assert.equal((await writer.save('demo.svg')).path, 'demo.svg');
   const reader = makeSession();
   assert.throws(() => reader.snapshot(), /no document/);
@@ -83,6 +98,8 @@ test('structured session consumer creates, saves and reads independently of CLI 
   assert.deepEqual(result.warnings, []);
   assert.equal(result.document.children[0]?.id, 'p');
   assert.equal(result.document.children[0]?.attributes['data-role'], 'example');
+  assert.equal(result.document.children[0]?.attributes.rx, '5');
+  assert.equal(result.document.children[0]?.attributes.stroke, '#345678');
   assert.equal(result.document.width, 80);
   await assert.rejects(reader.read('missing.svg'), /cannot read/);
   reader.init(10, 20);

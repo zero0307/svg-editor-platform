@@ -82,6 +82,16 @@ export function apply(ctx) {
       assert.deepEqual(legacy.graph.inferredEdges, ['start-process', 'process-done']);
       assert.deepEqual(legacy.graph.unresolvedEdges, []);
       assert.deepEqual(legacy.warnings, []);
+      const directed = await call('svg_inspect', { path: 'directed.svg' });
+      assert.deepEqual(directed.graph.edges, [
+        { id: 'e1', from: 'a', to: 'b' },
+        { id: 'e2', from: 'b', to: 'c' },
+        { id: 'e3', from: 'a', to: 'c' },
+      ]);
+      assert.deepEqual(
+        [directed.warnings, directed.graph.inferredEdges, directed.graph.unresolvedEdges],
+        [[], [], []],
+      );
       const second = { ...chart, path: 'second.svg', nodes: [nodes[1]], edges: [] };
       const [, firstAgain] = await Promise.all([
         call('svg_create_flowchart', second),
@@ -121,7 +131,11 @@ export function apply(ctx) {
         graph.nodes,
       );
       const demoPath = 'demo.svg';
-      const demoCreated = await inSession('svg_create_flowchart', { ...layout, path: demoPath });
+      const demoCreated = await inSession('svg_create_flowchart', {
+        ...layout,
+        path: demoPath,
+        theme: process.env.SVG_DEMO_THEME,
+      });
       const demoView = await inSession('svg_inspect', { path: demoPath });
       const count = graph.nodes.length;
       assert.deepEqual(demoCreated, { path: demoPath, nodes: count, edges: graph.edges.length });
@@ -134,13 +148,20 @@ export function apply(ctx) {
         inferredEdges: [],
       });
       assert.equal(demoView.counts.rect, count);
-      assert.equal(demoView.counts.text, count);
-      for (const { id, label } of graph.nodes) {
-        assert.deepEqual(
-          demoView.structure.find((s) => s.id === id + '-label'),
-          { id: id + '-label', parent: id, text: label, type: 'text' },
-        );
+      assert.ok(demoView.counts.text >= count);
+      for (const { id } of graph.nodes) {
+        const first = demoView.structure.find((s) => s.id === id + '-label');
+        assert.equal(first?.type, 'text');
+        assert.equal(first.parent, id);
       }
+      const otherTheme = process.env.SVG_DEMO_THEME === 'studio' ? 'print' : 'studio';
+      const alternate = 'alternate.svg';
+      await inSession('svg_create_flowchart', { ...layout, path: alternate, theme: otherTheme });
+      const other = await inSession('svg_inspect', { path: alternate });
+      assert.deepEqual(other.graph, demoView.graph);
+      assert.deepEqual(other.warnings, []);
+      const output = (name) => readFile(pathUtil.join(directory, name), 'utf8');
+      assert.notEqual(await output(alternate), await output(demoPath));
       const bypass = {
         nodes: ['A', 'B', 'C'].map((id) => ({ id, label: id })),
         edges: [
@@ -183,11 +204,19 @@ export function apply(ctx) {
       console.log(
         'SVG_ACCEPTANCE ' +
           JSON.stringify({
-            demo: { directory, graph, layout, created: demoCreated, inspected: demoView },
+            demo: {
+              directory,
+              theme: process.env.SVG_DEMO_THEME,
+              graph,
+              layout,
+              created: demoCreated,
+              inspected: demoView,
+            },
             created,
             inspected,
             directionChecks,
             legacyGraph: legacy.graph,
+            priorDirectedGraph: directed.graph,
             recoveryWarnings: recovered.warnings,
             independentElementCounts: [firstAgain.structure.length, secondView.structure.length],
             checkedFailures: ['missing endpoint', 'schema', 'existing output', 'missing input'],

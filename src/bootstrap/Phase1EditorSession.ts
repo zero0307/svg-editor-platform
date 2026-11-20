@@ -1,4 +1,4 @@
-import { sessionData } from '@svgframe/core';
+import { sessionData, sessionPresentation } from '@svgframe/core';
 import type {
   SessionShapeRequest,
   DocumentView,
@@ -29,6 +29,11 @@ export class Phase1EditorSession implements EditorSessionPort {
     const shape = this.factory.create(request.type, request.id, request.args);
     for (const [key, value] of Object.entries(sessionData(request)))
       shape.preserveAttribute(key, value);
+    for (const [key, value] of Object.entries(sessionPresentation(request))) {
+      if (key === 'fill' || key === 'stroke' || key === 'stroke-width')
+        shape.setAttribute(key, value);
+      else shape.preserveAttribute(key, value);
+    }
     doc.add(shape, parent);
   }
   snapshot(): DocumentView {

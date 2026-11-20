@@ -1,6 +1,6 @@
 # DeepSeek Harness SVG 插件
 
-当前开发版为 0.3.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
+当前开发版为 0.4.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
 
 ## 先跑四节点 demo
 
@@ -13,6 +13,28 @@ npm run demo:dsh
 运行时真实创建 Agent，工作目录与宿主启动目录独立。它根据[输入文件](../apps/dsh-plugin/demo/review.json)依次调用布局、生成和检查工具。打开终端输出目录中的 `demo.svg`，从左到右应是「提交 → 评审／复核 → 通过」。在同目录的 `verification.json` 查看 `demo.inspected`，当前版本的 `graph` 应有 4 个节点和 4 条边。修改输入后可运行 `npm run demo:dsh -- --input my-graph.json`。安装到自己的会话试用时，使用同目录中的 .tgz 和[插件使用说明](../apps/dsh-plugin/README.md)。
 
 0.2.0 留存了[实际生成的 SVG](evidence/dsh/demo/demo.svg) 和[三工具验收结果](evidence/dsh/demo/verification.json)。
+
+## 0.4.0 主题与复杂图验收
+
+在仓库根执行以下命令。将 `studio` 换为 `print` 可输出同一版式的灰阶打印稿。程序会在同一隔离 DSH profile 中实际生成并检查两种主题，终端给出所选主题的 SVG、完整读回报告和安装包路径。
+
+```sh
+npm run demo:dsh -- --input apps/dsh-plugin/demo/release.json --theme studio
+npm test -w dsh-svg-editor
+npm run verify:visual
+```
+
+发布流程示例含 6 个节点、6 条有向边。隐私节点的长标签换成两行，同列的回归测试保持短框。生成后使用 `svg_inspect` 的 `graph` 对照输入，可核对完整标签、方向与顺序。两份 SVG 都应返回 0 条导入警告和 0 条未确认边。[输入](../apps/dsh-plugin/demo/release.json) · [汇报图](evidence/dsh/design/studio.svg) · [打印稿](evidence/dsh/design/print.svg) · [宿主读回摘要](evidence/dsh/design/result.json)
+
+| 难例             | 检查方法与结果                                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 稠密关系图       | 8 层、每层 8 个节点，相邻层全连接。真实 SVG 编解码逐项还原 64 个节点与 448 条有向边，无未确认边或导入警告。此例验证关系完整性，边与边仍可能交叉。                               |
+| 四道交错障碍     | 正反向路线都经过全部开口，独立几何断言检查每段与障碍至少相距 4 个画布单位。完全封住通道时生成报错并保留原文件。                                                                 |
+| 多语言与可编辑性 | 中文长句、组合重音、家庭 emoji、XML 特殊字符和不同换行符均能读回原文。编辑可见续行后，读回同步变化。                                                                            |
+| 视觉回归         | 两套主题的五类节点均校验文字与底色对比度 ≥ 4.5∶1。在 1 倍和 2 倍渲染后，对比含字图和空白底图区分文字像素，验证中英混排、宽字母、emoji 和手工小节点的文字距框至少 2 个画布单位。 |
+| 历史文件         | 隔离宿主读取 0.2.0 的桌面图和 0.3.0 的直达路线图，分别验证中心线推断和显式方向。                                                                                                |
+
+[复杂图用例](../apps/dsh-plugin/test/design.test.ts) · [像素验收](../apps/dsh-plugin/verification/visual.mjs) · [绘制属性契约](adr/0005-session-presentation.md)
 
 ## 0.3.0 有向边验收
 
@@ -28,7 +50,7 @@ npm run demo:dsh
 npm ci
 npm pack --workspace dsh-svg-editor --pack-destination .
 dsh --profile svg-demo --from-default-profile sdk-minimal --dump-config
-dsh plugin --profile svg-demo add ./dsh-svg-editor-0.3.0.tgz
+dsh plugin --profile svg-demo add ./dsh-svg-editor-0.4.0.tgz
 dsh --profile svg-demo --dump-config
 ```
 
@@ -84,12 +106,12 @@ npm run verify:dsh
 
 2026-11-19 在 Apple Silicon Mac 上使用官方 DeepSeek Harness Desktop 0.2.2-rc.5、插件 `dsh-svg-editor@0.2.0` 和模型 DeepSeek-V4.1-Flash 完成。桌面应用使用自己的 `desktop` profile。[官方桌面版说明](https://github.com/deepseek-ai/deepseek-harness/blob/master/apps/desktop/README.zh.md#bundled-command-runtime)
 
-以下命令展示在当前分支安装 0.3.0 的方法。表中记录对应当时实测的 0.2.0。
+以下命令展示在当前分支安装 0.4.0 的方法。表中记录对应当时实测的 0.2.0。
 
 1. 在仓库根目录按上文安装依赖并运行 `npm pack --workspace dsh-svg-editor --pack-destination .`。首次使用桌面版时先启动一次，再用 ⌘Q 退出。从同一目录执行以下命令，将验收包安装到桌面版。
 
    ```sh
-   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.3.0.tgz"
+   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.4.0.tgz"
    ```
 
 2. 重新打开桌面应用，确认插件已启用并选择可用模型。在可写的工作区打开会话。首次复验请选择尚无 `桌面验收.svg` 的目录，后续复跑也可以换新的工作区。

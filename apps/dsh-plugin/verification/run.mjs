@@ -18,10 +18,16 @@ import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '../../..');
 const {
-  values: { evidence, input, demo },
+  values: { evidence, input, demo, theme },
 } = parseArgs({
-  options: { evidence: { type: 'string' }, input: { type: 'string' }, demo: { type: 'boolean' } },
+  options: {
+    evidence: { type: 'string' },
+    input: { type: 'string' },
+    demo: { type: 'boolean' },
+    theme: { type: 'string', default: 'studio' },
+  },
 });
+assert.ok(['studio', 'print'].includes(theme), 'Choose --theme studio or print');
 const npm = process.env.npm_execpath;
 // Locate the official npm/pnpm install behind a PATH entry, including Windows shims.
 function findCli() {
@@ -46,6 +52,7 @@ const temp = mkdtempSync(path.join(tmpdir(), 'dsh-svg-check-'));
 const cwd = path.join(temp, 'workspace');
 const env = {
   ...process.env,
+  SVG_DEMO_THEME: theme,
   SVG_DEMO_INPUT: input
     ? path.resolve(input)
     : path.resolve(import.meta.dirname, '../demo/review.json'),
@@ -72,6 +79,10 @@ try {
   copyFileSync(
     path.join(root, 'doc/evidence/dsh/desktop/桌面验收.svg'),
     path.join(cwd, 'legacy.svg'),
+  );
+  copyFileSync(
+    path.join(root, 'doc/evidence/dsh/directed/shortcut.svg'),
+    path.join(cwd, 'directed.svg'),
   );
   const version = run(cli, ['--version']).trim();
   assert.equal(version, '0.2.2-rc.5');

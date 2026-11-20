@@ -1,4 +1,4 @@
-import { sessionData } from '../sessionData.js';
+import { sessionData, sessionPresentation } from '../sessionData.js';
 import type {
   SessionShapeRequest,
   DocumentView,
@@ -35,7 +35,11 @@ export class FakeEditorSession implements EditorSessionPort {
     const projected = structuredClone(this.project(request));
     const shape = {
       ...projected,
-      attributes: { ...projected.attributes, ...sessionData(request) },
+      attributes: {
+        ...projected.attributes,
+        ...sessionData(request),
+        ...sessionPresentation(request),
+      },
     };
     let inserted = false;
     const add = (node: ShapeView): ShapeView => {

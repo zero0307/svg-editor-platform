@@ -1,3 +1,5 @@
+import type { ChartTheme } from './chartTheme.js';
+
 export interface GraphNode {
   id: string;
   label: string;
@@ -22,6 +24,7 @@ export interface FlowchartGraph<T extends GraphNode = GraphNode> {
 }
 
 export interface Chart extends FlowchartGraph<ChartNode> {
+  theme?: ChartTheme;
   path: string;
   width: number;
   height: number;
@@ -54,4 +57,18 @@ export function indexFlowchart<T extends GraphNode>(graph: FlowchartGraph<T>): M
       throw new RangeError('Self-loop at node ' + edge.from + ' on edge ' + edge.id);
   }
   return nodes;
+}
+
+// Additional graphical pieces must not collide with user IDs or the stable rect/label IDs.
+export function graphicIds(chart: Chart) {
+  const taken = new Set(chart.edges.map((e) => e.id));
+  for (const { id } of chart.nodes)
+    for (const value of [id, id + '-rect', id + '-label']) taken.add(value);
+  return (preferred: string) => {
+    let id = preferred,
+      index = 1;
+    while (taken.has(id)) id = preferred + '-' + index++;
+    taken.add(id);
+    return id;
+  };
 }
