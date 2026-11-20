@@ -2,6 +2,7 @@ import type { DocumentView, EditorSessionPort, ShapeView } from '@svgframe/core'
 
 import { graphicIds, indexFlowchart, type Chart } from './flowchart.js';
 
+import { drawPanels } from './drawPanels.js';
 import { drawEdges } from './drawEdges.js';
 import { readFlowchart } from './readFlowchart.js';
 
@@ -47,6 +48,7 @@ export class SvgTools {
     session.init(chart.width, chart.height);
     const paint = chartPaint(chart);
     const graphicId = graphicIds(chart);
+    drawPanels(session, chart, graphicId);
     drawEdges(session, chart, nodes, paint.connector, graphicId);
     for (const n of nodes.values()) {
       const nodePaint = paint.node(n.id);

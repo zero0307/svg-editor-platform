@@ -45,7 +45,11 @@ jobs:
         run: |
           runtime="$RUNNER_TEMP/svg-dsh"
           npm install --prefix "$runtime" --ignore-scripts --no-audit --no-fund @deepseek-ai/dsh@0.2.2-rc.5 pnpm@10.32.1
-          PATH="$runtime/node_modules/.bin:$PATH" DSH_CLI="$runtime/node_modules/@deepseek-ai/dsh/lib/bin.js" npm run verify:dsh
+          export PATH="$runtime/node_modules/.bin:$PATH"
+          export DSH_CLI="$runtime/node_modules/@deepseek-ai/dsh/lib/bin.js"
+          npm run verify:dsh
+          node apps/dsh-plugin/verification/transformer-bench.mjs --export-layers 24 > "$RUNNER_TEMP/transformer-24.json"
+          npm run demo:dsh -- --input "$RUNNER_TEMP/transformer-24.json"
 
   required:
     name: CI required

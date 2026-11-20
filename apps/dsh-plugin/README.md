@@ -1,13 +1,13 @@
 # DSH SVG 流程图插件
 
-在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.4.0 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
+在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.5.0 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
 
 ## 在已有 DSH 中试用
 
 将验收包下载到当前目录，指定自己实际使用的 profile，以下以 web 为例。
 
 ```sh
-dsh plugin --profile web add ./dsh-svg-editor-0.4.0.tgz
+dsh plugin --profile web add ./dsh-svg-editor-0.5.0.tgz
 ```
 
 打开该 profile 的 DSH 会话，给智能体这段指令（模型会话需要配置可用模型）：
@@ -31,6 +31,16 @@ dsh plugin --profile web add ./dsh-svg-editor-0.4.0.tgz
 > 画一张发布流程图。提交申请后评估风险，同时做回归测试和隐私审查，汇总后发布。在同一个布局上用 svg_create_flowchart 分别生成「发布汇报.svg」和「发布打印.svg」。第一份用 studio，第二份用 print，再读回核对两份的节点与连线。
 
 `print` 使用灰阶填充、深色描边与相同的箭头，适合黑白讲义。下面是同一份输入实际生成的两张图。[彩色示例](../../doc/evidence/dsh/design/studio.svg) · [打印示例](../../doc/evidence/dsh/design/print.svg)
+
+## 用 Transformer 架构图验收
+
+在源码仓库运行以下命令。打开输出目录的 `demo.svg`，沿左栏可看到编码器生成记忆表示，沿右栏可看到移位的目标输入、掩码自注意力和交叉注意力。图中折叠显示每侧六层；五条旁路对应五个子层的残差连接。
+
+```sh
+npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer.json
+```
+
+向 `svg_create_flowchart` 传入明确的坐标、可选 `title` 和 `panels` 可以保留双栏排版。面板接受标题、可选说明和矩形范围。请在左上角为标题和说明留出空间。读回业务关系用 `graph`，背景板与标题只进入 SVG 元素统计。本例有 18 个节点、22 条有向边。[可编辑架构图](../../doc/evidence/dsh/transformer/Transformer.svg) · [多层压力测试与数据](../../doc/dsh.md#transformer-架构图与性能验证)
 
 ## 检查直达路线与箭头
 

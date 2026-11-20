@@ -1,0 +1,287 @@
+{
+  "title": "Transformer  /  编码器与解码器",
+  "width": 820,
+  "height": 974,
+  "panels": [
+    {
+      "label": "编码器  × 6",
+      "x": 27,
+      "y": 211,
+      "width": 363,
+      "height": 304
+    },
+    {
+      "label": "解码器  × 6",
+      "x": 423,
+      "y": 211,
+      "width": 363,
+      "height": 603
+    },
+    {
+      "label": "残差与归一化",
+      "description": "LayerNorm(x + F(x))\n旁路将子层输入加回输出，再做层归一化。\n交叉注意力的 K/V 由编码器输出投影得到。",
+      "x": 27,
+      "y": 664,
+      "width": 363,
+      "height": 111
+    }
+  ],
+  "nodes": [
+    {
+      "id": "src",
+      "label": "源序列",
+      "x": 149,
+      "y": 82,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "src-embed",
+      "label": "词嵌入 + 位置编码",
+      "x": 149,
+      "y": 150,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "tgt",
+      "label": "目标序列 · 右移一位",
+      "x": 545,
+      "y": 82,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "tgt-embed",
+      "label": "词嵌入 + 位置编码",
+      "x": 545,
+      "y": 150,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "enc-self",
+      "label": "多头自注意力",
+      "x": 149,
+      "y": 267,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "enc-norm1",
+      "label": "Add & Norm",
+      "x": 149,
+      "y": 330,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "enc-ff",
+      "label": "前馈网络 · FFN",
+      "x": 149,
+      "y": 393,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "enc-norm2",
+      "label": "Add & Norm",
+      "x": 149,
+      "y": 456,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "dec-masked",
+      "label": "掩码多头自注意力",
+      "x": 545,
+      "y": 267,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "dec-norm1",
+      "label": "Add & Norm",
+      "x": 545,
+      "y": 337,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "dec-query",
+      "label": "查询投影 · Q",
+      "x": 545,
+      "y": 439,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "dec-cross",
+      "label": "多头交叉注意力",
+      "x": 545,
+      "y": 546,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "dec-norm2",
+      "label": "Add & Norm",
+      "x": 545,
+      "y": 616,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "dec-ff",
+      "label": "前馈网络 · FFN",
+      "x": 545,
+      "y": 686,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "dec-norm3",
+      "label": "Add & Norm",
+      "x": 545,
+      "y": 756,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "memory",
+      "label": "编码器输出 · K/V",
+      "x": 149,
+      "y": 546,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "linear",
+      "label": "线性投影",
+      "x": 545,
+      "y": 837,
+      "width": 190,
+      "height": 42
+    },
+    {
+      "id": "probs",
+      "label": "Softmax · 输出概率",
+      "x": 535,
+      "y": 903,
+      "width": 210,
+      "height": 42
+    }
+  ],
+  "edges": [
+    {
+      "id": "src--src-embed",
+      "from": "src",
+      "to": "src-embed"
+    },
+    {
+      "id": "tgt--tgt-embed",
+      "from": "tgt",
+      "to": "tgt-embed"
+    },
+    {
+      "id": "src-embed--enc-self",
+      "from": "src-embed",
+      "to": "enc-self"
+    },
+    {
+      "id": "enc-self--enc-norm1",
+      "from": "enc-self",
+      "to": "enc-norm1"
+    },
+    {
+      "id": "enc-norm1--enc-ff",
+      "from": "enc-norm1",
+      "to": "enc-ff"
+    },
+    {
+      "id": "enc-ff--enc-norm2",
+      "from": "enc-ff",
+      "to": "enc-norm2"
+    },
+    {
+      "id": "enc-norm2--memory",
+      "from": "enc-norm2",
+      "to": "memory"
+    },
+    {
+      "id": "memory--dec-cross",
+      "from": "memory",
+      "to": "dec-cross"
+    },
+    {
+      "id": "tgt-embed--dec-masked",
+      "from": "tgt-embed",
+      "to": "dec-masked"
+    },
+    {
+      "id": "dec-masked--dec-norm1",
+      "from": "dec-masked",
+      "to": "dec-norm1"
+    },
+    {
+      "id": "dec-norm1--dec-query",
+      "from": "dec-norm1",
+      "to": "dec-query"
+    },
+    {
+      "id": "dec-query--dec-cross",
+      "from": "dec-query",
+      "to": "dec-cross"
+    },
+    {
+      "id": "dec-cross--dec-norm2",
+      "from": "dec-cross",
+      "to": "dec-norm2"
+    },
+    {
+      "id": "dec-norm2--dec-ff",
+      "from": "dec-norm2",
+      "to": "dec-ff"
+    },
+    {
+      "id": "dec-ff--dec-norm3",
+      "from": "dec-ff",
+      "to": "dec-norm3"
+    },
+    {
+      "id": "dec-norm3--linear",
+      "from": "dec-norm3",
+      "to": "linear"
+    },
+    {
+      "id": "linear--probs",
+      "from": "linear",
+      "to": "probs"
+    },
+    {
+      "id": "residual-enc-norm1",
+      "from": "src-embed",
+      "to": "enc-norm1"
+    },
+    {
+      "id": "residual-enc-norm2",
+      "from": "enc-norm1",
+      "to": "enc-norm2"
+    },
+    {
+      "id": "residual-dec-norm1",
+      "from": "tgt-embed",
+      "to": "dec-norm1"
+    },
+    {
+      "id": "residual-dec-norm2",
+      "from": "dec-norm1",
+      "to": "dec-norm2"
+    },
+    {
+      "id": "residual-dec-norm3",
+      "from": "dec-norm2",
+      "to": "dec-norm3"
+    }
+  ]
+}

@@ -120,6 +120,28 @@ export function apply(ctx: Context): void {
         width: number,
         height: number,
         nodes: positionedNodes,
+        title: {
+          type: 'string',
+          description:
+            'Optional single-line title in the top 56 canvas units. Reserve space above the nodes.',
+        },
+        panels: {
+          type: 'array',
+          description:
+            'Background panels at explicit canvas coordinates. Allow space for the heading and optional notes above the nodes.',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            properties: {
+              label: string,
+              description: { type: 'string' },
+              x: number,
+              y: number,
+              width: number,
+              height: number,
+            },
+          },
+        },
         theme: {
           type: 'string',
           enum: ['studio', 'print'],
