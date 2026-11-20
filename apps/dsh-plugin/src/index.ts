@@ -120,6 +120,11 @@ export function apply(ctx: Context): void {
         width: number,
         height: number,
         nodes: positionedNodes,
+        theme: {
+          type: 'string',
+          enum: ['studio', 'print'],
+          description: 'Default studio uses role colors. Choose print for grayscale.',
+        },
         edges,
       },
       output: {

@@ -81,7 +81,23 @@ export interface ReadResult {
   readonly warnings: readonly string[];
 }
 
+export type SvgPresentation = Partial<
+  Record<
+    | 'fill'
+    | 'stroke'
+    | 'stroke-width'
+    | 'stroke-linecap'
+    | 'rx'
+    | 'font-size'
+    | 'font-family'
+    | 'font-weight'
+    | 'text-anchor',
+    string
+  >
+>;
+
 export interface SessionShapeRequest extends CreateShapeRequest {
+  readonly presentation?: Readonly<SvgPresentation>;
   readonly dataAttributes?: Readonly<Record<`data-${string}`, string>>;
 }
 

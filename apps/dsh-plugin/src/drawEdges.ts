@@ -6,11 +6,9 @@ export function drawEdges(
   session: EditorSessionPort,
   chart: Chart,
   nodes: ReadonlyMap<string, ChartNode>,
+  color: string,
+  graphicId: (preferred: string) => string,
 ): void {
-  // Keep raw SVG IDs unique even when user IDs resemble our generated segment IDs.
-  const used = new Set(chart.edges.map((edge) => edge.id));
-  for (const n of nodes.values())
-    for (const id of [n.id, n.id + '-rect', n.id + '-label']) used.add(id);
   let serial = 0;
   // Give parallel and antiparallel connectors separate ports on both rectangles.
   const pairKey = (a: string, b: string) => JSON.stringify([a, b].sort());
@@ -41,15 +39,12 @@ export function drawEdges(
       },
     });
     function line(a: Point, b: Point, part: 'route' | 'arrow') {
-      let id: string;
-      do {
-        id = 'dsh-line-' + ++serial;
-      } while (used.has(id));
       session.create(
         {
           type: 'line',
-          id,
-          args: [a.x, a.y, b.x, b.y].map(String).concat('black'),
+          id: graphicId('dsh-line-' + ++serial),
+          presentation: { 'stroke-width': '1.65', 'stroke-linecap': 'round' },
+          args: [a.x, a.y, b.x, b.y].map(String).concat(color),
           dataAttributes: { 'data-dsh-part': part },
         },
         edge.id,

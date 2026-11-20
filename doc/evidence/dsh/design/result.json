@@ -1,0 +1,162 @@
+{
+  "pluginPackage": "dsh-svg-editor-0.4.0.tgz",
+  "packageSha256": "4091e1906838833cd61ed7ab80469cfa9d56a611dd0e577c8ba1073ff9b58083",
+  "dsh": "0.2.2-rc.5",
+  "node": "v24.22.3",
+  "profile": "sdk-minimal",
+  "input": "apps/dsh-plugin/demo/release.json",
+  "runs": [
+    {
+      "theme": "studio",
+      "file": "studio.svg",
+      "svgSha256": "749b47f426cbd3e2f92cd03fd00ea205dea676149322cd7bfcd87dcd2d47dc5f",
+      "width": 960,
+      "height": 198,
+      "counts": {
+        "g": 12,
+        "line": 18,
+        "rect": 6,
+        "text": 7
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "request",
+            "label": "提交发布申请"
+          },
+          {
+            "id": "triage",
+            "label": "评估变更风险"
+          },
+          {
+            "id": "tests",
+            "label": "回归测试"
+          },
+          {
+            "id": "privacy",
+            "label": "核对数据保留策略与隐私合规要求"
+          },
+          {
+            "id": "signoff",
+            "label": "汇总验证结果"
+          },
+          {
+            "id": "release",
+            "label": "发布到生产"
+          }
+        ],
+        "edges": [
+          {
+            "id": "e1",
+            "from": "request",
+            "to": "triage"
+          },
+          {
+            "id": "e2",
+            "from": "triage",
+            "to": "tests"
+          },
+          {
+            "id": "e3",
+            "from": "triage",
+            "to": "privacy"
+          },
+          {
+            "id": "e4",
+            "from": "tests",
+            "to": "signoff"
+          },
+          {
+            "id": "e5",
+            "from": "privacy",
+            "to": "signoff"
+          },
+          {
+            "id": "e6",
+            "from": "signoff",
+            "to": "release"
+          }
+        ],
+        "inferredEdges": [],
+        "unresolvedEdges": []
+      },
+      "warnings": []
+    },
+    {
+      "theme": "print",
+      "file": "print.svg",
+      "svgSha256": "75ce98da480058715b1520f8660b68880db361f8ec45340fc0b2f2839845400c",
+      "width": 960,
+      "height": 198,
+      "counts": {
+        "g": 12,
+        "line": 18,
+        "rect": 6,
+        "text": 7
+      },
+      "graph": {
+        "nodes": [
+          {
+            "id": "request",
+            "label": "提交发布申请"
+          },
+          {
+            "id": "triage",
+            "label": "评估变更风险"
+          },
+          {
+            "id": "tests",
+            "label": "回归测试"
+          },
+          {
+            "id": "privacy",
+            "label": "核对数据保留策略与隐私合规要求"
+          },
+          {
+            "id": "signoff",
+            "label": "汇总验证结果"
+          },
+          {
+            "id": "release",
+            "label": "发布到生产"
+          }
+        ],
+        "edges": [
+          {
+            "id": "e1",
+            "from": "request",
+            "to": "triage"
+          },
+          {
+            "id": "e2",
+            "from": "triage",
+            "to": "tests"
+          },
+          {
+            "id": "e3",
+            "from": "triage",
+            "to": "privacy"
+          },
+          {
+            "id": "e4",
+            "from": "tests",
+            "to": "signoff"
+          },
+          {
+            "id": "e5",
+            "from": "privacy",
+            "to": "signoff"
+          },
+          {
+            "id": "e6",
+            "from": "signoff",
+            "to": "release"
+          }
+        ],
+        "inferredEdges": [],
+        "unresolvedEdges": []
+      },
+      "warnings": []
+    }
+  ]
+}

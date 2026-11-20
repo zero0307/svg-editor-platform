@@ -54,7 +54,23 @@ export function readFlowchart(doc: DocumentView) {
     const rect = rectOf(s);
     const text = s.children.find((c) => c.kind === 'text' && c.id === s.id + '-label');
     if (s.kind === 'g' && rect && text && (role === 'node' || (!role && s.children.length === 2))) {
-      nodes.push({ id: s.id, label: text.text ?? '' });
+      const pieces = [text.text ?? ''];
+      for (const child of s.children) {
+        if (child.kind !== 'text' || child.attributes['data-dsh-part'] !== 'label-continuation')
+          continue;
+        const separator = child.attributes['data-dsh-break'];
+        pieces.push(
+          separator === 'crlf'
+            ? '\r\n'
+            : separator === 'cr'
+              ? '\r'
+              : separator === 'lf'
+                ? '\n'
+                : '',
+          child.text ?? '',
+        );
+      }
+      nodes.push({ id: s.id, label: pieces.join('') });
       bodies.set(s.id, rect);
       if (!role) legacyBodies.set(s.id, rect);
       return;

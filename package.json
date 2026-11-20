@@ -12,7 +12,7 @@
     "cli": "npm run build --silent && node dist/src/bootstrap/main.js",
     "test": "npm run build --silent && node --test dist/test/*.test.js && npm run test --workspaces --if-present",
     "test:coverage": "npm run build --silent && node --experimental-test-coverage --test dist/test/*.test.js && npm run test --workspaces --if-present",
-    "verify:visual": "npm run build --silent && node scripts/verify-visual.mjs",
+    "verify:visual": "npm run build --silent && node scripts/verify-visual.mjs && node apps/dsh-plugin/verification/visual.mjs",
     "format": "prettier --write --no-error-on-unmatched-pattern apps packages plugins src test scripts doc ci .github README.md AGENTS.md CONTRIBUTING.md package.json tsconfig.json tsconfig.base.json .prettierrc.json",
     "format:check": "prettier --check --no-error-on-unmatched-pattern apps packages plugins src test scripts doc ci .github README.md AGENTS.md CONTRIBUTING.md package.json tsconfig.json tsconfig.base.json .prettierrc.json",
     "check": "npm run format:check && npm run check:docs && npm test && node scripts/replay-baseline.mjs && npm run check:architecture",

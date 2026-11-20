@@ -1,3 +1,4 @@
+import { corridorRoute } from './corridorRoute.js';
 import type { ChartNode, Chart } from './flowchart.js';
 
 export interface Point {
@@ -11,12 +12,12 @@ const epsilon = 1e-7;
 const distance = (a: Point, b: Point) => Math.hypot(b.x - a.x, b.y - a.y);
 
 // Clip a segment against the open interior. Touching a node at its port is allowed.
-function crosses(a: Point, b: Point, node: ChartNode): boolean {
+function crosses(a: Point, b: Point, node: ChartNode, gap = 0): boolean {
   let enter = 0,
     leave = 1;
   for (const [start, delta, low, high] of [
-    [a.x, b.x - a.x, node.x, node.x + node.width],
-    [a.y, b.y - a.y, node.y, node.y + node.height],
+    [a.x, b.x - a.x, node.x - gap, node.x + node.width + gap],
+    [a.y, b.y - a.y, node.y - gap, node.y + node.height + gap],
   ] as const) {
     if (Math.abs(delta) < epsilon) {
       if (start <= low + epsilon || start >= high - epsilon) return false;
@@ -31,8 +32,9 @@ function crosses(a: Point, b: Point, node: ChartNode): boolean {
 }
 
 function ports(node: ChartNode, fraction: number) {
-  const x = node.x + fraction * node.width,
-    y = node.y + fraction * node.height;
+  const radius = Math.min(13, node.width / 4, node.height / 4);
+  const x = node.x + radius + fraction * (node.width - 2 * radius),
+    y = node.y + radius + fraction * (node.height - 2 * radius);
   return [
     { x: node.x, y, dx: -1, dy: 0 },
     { x: node.x + node.width, y, dx: 1, dy: 0 },
@@ -45,7 +47,11 @@ function border(node: ChartNode, anchor: Point, dx: number, dy: number): Point {
   const tx = dx === 0 ? Infinity : ((dx > 0 ? node.x + node.width : node.x) - anchor.x) / dx;
   const ty = dy === 0 ? Infinity : ((dy > 0 ? node.y + node.height : node.y) - anchor.y) / dy;
   const t = Math.min(tx, ty);
-  return { x: anchor.x + t * dx, y: anchor.y + t * dy };
+  const p = { x: anchor.x + t * dx, y: anchor.y + t * dy };
+  const radius = Math.min(13, node.width / 4, node.height / 4);
+  if (tx < ty) p.y = Math.max(node.y + radius, Math.min(node.y + node.height - radius, p.y));
+  else p.x = Math.max(node.x + radius, Math.min(node.x + node.width - radius, p.x));
+  return p;
 }
 
 function simplify(points: Point[]): Point[] {
@@ -83,7 +89,8 @@ export function routeEdge(chart: Chart, from: ChartNode, to: ChartNode, fraction
     b = anchor(to),
     dx = b.x - a.x,
     dy = b.y - a.y;
-  const clear = (p: Point, q: Point) => !chart.nodes.some((n) => crosses(p, q, n));
+  const clear = (p: Point, q: Point) =>
+    !chart.nodes.some((n) => crosses(p, q, n, n === from || n === to ? 0 : 4));
   if (dx || dy) {
     const p = border(from, a, dx, dy),
       q = border(to, b, -dx, -dy);
@@ -123,6 +130,23 @@ export function routeEdge(chart: Chart, from: ChartNode, to: ChartNode, fraction
       for (const y of ys) consider([p, s, { x: s.x, y }, { x: t.x, y }, t, q]);
       for (const x of xs) consider([p, s, { x, y: s.y }, { x, y: t.y }, t, q]);
     }
+  }
+  if (!best.length) {
+    const inside = (p: Point) => p.x >= 0 && p.x <= chart.width && p.y >= 0 && p.y <= chart.height;
+    const clearCorridor = (p: Point, q: Point) =>
+      inside(p) && inside(q) && !chart.nodes.some((n) => crosses(p, q, n, 4));
+    best = simplify(
+      corridorRoute(
+        xs,
+        ys,
+        ports(from, fraction),
+        ports(to, fraction),
+        clearance,
+        inside,
+        clear,
+        clearCorridor,
+      ),
+    );
   }
   if (!best.length)
     throw new RangeError(

@@ -3,4 +3,4 @@ export type * from './model.js';
 export type * from './plugin.js';
 export type * from './ports.js';
 export { DomainError } from './DomainError.js';
-export { sessionData } from './sessionData.js';
+export { sessionData, sessionPresentation } from './sessionData.js';

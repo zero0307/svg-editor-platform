@@ -1,3 +1,4 @@
+import { nodeSize } from './chartText.js';
 import { indexFlowchart, type FlowchartGraph } from './flowchart.js';
 
 export function layoutFlowchart(graph: FlowchartGraph) {
@@ -28,36 +29,35 @@ export function layoutFlowchart(graph: FlowchartGraph) {
     throw new RangeError('Cycle prevents layout of: ' + blocked.join(', '));
   }
 
-  const margin = 24,
-    columnGap = 56,
-    rowGap = 28,
-    nodeHeight = 48;
-  const columns: { width: number; count: number; left: number; top: number }[] = [];
-  // Group the original order, independent of when edges released a vertex.
-  for (const { node, column } of vertices) {
-    const layer = (columns[column] ??= { width: 0, count: 0, left: 0, top: 0 });
-    layer.width = Math.max(layer.width, 96, 24 + Array.from(node.label).length * 18);
-    layer.count++;
+  const margin = 28,
+    columnGap = 58,
+    rowGap = 26;
+  const sizes = graph.nodes.map((n) => nodeSize(n.label));
+  const columns: { width: number; height: number; left: number; top: number }[] = [];
+  for (const [index, vertex] of vertices.entries()) {
+    const layer = (columns[vertex.column] ??= { width: 0, height: 0, left: 0, top: 0 });
+    const size = sizes[index]!;
+    layer.width = Math.max(layer.width, size.width);
+    layer.height += (layer.height ? rowGap : 0) + size.height;
   }
-  const rows = columns.reduce((max, layer) => Math.max(max, layer.count), 0);
-  const height = margin * 2 + rows * nodeHeight + (rows - 1) * rowGap;
+  const height = columns.reduce((max, c) => Math.max(max, c.height), 0) + 2 * margin;
   let left = margin;
   for (const layer of columns) {
     layer.left = left;
-    layer.top = margin + ((rows - layer.count) * (nodeHeight + rowGap)) / 2;
+    layer.top = (height - layer.height) / 2;
     left += layer.width + columnGap;
   }
-  const nodes = vertices.map(({ node, column }) => {
-    const layer = columns[column]!;
-    const position = {
+  const nodes = vertices.map(({ node, column }, index) => {
+    const layer = columns[column]!,
+      size = sizes[index]!;
+    const positioned = {
       ...node,
-      x: layer.left,
+      ...size,
+      x: layer.left + (layer.width - size.width) / 2,
       y: layer.top,
-      width: layer.width,
-      height: nodeHeight,
     };
-    layer.top += nodeHeight + rowGap;
-    return position;
+    layer.top += size.height + rowGap;
+    return positioned;
   });
   return {
     width: left - columnGap + margin,

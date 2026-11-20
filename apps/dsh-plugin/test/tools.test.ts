@@ -1,11 +1,11 @@
 import { layoutFlowchart } from '../src/layoutFlowchart.js';
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { DocumentView, FileStore } from '@svgframe/core';
+import type { DocumentView } from '@svgframe/core';
 import { FakeEditorSession } from '@svgframe/core/testing';
 import type { Chart } from '../src/flowchart.js';
 import { SvgTools } from '../src/SvgTools.js';
-import { Phase1EditorSession } from '../src/session.cjs';
+import { fixture } from './fixture.js';
 
 const chart: Chart = {
   path: 'chart.svg',
@@ -17,22 +17,6 @@ const chart: Chart = {
   ],
   edges: [{ id: 'edge', from: 'a', to: 'b' }],
 };
-
-function fixture() {
-  const files = new Map<string, string>();
-  const store: FileStore = {
-    async read(path) {
-      const content = files.get(path);
-      if (content === undefined) throw new Error('missing file');
-      return content;
-    },
-    async write(path, content) {
-      if (path === 'denied.svg') throw new Error('write denied');
-      files.set(path, content);
-    },
-  };
-  return { files, tools: new SvgTools(() => new Phase1EditorSession(store)) };
-}
 
 test('tools run against the public session fake without the CLI or a DSH process', async () => {
   const files = new Map<string, DocumentView>();
@@ -137,7 +121,7 @@ test('readback follows opaque edge IDs in both directions and detects stale endp
     assert.deepEqual(result.graph.unresolvedEdges, ['e&1']);
     assert.deepEqual(result.graph.edges, [edges[1]]);
   }
-  files.set('moved.svg', original.replace('id="a-rect" x="8"', 'id="a-rect" x="80"'));
+  files.set('moved.svg', original.replace(/(<rect id="a-rect"[^>]*? )x="8"/, '$1x="80"'));
   assert.deepEqual(
     (await tools.inspect('moved.svg')).graph.unresolvedEdges,
     edges.map((e) => e.id),
