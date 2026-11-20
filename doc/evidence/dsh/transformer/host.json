@@ -1,0 +1,35 @@
+{
+  "profile": "sdk-minimal",
+  "dsh": "0.2.2-rc.5",
+  "pluginPackage": "dsh-svg-editor-0.5.0.tgz",
+  "packageSha256": "1e88a442eec0b17bd447d35c28ce270128deca087a04f5ae7963d48e43618beb",
+  "node": "v24.22.3",
+  "afterLiveUnload": [],
+  "afterUninstall": [],
+  "runs": [
+    {
+      "case": "expanded",
+      "width": 53256,
+      "height": 186,
+      "nodes": 271,
+      "edges": 413,
+      "unresolvedEdges": [],
+      "inferredEdges": [],
+      "warnings": [],
+      "verificationBytes": 669950,
+      "svgSha256": "0effa1db58996b6cca1d5a7d2d91b13fa3968fdd12929f00f46e9c3ee9c4f88f"
+    },
+    {
+      "case": "overview",
+      "width": 820,
+      "height": 974,
+      "nodes": 18,
+      "edges": 22,
+      "unresolvedEdges": [],
+      "inferredEdges": [],
+      "warnings": [],
+      "verificationBytes": 42032,
+      "svgSha256": "78876fbf54d2dc40810da685095c9f423c7a27eb1d3c3d1e9b57159c5e8140db"
+    }
+  ]
+}

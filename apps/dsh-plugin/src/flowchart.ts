@@ -25,6 +25,15 @@ export interface FlowchartGraph<T extends GraphNode = GraphNode> {
 
 export interface Chart extends FlowchartGraph<ChartNode> {
   theme?: ChartTheme;
+  title?: string;
+  panels?: readonly {
+    label: string;
+    description?: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }[];
   path: string;
   width: number;
   height: number;

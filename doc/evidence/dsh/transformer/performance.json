@@ -1,0 +1,116 @@
+{
+  "baselineVersion": "0.4.0",
+  "candidateVersion": "0.5.0",
+  "baseline": {
+    "node": "v24.22.3",
+    "cpu": "Apple M5",
+    "warmupsPerSize": 1,
+    "samplesPerSize": 5,
+    "runs": [
+      {
+        "layers": 1,
+        "nodes": 18,
+        "edges": 22,
+        "bytes": 21344,
+        "graphSha256": "c5082d42c7de33ea949a10eef04910b422e8d93f5479562e05bd5b73f426ced6",
+        "medianMs": {
+          "layout": 0.26,
+          "generate": 7.51,
+          "inspect": 4.27
+        }
+      },
+      {
+        "layers": 6,
+        "nodes": 73,
+        "edges": 107,
+        "bytes": 100546,
+        "graphSha256": "3579122148e736fc7ef6fa175a80eafe868f4eba001a6c74b0c008d4275dfc93",
+        "medianMs": {
+          "layout": 0.73,
+          "generate": 28.89,
+          "inspect": 13.66
+        }
+      },
+      {
+        "layers": 12,
+        "nodes": 139,
+        "edges": 209,
+        "bytes": 196559,
+        "graphSha256": "c4d41a91373c1437463288eab25f105764a17fa8b934ae7a39625e5cafcfbfd5",
+        "medianMs": {
+          "layout": 1.07,
+          "generate": 72.23,
+          "inspect": 26.99
+        }
+      },
+      {
+        "layers": 24,
+        "nodes": 271,
+        "edges": 413,
+        "bytes": 389683,
+        "graphSha256": "a9a09b94f7530e4d768565aa791b62d15bed76b64622964904a274ca5914d853",
+        "medianMs": {
+          "layout": 1.81,
+          "generate": 234.1,
+          "inspect": 64.12
+        }
+      }
+    ]
+  },
+  "candidate": {
+    "node": "v24.22.3",
+    "cpu": "Apple M5",
+    "warmupsPerSize": 1,
+    "samplesPerSize": 5,
+    "runs": [
+      {
+        "layers": 1,
+        "nodes": 18,
+        "edges": 22,
+        "bytes": 21344,
+        "graphSha256": "c5082d42c7de33ea949a10eef04910b422e8d93f5479562e05bd5b73f426ced6",
+        "medianMs": {
+          "layout": 0.22,
+          "generate": 1.78,
+          "inspect": 2.31
+        }
+      },
+      {
+        "layers": 6,
+        "nodes": 73,
+        "edges": 107,
+        "bytes": 100646,
+        "graphSha256": "3579122148e736fc7ef6fa175a80eafe868f4eba001a6c74b0c008d4275dfc93",
+        "medianMs": {
+          "layout": 0.59,
+          "generate": 8.46,
+          "inspect": 12.52
+        }
+      },
+      {
+        "layers": 12,
+        "nodes": 139,
+        "edges": 209,
+        "bytes": 196779,
+        "graphSha256": "c4d41a91373c1437463288eab25f105764a17fa8b934ae7a39625e5cafcfbfd5",
+        "medianMs": {
+          "layout": 1,
+          "generate": 17.46,
+          "inspect": 24.38
+        }
+      },
+      {
+        "layers": 24,
+        "nodes": 271,
+        "edges": 413,
+        "bytes": 390143,
+        "graphSha256": "a9a09b94f7530e4d768565aa791b62d15bed76b64622964904a274ca5914d853",
+        "medianMs": {
+          "layout": 1.77,
+          "generate": 45.12,
+          "inspect": 64.37
+        }
+      }
+    ]
+  }
+}

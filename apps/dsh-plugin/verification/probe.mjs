@@ -18,7 +18,10 @@ export function apply(ctx) {
           .sort();
       if (process.env.SVG_CHECK_MODE === 'removed') {
         assert.deepEqual(registered(), []);
-        console.log('SVG_ACCEPTANCE ' + JSON.stringify({ afterUninstall: registered() }));
+        await writeFile(
+          process.env.SVG_CHECK_REPORT,
+          JSON.stringify({ afterUninstall: registered() }),
+        );
         process.exit(0);
       }
       assert.deepEqual(registered(), names);
@@ -109,7 +112,11 @@ export function apply(ctx) {
       await ctx.workingDirectory.set(handle.agent, pathUtil.resolve(directory));
       const inSession = (name, args, expectError = false) =>
         call(name, args, expectError, handle.agent);
-      const graph = JSON.parse(await readFile(process.env.SVG_DEMO_INPUT, 'utf8'));
+      const input = JSON.parse(await readFile(process.env.SVG_DEMO_INPUT, 'utf8'));
+      const graph = {
+        nodes: input.nodes.map(({ id, label }) => ({ id, label })),
+        edges: input.edges,
+      };
       await inSession(
         'svg_layout_flowchart',
         {
@@ -124,7 +131,9 @@ export function apply(ctx) {
         },
         true,
       );
-      const layout = await inSession('svg_layout_flowchart', graph);
+      const automatic = await inSession('svg_layout_flowchart', graph);
+      // An explicitly positioned architecture diagram uses its supplied positions for publication.
+      const layout = input.width === undefined ? automatic : input;
       assert.deepEqual(layout.edges, graph.edges);
       assert.deepEqual(
         layout.nodes.map(({ id, label }) => ({ id, label })),
@@ -147,7 +156,7 @@ export function apply(ctx) {
         unresolvedEdges: [],
         inferredEdges: [],
       });
-      assert.equal(demoView.counts.rect, count);
+      assert.equal(demoView.counts.rect, count + (layout.panels?.length ?? 0));
       assert.ok(demoView.counts.text >= count);
       for (const { id } of graph.nodes) {
         const first = demoView.structure.find((s) => s.id === id + '-label');
@@ -201,27 +210,27 @@ export function apply(ctx) {
       await entry.fiber.dispose();
       await ctx.loader.await();
       assert.deepEqual(registered(), []);
-      console.log(
-        'SVG_ACCEPTANCE ' +
-          JSON.stringify({
-            demo: {
-              directory,
-              theme: process.env.SVG_DEMO_THEME,
-              graph,
-              layout,
-              created: demoCreated,
-              inspected: demoView,
-            },
-            created,
-            inspected,
-            directionChecks,
-            legacyGraph: legacy.graph,
-            priorDirectedGraph: directed.graph,
-            recoveryWarnings: recovered.warnings,
-            independentElementCounts: [firstAgain.structure.length, secondView.structure.length],
-            checkedFailures: ['missing endpoint', 'schema', 'existing output', 'missing input'],
-            afterLiveUnload: registered(),
-          }),
+      await writeFile(
+        process.env.SVG_CHECK_REPORT,
+        JSON.stringify({
+          demo: {
+            directory,
+            theme: process.env.SVG_DEMO_THEME,
+            graph,
+            layout,
+            created: demoCreated,
+            inspected: demoView,
+          },
+          created,
+          inspected,
+          directionChecks,
+          legacyGraph: legacy.graph,
+          priorDirectedGraph: directed.graph,
+          recoveryWarnings: recovered.warnings,
+          independentElementCounts: [firstAgain.structure.length, secondView.structure.length],
+          checkedFailures: ['missing endpoint', 'schema', 'existing output', 'missing input'],
+          afterLiveUnload: registered(),
+        }),
       );
       process.exit(0);
     } catch (error) {

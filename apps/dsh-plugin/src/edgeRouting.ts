@@ -13,6 +13,14 @@ const distance = (a: Point, b: Point) => Math.hypot(b.x - a.x, b.y - a.y);
 
 // Clip a segment against the open interior. Touching a node at its port is allowed.
 function crosses(a: Point, b: Point, node: ChartNode, gap = 0): boolean {
+  // Most nodes lie outside this segment's bounding box on an unrolled graph.
+  if (
+    Math.max(a.x, b.x) < node.x - gap ||
+    Math.min(a.x, b.x) > node.x + node.width + gap ||
+    Math.max(a.y, b.y) < node.y - gap ||
+    Math.min(a.y, b.y) > node.y + node.height + gap
+  )
+    return false;
   let enter = 0,
     leave = 1;
   for (const [start, delta, low, high] of [
@@ -69,7 +77,49 @@ function simplify(points: Point[]): Point[] {
   return result;
 }
 
-export function routeEdge(chart: Chart, from: ChartNode, to: ChartNode, fraction: number): Point[] {
+function chartGutters(chart: Chart) {
+  const xs = new Set<number>(),
+    ys = new Set<number>();
+  for (const n of chart.nodes) {
+    xs.add(Math.max(0, n.x - clearance));
+    xs.add(Math.min(chart.width, n.x + n.width + clearance));
+    ys.add(Math.max(0, n.y - clearance));
+    ys.add(Math.min(chart.height, n.y + n.height + clearance));
+  }
+  return { xs, ys };
+}
+
+export function makeEdgeRouter(chart: Chart) {
+  let gutters: ReturnType<typeof chartGutters> | undefined;
+  const occupied = new Map<string, Set<string>>();
+  const mark = (node: ChartNode, point: Point) => {
+    const ports = occupied.get(node.id) ?? new Set<string>();
+    ports.add(point.x + ',' + point.y);
+    occupied.set(node.id, ports);
+  };
+  return (from: ChartNode, to: ChartNode, fraction: number) => {
+    const route = routeEdge(
+      chart,
+      from,
+      to,
+      fraction,
+      () => (gutters ??= chartGutters(chart)),
+      occupied,
+    );
+    mark(from, route[0]!);
+    mark(to, route.at(-1)!);
+    return route;
+  };
+}
+
+export function routeEdge(
+  chart: Chart,
+  from: ChartNode,
+  to: ChartNode,
+  fraction: number,
+  gutters = () => chartGutters(chart),
+  occupied?: ReadonlyMap<string, ReadonlySet<string>>,
+): Point[] {
   // Nested or coincident node bodies cannot have visually distinct endpoints.
   const encloses = (outer: ChartNode, inner: ChartNode) =>
     outer.x <= inner.x &&
@@ -98,16 +148,10 @@ export function routeEdge(chart: Chart, from: ChartNode, to: ChartNode, fraction
   }
 
   // Search gutters bordering the rectangles. Stubs force a clean exit and entry at each port.
-  const xs = new Set<number>(),
-    ys = new Set<number>();
-  for (const n of chart.nodes) {
-    xs.add(Math.max(0, n.x - clearance));
-    xs.add(Math.min(chart.width, n.x + n.width + clearance));
-    ys.add(Math.max(0, n.y - clearance));
-    ys.add(Math.min(chart.height, n.y + n.height + clearance));
-  }
+  const { xs, ys } = gutters();
   let best: Point[] = [],
-    bestCost = Infinity;
+    bestCost = Infinity,
+    bestCrowding = Infinity;
   function consider(points: Point[]) {
     const path = simplify(points);
     if (
@@ -117,7 +161,18 @@ export function routeEdge(chart: Chart, from: ChartNode, to: ChartNode, fraction
       return;
     let cost = (path.length - 2) * bendPenalty;
     for (let i = 1; i < path.length; i++) cost += distance(path[i - 1]!, path[i]!);
-    if (cost >= bestCost || !path.slice(1).every((p, i) => clear(path[i]!, p))) return;
+    if (cost > bestCost || (cost === bestCost && bestCrowding === 0)) return;
+    const first = path[0]!,
+      last = path.at(-1)!;
+    const crowding =
+      Number(occupied?.get(from.id)?.has(first.x + ',' + first.y) ?? false) +
+      Number(occupied?.get(to.id)?.has(last.x + ',' + last.y) ?? false);
+    if (
+      (cost === bestCost && crowding >= bestCrowding) ||
+      !path.slice(1).every((p, i) => clear(path[i]!, p))
+    )
+      return;
+    bestCrowding = crowding;
     bestCost = cost;
     best = path;
   }
@@ -125,10 +180,18 @@ export function routeEdge(chart: Chart, from: ChartNode, to: ChartNode, fraction
     const s = { x: p.x + clearance * p.dx, y: p.y + clearance * p.dy };
     for (const q of ports(to, fraction)) {
       const t = { x: q.x + clearance * q.dx, y: q.y + clearance * q.dy };
+      // A valid simplified path has the same length as its raw non-reversing segments.
+      const baseX = Math.abs(s.x - t.x) + 2 * clearance,
+        baseY = Math.abs(s.y - t.y) + 2 * clearance;
+      if (baseX + Math.abs(s.y - t.y) > bestCost + epsilon) continue;
       consider([p, s, { x: s.x, y: t.y }, t, q]);
       consider([p, s, { x: t.x, y: s.y }, t, q]);
-      for (const y of ys) consider([p, s, { x: s.x, y }, { x: t.x, y }, t, q]);
-      for (const x of xs) consider([p, s, { x, y: s.y }, { x, y: t.y }, t, q]);
+      for (const y of ys)
+        if (baseX + Math.abs(s.y - y) + Math.abs(t.y - y) <= bestCost + epsilon)
+          consider([p, s, { x: s.x, y }, { x: t.x, y }, t, q]);
+      for (const x of xs)
+        if (baseY + Math.abs(s.x - x) + Math.abs(t.x - x) <= bestCost + epsilon)
+          consider([p, s, { x, y: s.y }, { x, y: t.y }, t, q]);
     }
   }
   if (!best.length) {
@@ -137,8 +200,8 @@ export function routeEdge(chart: Chart, from: ChartNode, to: ChartNode, fraction
       inside(p) && inside(q) && !chart.nodes.some((n) => crosses(p, q, n, 4));
     best = simplify(
       corridorRoute(
-        xs,
-        ys,
+        new Set(xs),
+        new Set(ys),
         ports(from, fraction),
         ports(to, fraction),
         clearance,

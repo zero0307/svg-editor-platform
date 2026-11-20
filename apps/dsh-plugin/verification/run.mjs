@@ -107,10 +107,10 @@ try {
   );
   function boot(mode) {
     env.SVG_CHECK_MODE = mode;
-    const out = run(cli, ['--profile', profile, '--patch', patch]);
-    const marker = out.split(/\r?\n/).find((s) => s.startsWith('SVG_ACCEPTANCE '));
-    assert.ok(marker, 'Acceptance driver did not run');
-    return JSON.parse(marker.slice('SVG_ACCEPTANCE '.length));
+    // Large verification reports outlive stdout buffering in a shutting-down DSH process.
+    env.SVG_CHECK_REPORT = path.join(temp, mode + '-result.json');
+    run(cli, ['--profile', profile, '--patch', patch]);
+    return JSON.parse(readFileSync(env.SVG_CHECK_REPORT, 'utf8'));
   }
   const result = boot('installed');
   run(cli, ['plugin', '--profile', profile, 'remove', 'dsh-svg-editor']);

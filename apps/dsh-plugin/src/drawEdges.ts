@@ -1,5 +1,5 @@
 import type { EditorSessionPort } from '@svgframe/core';
-import { arrowWings, routeEdge, type Point } from './edgeRouting.js';
+import { arrowWings, makeEdgeRouter, type Point } from './edgeRouting.js';
 import type { Chart, ChartNode } from './flowchart.js';
 
 export function drawEdges(
@@ -9,6 +9,7 @@ export function drawEdges(
   color: string,
   graphicId: (preferred: string) => string,
 ): void {
+  const routeEdge = makeEdgeRouter(chart);
   let serial = 0;
   // Give parallel and antiparallel connectors separate ports on both rectangles.
   const pairKey = (a: string, b: string) => JSON.stringify([a, b].sort());
@@ -23,7 +24,6 @@ export function drawEdges(
       index = (drawn.get(key) ?? 0) + 1;
     drawn.set(key, index);
     const route = routeEdge(
-      chart,
       nodes.get(edge.from)!,
       nodes.get(edge.to)!,
       index / (totals.get(key)! + 1),

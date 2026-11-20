@@ -8,6 +8,7 @@ import type {
 } from '@svgframe/core';
 import { ShapeFactory } from '../application/ShapeFactory.js';
 import { SvgEditor } from '../application/SvgEditor.js';
+import { DomainError } from '../domain/DomainError.js';
 import { Group } from '../domain/shapes/Group.js';
 import type { Shape } from '../domain/shapes/Shape.js';
 import { XmlSvgCodec } from '../infrastructure/XmlSvgCodec.js';
@@ -16,16 +17,23 @@ import { XmlSvgCodec } from '../infrastructure/XmlSvgCodec.js';
 export class Phase1EditorSession implements EditorSessionPort {
   private readonly factory = new ShapeFactory();
   private readonly editor: SvgEditor;
+  // This session only appends newly constructed, childless shapes. The CLI owns its separate
+  // editable document. Build the lookup lazily when an imported document is first extended.
+  private shapesById?: Map<string, Shape>;
   constructor(files: FileStore) {
     this.editor = new SvgEditor(files, new XmlSvgCodec(this.factory));
   }
   init(width: number, height: number): void {
     this.editor.init(width, height);
+    this.shapesById = new Map();
   }
   create(request: SessionShapeRequest, parentId?: string): void {
     // The whole session is private to a tool call. Keep a single candidate until save.
     const doc = this.editor.document();
-    const parent = parentId === undefined ? doc.root : doc.container(parentId);
+    const shapes = (this.shapesById ??= new Map(doc.all().map((s) => [s.id, s])));
+    const parent = parentId === undefined ? doc.root : shapes.get(parentId);
+    if (!parent) throw new DomainError('no such container: ' + parentId);
+    if (!(parent instanceof Group)) throw new DomainError('not a container: ' + parentId);
     const shape = this.factory.create(request.type, request.id, request.args);
     for (const [key, value] of Object.entries(sessionData(request)))
       shape.preserveAttribute(key, value);
@@ -34,7 +42,9 @@ export class Phase1EditorSession implements EditorSessionPort {
         shape.setAttribute(key, value);
       else shape.preserveAttribute(key, value);
     }
-    doc.add(shape, parent);
+    if (shapes.has(shape.id)) throw new DomainError('id already exists: ' + shape.id);
+    parent.insert(shape);
+    shapes.set(shape.id, shape);
   }
   snapshot(): DocumentView {
     const doc = this.editor.document();
@@ -51,6 +61,7 @@ export class Phase1EditorSession implements EditorSessionPort {
   }
   async read(path: string) {
     const { warnings } = await this.editor.openFile(path);
+    this.shapesById = undefined;
     return { document: this.snapshot(), warnings };
   }
   async save(path?: string) {
