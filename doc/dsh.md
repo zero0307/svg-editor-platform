@@ -1,6 +1,6 @@
 # DeepSeek Harness SVG 插件
 
-当前开发版为 0.6.1。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
+当前开发版为 0.7.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
 
 ## 先跑四节点 demo
 
@@ -13,6 +13,14 @@ npm run demo:dsh
 运行时真实创建 Agent，工作目录与宿主启动目录独立。它根据[输入文件](../apps/dsh-plugin/demo/review.json)依次调用布局、生成和检查工具。打开终端输出目录中的 `demo.svg`，从左到右应是「提交 → 评审／复核 → 通过」。在同目录的 `verification.json` 查看 `demo.inspected`，当前版本的 `graph` 应有 4 个节点和 4 条边。修改输入后可运行 `npm run demo:dsh -- --input my-graph.json`。安装到自己的会话试用时，使用同目录中的 .tgz 和[插件使用说明](../apps/dsh-plugin/README.md)。
 
 0.2.0 留存了[实际生成的 SVG](evidence/dsh/demo/demo.svg) 和[三工具验收结果](evidence/dsh/demo/verification.json)。
+
+## QKV 分叉箭头
+
+0.7.0 增加可选的具名输入端口。对照论文图 1 和第 3.2.3 节，编码器自注意力和解码器掩码自注意力各从本层输入分出 Q、K、V。交叉注意力的 Q 来自解码器的上一子层，K、V 由编码器最终输出分别投影得到。每个输入旁有可编辑文字和独立箭头，保留五条残差旁路。[论文图 1 和注意力输入说明](https://arxiv.org/html/1706.03762v7#S3.SS2.SSS3) · [示例输入](../apps/dsh-plugin/demo/transformer-qkv.json) · [新图](evidence/dsh/qkv/Transformer.svg)
+
+`svg_layout_flowchart` 会为具名端口增加目标节点高度。手工布局可以从矩形任意一侧接入，目标要有足够的平直边界和入口空间。`svg_inspect` 校验主线、分叉横线、每个端口的独立箭头、可见标签及其落点。删除一支箭头、断开横线或移错标签时，该连接进入 `graph.unresolvedEdges`。省略 `inputs` 时仍使用原有的普通连接。
+
+实测参考图保持 21 个节点和 25 条逻辑连接，其中四条连接承载九个具名输入。独立审计逐一核对实际导出的 30 个箭头、节点边界、意外交叉和重叠。隔离 DSH 会话读回全部具名端口；压力图将 60 处分叉展开为 180 个具名箭头。[真实宿主结果](evidence/dsh/qkv/verification.json) · [损坏与多方向回归](../apps/dsh-plugin/test/ports.test.ts)
 
 ## 标题避让与本地性能
 
@@ -112,7 +120,7 @@ npm run verify:visual
 npm ci
 npm pack --workspace dsh-svg-editor --pack-destination .
 dsh --profile svg-demo --from-default-profile sdk-minimal --dump-config
-dsh plugin --profile svg-demo add ./dsh-svg-editor-0.6.1.tgz
+dsh plugin --profile svg-demo add ./dsh-svg-editor-0.7.0.tgz
 dsh --profile svg-demo --dump-config
 ```
 
@@ -168,12 +176,12 @@ npm run verify:dsh
 
 2026-11-19 在 Apple Silicon Mac 上使用官方 DeepSeek Harness Desktop 0.2.2-rc.5、插件 `dsh-svg-editor@0.2.0` 和模型 DeepSeek-V4.1-Flash 完成。桌面应用使用自己的 `desktop` profile。[官方桌面版说明](https://github.com/deepseek-ai/deepseek-harness/blob/master/apps/desktop/README.zh.md#bundled-command-runtime)
 
-以下命令展示在当前分支安装 0.6.1 的方法。表中记录对应当时实测的 0.2.0。
+以下命令展示在当前分支安装 0.7.0 的方法。表中记录对应当时实测的 0.2.0。
 
 1. 在仓库根目录按上文安装依赖并运行 `npm pack --workspace dsh-svg-editor --pack-destination .`。首次使用桌面版时先启动一次，再用 ⌘Q 退出。从同一目录执行以下命令，将验收包安装到桌面版。
 
    ```sh
-   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.6.1.tgz"
+   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.7.0.tgz"
    ```
 
 2. 重新打开桌面应用，确认插件已启用并选择可用模型。在可写的工作区打开会话。首次复验请选择尚无 `桌面验收.svg` 的目录，后续复跑也可以换新的工作区。

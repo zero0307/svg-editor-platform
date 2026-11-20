@@ -1,7 +1,8 @@
 import type { DocumentView, ShapeView } from '@svgframe/core';
+import { fontSize, wrapLabel } from './chartText.js';
 import { quadraticPoints } from './session.cjs';
 import type { Point } from './edgeRouting.js';
-import type { GraphEdge, GraphNode } from './flowchart.js';
+import { validPortName, type GraphEdge, type GraphNode } from './flowchart.js';
 
 function rectOf(group: ShapeView) {
   return group.children.find(
@@ -63,6 +64,102 @@ function arrowMatches(edge: ShapeView, previous: Point, tip: Point): boolean {
     return x * dx + y * dy < 0 ? Math.sign(dx * y - dy * x) : 0;
   });
   return sides[0]! * sides[1]! === -1;
+}
+
+// Check the actual fork tree in the SVG. A missing arm must not turn a three-input
+// relationship into a verified one-input relationship on read-back.
+function readPorts(edge: ShapeView, target: ShapeView, junction: Point): string[] | undefined {
+  let expected: unknown;
+  try {
+    expected = JSON.parse(edge.attributes['data-dsh-inputs'] ?? '');
+  } catch {
+    return;
+  }
+  const parts = (key: string) => edge.children.filter((c) => c.attributes['data-dsh-part'] === key);
+  const groups = parts('port'),
+    bus = parts('bus');
+  if (
+    target.kind !== 'rect' ||
+    !Array.isArray(expected) ||
+    !expected.length ||
+    groups.length !== expected.length ||
+    new Set(expected).size !== expected.length ||
+    bus.length !== Number(groups.length > 1) ||
+    parts('arrow').length
+  )
+    return;
+  const bases: Point[] = [];
+  let vector: Point | undefined;
+  for (const [i, g] of groups.entries()) {
+    const branches = g.children.filter(
+      (c) => c.kind === 'line' && c.attributes['data-dsh-part'] === 'branch',
+    );
+    const labels = g.children.filter((c) => c.kind === 'text');
+    if (
+      g.kind !== 'g' ||
+      branches.length !== 1 ||
+      labels.length !== 1 ||
+      labels[0]!.text !== expected[i] ||
+      !validPortName(expected[i])
+    )
+      return;
+    if (g.children.length !== 4) return;
+    const base = linePoint(branches[0]!, 1),
+      tip = linePoint(branches[0]!, 2);
+    const delta = { x: tip.x - base.x, y: tip.y - base.y };
+    const eps = 1e-6;
+    if (
+      Math.abs(delta.x) < eps === Math.abs(delta.y) < eps ||
+      !atRect(target, tip, false) ||
+      !arrowMatches(g, base, tip) ||
+      (vector && !nearPoint(delta, vector))
+    )
+      return;
+    const { x, y, width, height } = target.attributes;
+    const face =
+      delta.x > eps
+        ? Number(x)
+        : delta.x < -eps
+          ? Number(x) + Number(width)
+          : delta.y > 0
+            ? Number(y)
+            : Number(y) + Number(height);
+    if (Math.abs((Math.abs(delta.x) > eps ? tip.x : tip.y) - face) > eps) return;
+    // The visible text must still sit alongside this arm. Moving Q above K
+    // changes how a person reads the diagram, even when the metadata is intact.
+    const label = labels[0]!,
+      size = Number(label.attributes['font-size']);
+    const xText = Number(label.attributes.x),
+      yText = Number(label.attributes.y);
+    const name = label.text!;
+    const horizontal = Math.abs(delta.x) > eps;
+    const along = horizontal
+      ? (xText + (wrapLabel(name, Infinity)[0]!.width * size) / (2 * fontSize) - base.x) / delta.x
+      : (yText - size * 0.35 - base.y) / delta.y;
+    const offset = horizontal ? (tip.y - yText) / size : (xText - tip.x) / size;
+    if (!(size > 0 && along > 0 && along < 1 && offset > 0 && offset < 1.4)) return;
+    const last = bases.at(-1);
+    if (
+      last &&
+      (Math.abs(delta.x) > eps
+        ? Math.abs(base.x - last.x) > eps || base.y <= last.y
+        : Math.abs(base.y - last.y) > eps || base.x <= last.x)
+    )
+      return;
+    bases.push(base);
+    vector = delta;
+  }
+  const first = bases[0]!,
+    last = bases.at(-1)!;
+  if (!nearPoint(junction, { x: (first.x + last.x) / 2, y: (first.y + last.y) / 2 })) return;
+  if (
+    bus.length &&
+    (bus[0]!.kind !== 'line' ||
+      !nearPoint(linePoint(bus[0]!, 1), first) ||
+      !nearPoint(linePoint(bus[0]!, 2), last))
+  )
+    return;
+  return expected as string[];
 }
 
 export function readFlowchart(doc: DocumentView) {
@@ -145,11 +242,18 @@ export function readFlowchart(doc: DocumentView) {
       first &&
       last &&
       route.every((span, i) => span && (!i || nearPoint(route[i - 1]!.end, span.start))) &&
-      atRect(source, first.start, false) &&
-      atRect(target, last.end, false) &&
-      arrowMatches(edge, last.control ?? last.start, last.end)
+      atRect(source, first.start, false)
     ) {
-      edges.push({ id: edge.id, from, to });
+      if (edge.attributes['data-dsh-inputs'] !== undefined) {
+        const inputs = readPorts(edge, target, last.end);
+        if (inputs) edges.push({ id: edge.id, from, to, inputs });
+        else unresolvedEdges.push(edge.id);
+      } else if (
+        atRect(target, last.end, false) &&
+        arrowMatches(edge, last.control ?? last.start, last.end)
+      ) {
+        edges.push({ id: edge.id, from, to });
+      } else unresolvedEdges.push(edge.id);
     } else unresolvedEdges.push(edge.id);
   }
   return { nodes, edges, inferredEdges, unresolvedEdges };

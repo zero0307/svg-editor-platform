@@ -49,7 +49,15 @@ export class SvgTools {
     const paint = chartPaint(chart);
     const graphicId = graphicIds(chart);
     const captions = drawPanels(session, chart, graphicId);
-    drawEdges(session, chart, nodes, paint.connector, graphicId, captions?.spans);
+    drawEdges(
+      session,
+      chart,
+      nodes,
+      paint.connector,
+      graphicId,
+      captions?.spans,
+      captions?.occupied,
+    );
     captions?.render();
     const wrap = cachedWrap();
     for (const n of nodes.values()) {

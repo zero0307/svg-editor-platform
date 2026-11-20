@@ -40,7 +40,17 @@ const edges = {
   items: {
     type: 'object',
     additionalProperties: false,
-    properties: { id: string, from: string, to: string },
+    properties: {
+      id: string,
+      from: string,
+      to: string,
+      inputs: {
+        type: 'array',
+        items: { type: 'string' },
+        description:
+          'Optional ordered input port names on a box target (1-8 letters, digits, _ or - per name). One source can branch to multiple named arrows, e.g. ["Q","K","V"]. Use separate edges for different sources.',
+      },
+    },
   },
 } as const;
 

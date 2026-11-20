@@ -143,5 +143,5 @@ export function drawPanels(
     });
     heading(key + '-heading', label, panel, 16, 27, 17, panel.headingAlign, description);
   }
-  return { spans, render: () => captions.forEach((place) => place()) };
+  return { spans, occupied, render: () => captions.forEach((place) => place()) };
 }

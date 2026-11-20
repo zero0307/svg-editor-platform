@@ -1,0 +1,65 @@
+{
+  "plugin": "dsh-svg-editor-0.7.0.tgz",
+  "packageSha256": "053805a3c6b78fd3b501300827dbe733af6cbad83fc414bef4d5fbfbd2b18e23",
+  "node": "v24.22.3",
+  "dsh": "0.2.2-rc.5",
+  "profile": "sdk-minimal",
+  "platform": "darwin",
+  "afterLiveUnload": [],
+  "afterUninstall": [],
+  "hostRuns": [
+    {
+      "sample": "Transformer",
+      "nodes": 21,
+      "logicalEdges": 25,
+      "namedArrowheads": 9,
+      "allArrowheads": 30,
+      "inputs": [
+        {
+          "id": "src-add--enc-self",
+          "from": "src-add",
+          "to": "enc-self",
+          "inputs": ["Q", "K", "V"]
+        },
+        {
+          "id": "enc-norm2--dec-cross",
+          "from": "enc-norm2",
+          "to": "dec-cross",
+          "inputs": ["K", "V"]
+        },
+        {
+          "id": "tgt-add--dec-masked",
+          "from": "tgt-add",
+          "to": "dec-masked",
+          "inputs": ["Q", "K", "V"]
+        },
+        {
+          "id": "dec-norm1--dec-cross",
+          "from": "dec-norm1",
+          "to": "dec-cross",
+          "inputs": ["Q"]
+        }
+      ],
+      "warnings": [],
+      "unresolvedEdges": [],
+      "inferredEdges": [],
+      "svgSha256": "60bf27f57982ff8f7cff142ea9dc5b912b2b828c4ff072827ff1f98ad1db60b9"
+    },
+    {
+      "sample": "60-forks",
+      "nodes": 61,
+      "logicalEdges": 60,
+      "namedArrowheads": 180,
+      "allArrowheads": 180,
+      "inputs": {
+        "Q": 60,
+        "K": 60,
+        "V": 60
+      },
+      "warnings": [],
+      "unresolvedEdges": [],
+      "inferredEdges": [],
+      "svgSha256": "2a5c73d4274f12febfbb5ec78aced18b4518fa1e386181effaec395bcb844092"
+    }
+  ]
+}

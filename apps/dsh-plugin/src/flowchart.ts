@@ -9,6 +9,7 @@ export interface GraphEdge {
   id: string;
   from: string;
   to: string;
+  inputs?: string[];
 }
 
 export type Tone = 'normal' | 'muted' | 'accent' | 'strong';
@@ -50,6 +51,10 @@ export interface Chart extends FlowchartGraph<ChartNode> {
   height: number;
 }
 
+export function validPortName(name: unknown): name is string {
+  return typeof name === 'string' && /^[\p{L}\p{N}_-]{1,8}$/u.test(name);
+}
+
 // The projected IDs are also real SVG IDs, shared by nodes and edges.
 export function indexFlowchart<T extends GraphNode>(graph: FlowchartGraph<T>): Map<string, T> {
   if (!graph.nodes.length) throw new RangeError('Provide at least one flowchart node.');
@@ -68,10 +73,22 @@ export function indexFlowchart<T extends GraphNode>(graph: FlowchartGraph<T>): M
     if (illegalXml.test(node.label)) throw new RangeError('Invalid XML text in node ' + node.id);
     nodes.set(node.id, node);
   }
+  const inputNames = new Map<string, Set<string>>();
   for (const edge of graph.edges) {
     reserve(edge.id);
     for (const id of [edge.from, edge.to]) {
       if (!nodes.has(id)) throw new RangeError('Unknown endpoint ' + id + ' for edge ' + edge.id);
+    }
+    if (edge.inputs !== undefined) {
+      if (!Array.isArray(edge.inputs) || !edge.inputs.length)
+        throw new RangeError('Specify at least one named input on ' + edge.id);
+      const used = inputNames.get(edge.to) ?? new Set<string>();
+      for (const name of edge.inputs) {
+        if (!validPortName(name) || used.has(name))
+          throw new RangeError('Invalid or duplicate input port on ' + edge.to + ': ' + name);
+        used.add(name);
+      }
+      inputNames.set(edge.to, used);
     }
     if (edge.from === edge.to)
       throw new RangeError('Self-loop at node ' + edge.from + ' on edge ' + edge.id);

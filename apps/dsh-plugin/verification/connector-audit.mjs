@@ -118,35 +118,79 @@ function audit(input, svg) {
     input.edges.map((e) => e.id).sort(),
   );
   const inks = [];
-  for (const { id, from, to } of input.edges) {
+  for (const { id, from, to, inputs } of input.edges) {
     const group = connectors.find((g) => g.getAttribute('id') === id);
     assert.equal(group.getAttribute('data-dsh-from'), from);
     assert.equal(group.getAttribute('data-dsh-to'), to);
     const pieces = children(group);
     const route = pieces.filter((p) => p.getAttribute('data-dsh-part') === 'route').map(geometry);
-    const arrows = pieces.filter((p) => p.getAttribute('data-dsh-part') === 'arrow').map(geometry);
-    assert.ok(route.length > 0);
-    assert.equal(arrows.length, 2);
-    assert.equal(route.length + arrows.length, pieces.length);
+    function arrowInk(pieces, tail) {
+      const arrows = pieces
+        .filter((p) => p.getAttribute('data-dsh-part') === 'arrow')
+        .map(geometry);
+      assert.equal(arrows.length, 2);
+      const tangent = minus(tail.b, tail.c ?? tail.a);
+      const sides = arrows.map((wing) => {
+        assert.ok(gap(wing.b, tail.b) < eps);
+        const v = minus(wing.a, tail.b);
+        assert.ok(dot(v, tangent) < 0, id + ' backward arrow');
+        return Math.sign(cross(tangent, v));
+      });
+      assert.equal(sides[0] * sides[1], -1, id + ' arrow wings on the same side');
+      assert.ok(Math.abs(boundary(bodies.get(to), tail.b)) < eps, id + ' detached target');
+      return arrows;
+    }
+    assert.ok(route.length);
     const head = route[0].a,
-      tail = route.at(-1),
-      tip = tail.b,
-      tangent = minus(tip, tail.c ?? tail.a);
+      tail = route.at(-1);
+    const tips = [],
+      all = [...route];
     assert.ok(Math.abs(boundary(bodies.get(from), head)) < eps, id + ' detached source');
-    assert.ok(Math.abs(boundary(bodies.get(to), tip)) < eps, id + ' detached target');
     route.forEach((part, i) => {
       assert.ok(gap(part.a, part.b) > eps);
       if (i) assert.ok(gap(part.a, route[i - 1].b) < eps, id + ' broken route');
     });
-    const sides = arrows.map((wing) => {
-      assert.ok(gap(wing.b, tip) < eps);
-      const v = minus(wing.a, tip);
-      assert.ok(dot(v, tangent) < 0, id + ' backward arrow');
-      return Math.sign(cross(tangent, v));
-    });
-    assert.equal(sides[0] * sides[1], -1, id + ' arrow wings on the same side');
+    if (inputs) {
+      const ports = pieces.filter((p) => p.getAttribute('data-dsh-part') === 'port');
+      assert.equal(ports.length, inputs.length);
+      const bus = pieces.filter((p) => p.getAttribute('data-dsh-part') === 'bus').map(geometry);
+      assert.equal(bus.length, Number(ports.length > 1));
+      assert.equal(pieces.length, route.length + bus.length + ports.length);
+      all.push(...bus);
+      const bases = [];
+      for (const [i, p] of ports.entries()) {
+        const parts = children(p);
+        assert.equal(parts.length, 4);
+        assert.equal(parts.find((el) => el.tagName === 'text').textContent, inputs[i]);
+        const arm = geometry(parts.find((el) => el.getAttribute('data-dsh-part') === 'branch'));
+        const bar = bus[0];
+        if (bar) {
+          const hit = intersection(bar, arm);
+          assert.ok(hit && hit !== 'overlap' && gap(hit, arm.a) < eps, id + ' detached branch');
+          assert.ok(
+            Math.abs(dot(minus(bar.b, bar.a), minus(arm.b, arm.a))) < eps,
+            id + ' angled branch',
+          );
+        }
+        assert.ok(
+          tips.every((t) => gap(t, arm.b) > eps),
+          id + ' duplicate port',
+        );
+        all.push(arm, ...arrowInk(parts, arm));
+        tips.push(arm.b);
+        bases.push(arm.a);
+      }
+      assert.ok(gap(tail.b, midpoint(bases[0], bases.at(-1))) < eps, id + ' detached fork');
+      if (bus.length) {
+        assert.ok(gap(bus[0].a, bases[0]) < eps && gap(bus[0].b, bases.at(-1)) < eps);
+      }
+    } else {
+      assert.equal(pieces.length, route.length + 2);
+      all.push(...arrowInk(pieces, tail));
+      tips.push(tail.b);
+    }
     const ink = [];
-    for (const part of [...route, ...arrows]) flatten(part, ink);
+    for (const part of all) flatten(part, ink);
     for (const seg of ink) {
       const steps = Math.max(1, Math.ceil(gap(seg.a, seg.b) / 0.5));
       for (let i = 0; i <= steps; i++) {
@@ -164,10 +208,7 @@ function audit(input, svg) {
     }
     inks.push({
       id,
-      ports: [
-        { node: from, p: head },
-        { node: to, p: tip },
-      ],
+      ports: [{ node: from, p: head }, ...tips.map((p) => ({ node: to, p }))],
       ink,
     });
   }
@@ -192,6 +233,7 @@ function audit(input, svg) {
 for (const [sample, svgName] of [
   ['transformer-reference', 'captions/Transformer.svg'],
   ['release-curves', 'curves/release.svg'],
+  ['transformer-qkv', 'qkv/Transformer.svg'],
 ]) {
   const input = JSON.parse(
     await readFile(new URL('../demo/' + sample + '.json', import.meta.url), 'utf8'),

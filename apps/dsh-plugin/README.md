@@ -1,13 +1,13 @@
 # DSH SVG 流程图插件
 
-在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.6.1 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
+在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.7.0 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
 
 ## 在已有 DSH 中试用
 
 将验收包下载到当前目录，指定自己实际使用的 profile，以下以 web 为例。
 
 ```sh
-dsh plugin --profile web add ./dsh-svg-editor-0.6.1.tgz
+dsh plugin --profile web add ./dsh-svg-editor-0.7.0.tgz
 ```
 
 打开该 profile 的 DSH 会话，给智能体这段指令（模型会话需要配置可用模型）：
@@ -44,6 +44,16 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/release-curves.json
 ```
 
 [参考图版 Transformer](../../doc/evidence/dsh/captions/Transformer.svg) · [自动布局的发布流程](../../doc/evidence/dsh/curves/release.svg) · [标题避让验收](../../doc/dsh.md#标题避让与本地性能) · [性能对照](../../doc/dsh.md#线型与读回性能)
+
+## 绘制 Q、K、V 分叉箭头
+
+在一条边上指定有序的 `inputs`。例如 `{"id":"self-in","from":"embedding","to":"attention","inputs":["Q","K","V"]}` 会从一个来源绘制一根主线，在目标矩形前分出三支具名箭头。交叉注意力需要两条边，解码器边指定 `["Q"]`，编码器边指定 `["K","V"]`。同一目标的每个端口名称应唯一。重新打开文件后，查看 `graph.edges[].inputs` 可核对每个输入的名称与来源。
+
+```sh
+npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-qkv.json
+```
+
+这张图保持 21 个节点、25 条逻辑连接，最终有 30 个可见箭头，其中 9 个标注了注意力输入。[可编辑架构图](../../doc/evidence/dsh/qkv/Transformer.svg) · [输入与验证](../../doc/dsh.md#qkv-分叉箭头)
 
 ## 用 Transformer 架构图验收
 

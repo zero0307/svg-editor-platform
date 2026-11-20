@@ -35,8 +35,15 @@ function audit(svg, zoom, only, clearance = 3) {
       font: { loadSystemFonts: true, defaultFontFamily: font, sansSerifFamily: font },
     }).render().pixels;
   }
+  const portLabels = [];
+  for (const g of Array.from(root.getElementsByTagName('g'))) {
+    if (g.getAttribute('data-dsh-part') !== 'port') continue;
+    const label = g.getElementsByTagName('text').item(0);
+    assert.ok(label);
+    portLabels.push(g.removeChild(label));
+  }
   const foreground = raster(children.filter((el) => el.hasAttribute('data-dsh-role')));
-  const captions = children.filter(
+  const captions = [...children, ...portLabels].filter(
     (el) => el.tagName === 'text' && (!only || el.getAttribute('id') === only),
   );
   assert.ok(captions.length);
@@ -127,3 +134,23 @@ const dense = {
 await tools.createFlowchart({ ...dense, path: 'original-layout.svg' });
 assert.deepEqual(audit(generated, 2), { overlaps: 0, close: 0, captions: 6 });
 console.log('Original tight layout also passes at 2x.');
+
+const qkvInput = JSON.parse(
+  await readFile(new URL('../demo/transformer-qkv.json', import.meta.url)),
+);
+const qkvSvg = await readFile(new URL('qkv/Transformer.svg', evidence), 'utf8');
+for (const theme of ['studio', 'print']) {
+  await tools.createFlowchart({ ...qkvInput, theme, path: 'qkv.svg' });
+  if (theme === 'studio') assert.equal(generated, qkvSvg);
+  for (const zoom of [1, 2]) {
+    const result = audit(generated, zoom);
+    assert.deepEqual(result, { overlaps: 0, close: 0, captions: 15 }, theme + ' ' + zoom + 'x QKV');
+    console.log(
+      'QKV ' +
+        theme +
+        ' ' +
+        zoom +
+        'x: all nine port labels and six captions passed the ink check.',
+    );
+  }
+}

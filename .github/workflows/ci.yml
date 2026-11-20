@@ -48,6 +48,7 @@ jobs:
           export PATH="$runtime/node_modules/.bin:$PATH"
           export DSH_CLI="$runtime/node_modules/@deepseek-ai/dsh/lib/bin.js"
           npm run verify:dsh
+          npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-qkv.json
           node apps/dsh-plugin/verification/transformer-bench.mjs --export-layers 24 --style arc > "$RUNNER_TEMP/transformer-24.json"
           npm run demo:dsh -- --input "$RUNNER_TEMP/transformer-24.json"
 
