@@ -86,6 +86,7 @@ export type SvgPresentation = Partial<
     | 'fill'
     | 'stroke'
     | 'stroke-width'
+    | 'stroke-dasharray'
     | 'stroke-linecap'
     | 'rx'
     | 'font-size'

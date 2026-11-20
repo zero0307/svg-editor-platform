@@ -15,6 +15,6 @@ export function fixture() {
       files.set(path, content);
     },
   };
-  const session = () => new Phase1EditorSession(store);
+  const session = () => new Phase1EditorSession(store, { quadraticPaths: true });
   return { files, tools: new SvgTools(session), session };
 }

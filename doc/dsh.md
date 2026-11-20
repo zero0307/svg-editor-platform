@@ -1,6 +1,6 @@
 # DeepSeek Harness SVG 插件
 
-当前开发版为 0.5.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
+当前开发版为 0.6.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
 
 ## 先跑四节点 demo
 
@@ -13,6 +13,32 @@ npm run demo:dsh
 运行时真实创建 Agent，工作目录与宿主启动目录独立。它根据[输入文件](../apps/dsh-plugin/demo/review.json)依次调用布局、生成和检查工具。打开终端输出目录中的 `demo.svg`，从左到右应是「提交 → 评审／复核 → 通过」。在同目录的 `verification.json` 查看 `demo.inspected`，当前版本的 `graph` 应有 4 个节点和 4 条边。修改输入后可运行 `npm run demo:dsh -- --input my-graph.json`。安装到自己的会话试用时，使用同目录中的 .tgz 和[插件使用说明](../apps/dsh-plugin/README.md)。
 
 0.2.0 留存了[实际生成的 SVG](evidence/dsh/demo/demo.svg) 和[三工具验收结果](evidence/dsh/demo/verification.json)。
+
+## 线型与读回性能
+
+0.6.0 的参考图保留原论文图 1 的自下向上数据流、左右堆栈、位置编码加法与五条残差旁路。两侧各用一个图层代表六层重复结构。解码器的交叉注意力接收来自上一子层的查询、编码器最终输出投影得到的键和值。中文标签保留关键英文术语。生成时允许模型选择直线、圆角折线或局部弧线。该参考图只在绕行的折角使用二次曲线。[论文图 1](https://arxiv.org/html/1706.03762v7#S3) · [输入](../apps/dsh-plugin/demo/transformer-reference.json) · [可编辑 SVG](evidence/dsh/curves/Transformer.svg)
+
+性能基准沿用同一份自动展开输入。在 1、6、12、24 层分别预热一次、测量五次，比较 0.5.0 默认折线与 0.6.0 三种样式。记录布局、序列化生成、解析读回、文件字节数、原生曲线数及拓扑摘要。计时使用 Apple M5、Node 24 和内存文件服务。真实 DSH 另行安装验收包，生成、读回参考图、普通流程图及 24 层压力图。[全部性能数据](evidence/dsh/curves/performance.json) · [真实宿主摘要](evidence/dsh/curves/host.json)
+
+24 层展开图共有 271 个节点、413 条边。下表是分阶段中位数，生成包含序列化，读回包含解析与关系校验。四组的业务图摘要完全一致。
+
+| 版本及线型     | 布局 (ms) | 生成 (ms) | 读回 (ms) | SVG 字节 |
+| -------------- | --------: | --------: | --------: | -------: |
+| 0.5.0 折线     |      1.80 |     44.99 |     65.00 |   390143 |
+| 0.6.0 折线     |      1.93 |     45.35 |     22.59 |   390143 |
+| 0.6.0 圆角     |      1.75 |     50.11 |     27.70 |   444273 |
+| 0.6.0 弧线优先 |      1.82 |     51.30 |     26.44 |   461488 |
+
+这组测量支持按图选择线型。相同折线文件的读回节省约 65%，将所有边设为弧线优先会使生成耗时比新版折线增加约 13%，文件增加约 18%。不同机器、字体和宿主调用开销会影响用户实际看到的等待时间。
+
+```sh
+npm run build
+node apps/dsh-plugin/verification/transformer-bench.mjs --style angular
+node apps/dsh-plugin/verification/transformer-bench.mjs --style rounded
+node apps/dsh-plugin/verification/transformer-bench.mjs --style arc
+```
+
+新版导入沿用 XML 编解码器的全局 ID 预检、自动分配和最终树校验，省去每插入一个已校验图元时的全树扫描。读回带方向的边时同步检查端点、连续性和箭头的实际方向。端点偏移、箭头缺翼或曲线切线被反转的边会列入 `graph.unresolvedEdges`。[回归用例](../apps/dsh-plugin/test/curves.test.ts) · [接口约定](adr/0006-dsh-quadratic.md)
 
 ## Transformer 架构图与性能验证
 
@@ -67,7 +93,7 @@ npm run verify:visual
 npm ci
 npm pack --workspace dsh-svg-editor --pack-destination .
 dsh --profile svg-demo --from-default-profile sdk-minimal --dump-config
-dsh plugin --profile svg-demo add ./dsh-svg-editor-0.5.0.tgz
+dsh plugin --profile svg-demo add ./dsh-svg-editor-0.6.0.tgz
 dsh --profile svg-demo --dump-config
 ```
 
@@ -123,12 +149,12 @@ npm run verify:dsh
 
 2026-11-19 在 Apple Silicon Mac 上使用官方 DeepSeek Harness Desktop 0.2.2-rc.5、插件 `dsh-svg-editor@0.2.0` 和模型 DeepSeek-V4.1-Flash 完成。桌面应用使用自己的 `desktop` profile。[官方桌面版说明](https://github.com/deepseek-ai/deepseek-harness/blob/master/apps/desktop/README.zh.md#bundled-command-runtime)
 
-以下命令展示在当前分支安装 0.5.0 的方法。表中记录对应当时实测的 0.2.0。
+以下命令展示在当前分支安装 0.6.0 的方法。表中记录对应当时实测的 0.2.0。
 
 1. 在仓库根目录按上文安装依赖并运行 `npm pack --workspace dsh-svg-editor --pack-destination .`。首次使用桌面版时先启动一次，再用 ⌘Q 退出。从同一目录执行以下命令，将验收包安装到桌面版。
 
    ```sh
-   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.5.0.tgz"
+   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.6.0.tgz"
    ```
 
 2. 重新打开桌面应用，确认插件已启用并选择可用模型。在可写的工作区打开会话。首次复验请选择尚无 `桌面验收.svg` 的目录，后续复跑也可以换新的工作区。

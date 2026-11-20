@@ -14,12 +14,13 @@ export function sessionData(request: SessionShapeRequest): Record<string, string
 const solidColor = /^#[0-9a-f]{6}$/i;
 const length = /^(?:0|[1-9]\d*)(?:\.\d+)?(?:e[+-]?\d+)?$/i;
 const allowed = {
-  fill: solidColor,
+  fill: /^(?:#[0-9a-f]{6}|none)$/i,
   stroke: solidColor,
   'stroke-width': length,
   rx: length,
   'font-size': length,
   'font-weight': /^(400|500|600|700)$/,
+  'stroke-dasharray': /^(?:[1-9]\d{0,2})(?: [1-9]\d{0,2}){1,7}$/,
   'stroke-linecap': /^(round|butt|square)$/,
   'text-anchor': /^(start|middle|end)$/,
   'font-family': /^[A-Za-z][A-Za-z0-9 -]*(?:, *[A-Za-z][A-Za-z0-9 -]*)*$/,

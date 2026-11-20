@@ -1,13 +1,27 @@
 import type { DocumentView, ShapeView } from '@svgframe/core';
+import { quadraticPoints } from './session.cjs';
+import type { Point } from './edgeRouting.js';
 import type { GraphEdge, GraphNode } from './flowchart.js';
 
 function rectOf(group: ShapeView) {
-  return group.children.find((s) => s.kind === 'rect' && s.id === group.id + '-rect');
+  return group.children.find(
+    (s) =>
+      (s.kind === 'rect' && s.id === group.id + '-rect') ||
+      (s.kind === 'ellipse' && s.id === group.id + '-ellipse'),
+  );
 }
-function atRect(rect: ShapeView, line: ShapeView, end: 1 | 2, center: boolean): boolean {
+function atRect(rect: ShapeView, point: Point, center: boolean): boolean {
+  if (rect.kind === 'ellipse') {
+    const { cx, cy, rx, ry } = rect.attributes;
+    if (center) return false;
+    return (
+      Math.abs(
+        ((point.x - Number(cx)) / Number(rx)) ** 2 + ((point.y - Number(cy)) / Number(ry)) ** 2 - 1,
+      ) < 1e-6
+    );
+  }
   const { x, y, width, height } = rect.attributes;
-  const px = Number(line.attributes['x' + end]),
-    py = Number(line.attributes['y' + end]);
+  const { x: px, y: py } = point;
   const left = Number(x),
     top = Number(y),
     w = Number(width),
@@ -23,14 +37,32 @@ function atRect(rect: ShapeView, line: ShapeView, end: 1 | 2, center: boolean): 
   );
 }
 
-function connectedSegments(route: ShapeView[]): boolean {
-  return route.slice(1).every((segment, index) => {
-    const previous = route[index]!.attributes;
-    return (
-      Math.abs(Number(segment.attributes.x1) - Number(previous.x2)) < 1e-6 &&
-      Math.abs(Number(segment.attributes.y1) - Number(previous.y2)) < 1e-6
-    );
+function linePoint(s: ShapeView, end: 1 | 2) {
+  return { x: Number(s.attributes['x' + end]), y: Number(s.attributes['y' + end]) };
+}
+const nearPoint = (a: Point, b: Point) => Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6;
+function routeSpan(s: ShapeView) {
+  if (s.kind === 'line')
+    return { start: linePoint(s, 1), end: linePoint(s, 2), control: undefined };
+  if (s.kind !== 'path') return undefined;
+  const { x1, y1, cx, cy, x2, y2 } = quadraticPoints(s.attributes.d ?? '');
+  return { start: { x: x1, y: y1 }, control: { x: cx, y: cy }, end: { x: x2, y: y2 } };
+}
+
+// Both wings must meet the actual terminal tangent and lie on opposite sides behind the tip.
+function arrowMatches(edge: ShapeView, previous: Point, tip: Point): boolean {
+  const wings = edge.children.filter((s) => s.attributes['data-dsh-part'] === 'arrow');
+  if (wings.length !== 2) return false;
+  const dx = tip.x - previous.x,
+    dy = tip.y - previous.y;
+  const sides = wings.map((s) => {
+    if (s.kind !== 'line' || !nearPoint(linePoint(s, 2), tip)) return 0;
+    const start = linePoint(s, 1),
+      x = start.x - tip.x,
+      y = start.y - tip.y;
+    return x * dx + y * dy < 0 ? Math.sign(dx * y - dy * x) : 0;
   });
+  return sides[0]! * sides[1]! === -1;
 }
 
 export function readFlowchart(doc: DocumentView) {
@@ -47,7 +79,7 @@ export function readFlowchart(doc: DocumentView) {
       connectors.push(s);
       return;
     }
-    if (s.kind === 'line') {
+    if (s.kind === 'line' || s.kind === 'path') {
       connectors.push(s);
       return;
     }
@@ -79,10 +111,14 @@ export function readFlowchart(doc: DocumentView) {
   }
   doc.children.forEach(scan);
   for (const edge of connectors) {
+    if (edge.kind === 'path') {
+      unresolvedEdges.push(edge.id);
+      continue;
+    }
     if (edge.kind === 'line') {
       // Version 0.2 wrote x1,y1 at the source center and x2,y2 at the target center.
       const matches = (end: 1 | 2) =>
-        [...legacyBodies].filter(([, rect]) => atRect(rect, edge, end, true));
+        [...legacyBodies].filter(([, rect]) => atRect(rect, linePoint(edge, end), true));
       const start = matches(1),
         finish = matches(2);
       if (start.length === 1 && finish.length === 1 && start[0]![0] !== finish[0]![0]) {
@@ -93,9 +129,11 @@ export function readFlowchart(doc: DocumentView) {
     }
     const from = edge.attributes['data-dsh-from'],
       to = edge.attributes['data-dsh-to'];
-    const route = edge.children.filter(
-      (s) => s.kind === 'line' && s.attributes['data-dsh-part'] === 'route',
-    );
+    const route = edge.children
+      .filter((s) => s.attributes['data-dsh-part'] === 'route')
+      .map(routeSpan);
+    const first = route[0],
+      last = route.at(-1);
     const source = from && bodies.get(from),
       target = to && bodies.get(to);
     if (
@@ -104,10 +142,12 @@ export function readFlowchart(doc: DocumentView) {
       from !== to &&
       source &&
       target &&
-      route.length &&
-      connectedSegments(route) &&
-      atRect(source, route[0]!, 1, false) &&
-      atRect(target, route.at(-1)!, 2, false)
+      first &&
+      last &&
+      route.every((span, i) => span && (!i || nearPoint(route[i - 1]!.end, span.start))) &&
+      atRect(source, first.start, false) &&
+      atRect(target, last.end, false) &&
+      arrowMatches(edge, last.control ?? last.start, last.end)
     ) {
       edges.push({ id: edge.id, from, to });
     } else unresolvedEdges.push(edge.id);

@@ -17,11 +17,21 @@ const nodes = {
   required: true,
   items: { type: 'object', additionalProperties: false, properties: nodeFields },
 } as const;
+const tone = { type: 'string', enum: ['normal', 'muted', 'accent', 'strong'] } as const;
+const connectorStyle = { type: 'string', enum: ['angular', 'rounded', 'arc'] } as const;
 const positionedNodes = {
   ...nodes,
   items: {
     ...nodes.items,
-    properties: { ...nodeFields, x: number, y: number, width: number, height: number },
+    properties: {
+      ...nodeFields,
+      tone: { type: 'string', enum: ['normal', 'muted', 'accent', 'strong', 'warm'] },
+      shape: { type: 'string', enum: ['box', 'ellipse'] },
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+    },
   },
 } as const;
 const edges = {
@@ -73,7 +83,9 @@ const summary = {
 
 export function apply(ctx: Context): void {
   const tools = (exec: ToolRunContext) =>
-    new SvgTools(() => new Phase1EditorSession(new DshFileStore(ctx, exec)));
+    new SvgTools(
+      () => new Phase1EditorSession(new DshFileStore(ctx, exec), { quadraticPaths: true }),
+    );
   ctx.tools.register(
     defineTool({
       name: 'svg_layout_flowchart',
@@ -134,12 +146,29 @@ export function apply(ctx: Context): void {
             additionalProperties: false,
             properties: {
               label: string,
+              headingAlign: { type: 'string', enum: ['start', 'end'] },
+              tone,
               description: { type: 'string' },
               x: number,
               y: number,
               width: number,
               height: number,
             },
+          },
+        },
+        connectorStyle: {
+          ...connectorStyle,
+          description:
+            'Match a supplied reference. Keep direct links straight. Use rounded for side detours and arc sparingly for a distinct relationship. Default angular.',
+        },
+        edgeStyles: {
+          type: 'array',
+          description:
+            'Override geometry and emphasis for named business edges. List each edge ID in at most one group.',
+          items: {
+            type: 'object',
+            additionalProperties: false,
+            properties: { ids: idList, style: connectorStyle, tone },
           },
         },
         theme: {

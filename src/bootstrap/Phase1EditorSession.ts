@@ -9,18 +9,34 @@ import type {
 import { ShapeFactory } from '../application/ShapeFactory.js';
 import { SvgEditor } from '../application/SvgEditor.js';
 import { DomainError } from '../domain/DomainError.js';
+import { QuadraticPath } from '../domain/shapes/QuadraticPath.js';
+export { quadraticPoints } from '../domain/shapes/QuadraticPath.js';
 import { Group } from '../domain/shapes/Group.js';
 import type { Shape } from '../domain/shapes/Shape.js';
 import { XmlSvgCodec } from '../infrastructure/XmlSvgCodec.js';
 
 // Public session adapter while the default provider runtime is being migrated in #14.
 export class Phase1EditorSession implements EditorSessionPort {
-  private readonly factory = new ShapeFactory();
+  private readonly factory: ShapeFactory;
   private readonly editor: SvgEditor;
   // This session only appends newly constructed, childless shapes. The CLI owns its separate
   // editable document. Build the lookup lazily when an imported document is first extended.
   private shapesById?: Map<string, Shape>;
-  constructor(files: FileStore) {
+  constructor(files: FileStore, options?: { quadraticPaths?: boolean }) {
+    this.factory = new ShapeFactory(
+      options?.quadraticPaths
+        ? new Map([
+            [
+              'path',
+              {
+                fields: ['d'],
+                optionalStyle: 'stroke',
+                construct: (id, args) => new QuadraticPath(id, args[0]!),
+              },
+            ],
+          ])
+        : undefined,
+    );
     this.editor = new SvgEditor(files, new XmlSvgCodec(this.factory));
   }
   init(width: number, height: number): void {

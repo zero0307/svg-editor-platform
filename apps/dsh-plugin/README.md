@@ -1,13 +1,13 @@
 # DSH SVG 流程图插件
 
-在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.5.0 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
+在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.6.0 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
 
 ## 在已有 DSH 中试用
 
 将验收包下载到当前目录，指定自己实际使用的 profile，以下以 web 为例。
 
 ```sh
-dsh plugin --profile web add ./dsh-svg-editor-0.5.0.tgz
+dsh plugin --profile web add ./dsh-svg-editor-0.6.0.tgz
 ```
 
 打开该 profile 的 DSH 会话，给智能体这段指令（模型会话需要配置可用模型）：
@@ -31,6 +31,19 @@ dsh plugin --profile web add ./dsh-svg-editor-0.5.0.tgz
 > 画一张发布流程图。提交申请后评估风险，同时做回归测试和隐私审查，汇总后发布。在同一个布局上用 svg_create_flowchart 分别生成「发布汇报.svg」和「发布打印.svg」。第一份用 studio，第二份用 print，再读回核对两份的节点与连线。
 
 `print` 使用灰阶填充、深色描边与相同的箭头，适合黑白讲义。下面是同一份输入实际生成的两张图。[彩色示例](../../doc/evidence/dsh/design/studio.svg) · [打印示例](../../doc/evidence/dsh/design/print.svg)
+
+## 按参考图决定线型
+
+将参考图与任务一起交给 DSH 模型。例如“按这张图的方向和分区画，模块以中文为主，保留 Add & Norm 和 Softmax。主干保持直线，必要时绕行，最后读回核对每条残差与交叉注意力。”
+
+生成工具可选 `connectorStyle`。默认 `angular` 支持直线和避障折线，`rounded` 将已有折线的转角圆滑化，`arc` 尝试二次贝塞尔弧线。用 `edgeStyles` 按业务边 ID 局部覆盖，主流程可以沿用默认。空间受限时回退到经验证的安全路线。DSH 0.6.0 支持读回生成的 SVG 原生二次曲线。需要交给 Phase 1 CLI 时将图和边的线型均设为 `angular`。
+
+```sh
+npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-reference.json
+npm run demo:dsh -- --input apps/dsh-plugin/demo/release-curves.json
+```
+
+[参考图版 Transformer](../../doc/evidence/dsh/curves/Transformer.svg) · [自动布局的发布流程](../../doc/evidence/dsh/curves/release.svg) · [性能对照](../../doc/dsh.md#线型与读回性能)
 
 ## 用 Transformer 架构图验收
 

@@ -11,7 +11,10 @@ export interface GraphEdge {
   to: string;
 }
 
+export type Tone = 'normal' | 'muted' | 'accent' | 'strong';
 export interface ChartNode extends GraphNode {
+  tone?: Tone | 'warm';
+  shape?: 'box' | 'ellipse';
   x: number;
   y: number;
   width: number;
@@ -25,10 +28,18 @@ export interface FlowchartGraph<T extends GraphNode = GraphNode> {
 
 export interface Chart extends FlowchartGraph<ChartNode> {
   theme?: ChartTheme;
+  connectorStyle?: import('./curveRoute.js').ConnectorStyle;
+  edgeStyles?: readonly {
+    ids: readonly string[];
+    style?: import('./curveRoute.js').ConnectorStyle;
+    tone?: Tone;
+  }[];
   title?: string;
   panels?: readonly {
     label: string;
     description?: string;
+    headingAlign?: 'start' | 'end';
+    tone?: Tone;
     x: number;
     y: number;
     width: number;
@@ -52,7 +63,7 @@ export function indexFlowchart<T extends GraphNode>(graph: FlowchartGraph<T>): M
   const nodes = new Map<string, T>();
   for (const node of graph.nodes) {
     reserve(node.id);
-    reserve(node.id + '-rect');
+    reserve(node.id + ('shape' in node && node.shape === 'ellipse' ? '-ellipse' : '-rect'));
     reserve(node.id + '-label');
     if (illegalXml.test(node.label)) throw new RangeError('Invalid XML text in node ' + node.id);
     nodes.set(node.id, node);
@@ -71,8 +82,13 @@ export function indexFlowchart<T extends GraphNode>(graph: FlowchartGraph<T>): M
 // Additional graphical pieces must not collide with user IDs or the stable rect/label IDs.
 export function graphicIds(chart: Chart) {
   const taken = new Set(chart.edges.map((e) => e.id));
-  for (const { id } of chart.nodes)
-    for (const value of [id, id + '-rect', id + '-label']) taken.add(value);
+  for (const node of chart.nodes)
+    for (const value of [
+      node.id,
+      node.id + (node.shape === 'ellipse' ? '-ellipse' : '-rect'),
+      node.id + '-label',
+    ])
+      taken.add(value);
   return (preferred: string) => {
     let id = preferred,
       index = 1;

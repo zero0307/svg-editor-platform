@@ -1,4 +1,4 @@
-import type { Chart } from './flowchart.js';
+import type { Chart, Tone } from './flowchart.js';
 
 export type ChartTheme = 'studio' | 'print';
 type NodeRole = 'start' | 'step' | 'split' | 'join' | 'end';
@@ -39,7 +39,18 @@ export function chartPaint(chart: Chart) {
     neighbors.get(edge.from)!.outgoing.add(edge.to);
     neighbors.get(edge.to)!.incoming.add(edge.from);
   }
-  function node(id: string) {
+  function node(id: string, tone?: Tone | 'warm') {
+    if (tone === 'normal') return palette.nodes.step;
+    if (tone === 'warm') return palette.nodes.split;
+    if (tone) {
+      if (tone === 'strong') return palette.nodes.start;
+      if (tone === 'accent') return palette.nodes.join;
+      if (tone === 'muted')
+        return theme === 'print'
+          ? palette.nodes.step
+          : { fill: '#FAF5DD', stroke: '#CAC08B', ink: '#655A26', radius: 12 };
+      throw new RangeError('Unknown node tone.');
+    }
     const { incoming, outgoing } = neighbors.get(id)!;
     let role: NodeRole = 'step';
     if (!incoming.size && outgoing.size) role = 'start';

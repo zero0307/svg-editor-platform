@@ -51,7 +51,8 @@ export class SvgTools {
     drawPanels(session, chart, graphicId);
     drawEdges(session, chart, nodes, paint.connector, graphicId);
     for (const n of nodes.values()) {
-      const nodePaint = paint.node(n.id);
+      const oval = n.shape === 'ellipse';
+      const nodePaint = paint.node(n.id, n.tone);
       session.create({
         type: 'g',
         id: n.id,
@@ -60,13 +61,19 @@ export class SvgTools {
       });
       session.create(
         {
-          type: 'rect',
-          id: n.id + '-rect',
-          args: [...[n.x, n.y, n.width, n.height].map(String), nodePaint.fill],
+          type: oval ? 'ellipse' : 'rect',
+          id: n.id + (oval ? '-ellipse' : '-rect'),
+          args: [
+            ...(oval
+              ? [n.x + n.width / 2, n.y + n.height / 2, n.width / 2, n.height / 2]
+              : [n.x, n.y, n.width, n.height]
+            ).map(String),
+            nodePaint.fill,
+          ],
           presentation: {
             stroke: nodePaint.stroke,
             'stroke-width': '1.5',
-            rx: String(Math.min(nodePaint.radius, n.width / 4, n.height / 4)),
+            ...(oval ? {} : { rx: String(Math.min(nodePaint.radius, n.width / 4, n.height / 4)) }),
           },
         },
         n.id,

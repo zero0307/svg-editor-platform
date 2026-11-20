@@ -133,7 +133,7 @@ export function apply(ctx) {
       );
       const automatic = await inSession('svg_layout_flowchart', graph);
       // An explicitly positioned architecture diagram uses its supplied positions for publication.
-      const layout = input.width === undefined ? automatic : input;
+      const layout = input.width === undefined ? { ...input, ...automatic } : input;
       assert.deepEqual(layout.edges, graph.edges);
       assert.deepEqual(
         layout.nodes.map(({ id, label }) => ({ id, label })),
@@ -156,7 +156,10 @@ export function apply(ctx) {
         unresolvedEdges: [],
         inferredEdges: [],
       });
-      assert.equal(demoView.counts.rect, count + (layout.panels?.length ?? 0));
+      assert.equal(
+        (demoView.counts.rect ?? 0) + (demoView.counts.ellipse ?? 0),
+        count + (layout.panels?.length ?? 0),
+      );
       assert.ok(demoView.counts.text >= count);
       for (const { id } of graph.nodes) {
         const first = demoView.structure.find((s) => s.id === id + '-label');

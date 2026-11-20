@@ -12,7 +12,7 @@ const epsilon = 1e-7;
 const distance = (a: Point, b: Point) => Math.hypot(b.x - a.x, b.y - a.y);
 
 // Clip a segment against the open interior. Touching a node at its port is allowed.
-function crosses(a: Point, b: Point, node: ChartNode, gap = 0): boolean {
+export function crosses(a: Point, b: Point, node: ChartNode, gap = 0): boolean {
   // Most nodes lie outside this segment's bounding box on an unrolled graph.
   if (
     Math.max(a.x, b.x) < node.x - gap ||
@@ -21,6 +21,17 @@ function crosses(a: Point, b: Point, node: ChartNode, gap = 0): boolean {
     Math.min(a.y, b.y) > node.y + node.height + gap
   )
     return false;
+  if (node.shape === 'ellipse' && gap === 0) {
+    const rx = node.width / 2,
+      ry = node.height / 2;
+    const x = (a.x - node.x - rx) / rx,
+      y = (a.y - node.y - ry) / ry,
+      dx = (b.x - a.x) / rx,
+      dy = (b.y - a.y) / ry;
+    const norm = dx * dx + dy * dy,
+      t = norm ? Math.max(0, Math.min(1, -(x * dx + y * dy) / norm)) : 0;
+    return (x + t * dx) ** 2 + (y + t * dy) ** 2 < 1 - epsilon;
+  }
   let enter = 0,
     leave = 1;
   for (const [start, delta, low, high] of [
@@ -43,6 +54,20 @@ function ports(node: ChartNode, fraction: number) {
   const radius = Math.min(13, node.width / 4, node.height / 4);
   const x = node.x + radius + fraction * (node.width - 2 * radius),
     y = node.y + radius + fraction * (node.height - 2 * radius);
+  if (node.shape === 'ellipse') {
+    const rx = node.width / 2,
+      ry = node.height / 2,
+      cx = node.x + rx,
+      cy = node.y + ry;
+    const ox = rx * Math.sqrt(Math.max(0, 1 - ((y - cy) / ry) ** 2)),
+      oy = ry * Math.sqrt(Math.max(0, 1 - ((x - cx) / rx) ** 2));
+    return [
+      { x: cx - ox, y, dx: -1, dy: 0 },
+      { x: cx + ox, y, dx: 1, dy: 0 },
+      { x, y: cy - oy, dx: 0, dy: -1 },
+      { x, y: cy + oy, dx: 0, dy: 1 },
+    ];
+  }
   return [
     { x: node.x, y, dx: -1, dy: 0 },
     { x: node.x + node.width, y, dx: 1, dy: 0 },
@@ -52,6 +77,18 @@ function ports(node: ChartNode, fraction: number) {
 }
 
 function border(node: ChartNode, anchor: Point, dx: number, dy: number): Point {
+  if (node.shape === 'ellipse') {
+    const rx = node.width / 2,
+      ry = node.height / 2,
+      px = (anchor.x - node.x - rx) / rx,
+      py = (anchor.y - node.y - ry) / ry;
+    const vx = dx / rx,
+      vy = dy / ry,
+      norm = vx * vx + vy * vy,
+      dot = px * vx + py * vy;
+    const t = (-dot + Math.sqrt(Math.max(0, dot * dot + norm * (1 - px * px - py * py)))) / norm;
+    return { x: anchor.x + dx * t, y: anchor.y + dy * t };
+  }
   const tx = dx === 0 ? Infinity : ((dx > 0 ? node.x + node.width : node.x) - anchor.x) / dx;
   const ty = dy === 0 ? Infinity : ((dy > 0 ? node.y + node.height : node.y) - anchor.y) / dy;
   const t = Math.min(tx, ty);

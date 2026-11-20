@@ -42,7 +42,21 @@ export function wrapLabel(label: string, limit = maxContentWidth): LabelLine[] {
       if (line.width && total <= limit && line.width + total > limit && word.isWordLike) next('');
       for (const glyph of glyphs) {
         const width = advance(glyph);
-        if (line.width && line.width + width > limit) next('');
+        if (line.width && line.width + width > limit) {
+          // Keep a closing CJK punctuation mark with the previous complete grapheme.
+          const trailing = /^[。，、；：！？）》】」』]$/u.test(glyph)
+            ? segmenter.segment(line.text).containing(line.text.length - 1)
+            : undefined;
+          if (trailing && trailing.index > 0 && advance(trailing.segment) + width <= limit) {
+            const carry = trailing.segment,
+              carryWidth = advance(carry);
+            line.text = line.text.slice(0, trailing.index);
+            line.width -= carryWidth;
+            next('');
+            line.text = carry;
+            line.width = carryWidth;
+          } else next('');
+        }
         line.text += glyph;
         line.width += width;
       }

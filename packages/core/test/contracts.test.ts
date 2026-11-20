@@ -79,6 +79,7 @@ test('structured session consumer creates, saves and reads independently of CLI 
     { fill: 'currentColor' },
     { rx: '-1' },
     { rx: '1e999' },
+    { 'stroke-dasharray': '5 -4' },
     { 'font-weight': 'unavailable' },
   ]) {
     assert.throws(

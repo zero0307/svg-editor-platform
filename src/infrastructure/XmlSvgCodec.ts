@@ -126,7 +126,9 @@ export class XmlSvgCodec implements SvgCodec {
         throw new DomainError(`unsupported child elements in <${tag}>`);
       if (shape instanceof Group && this.nonWhitespaceText(element))
         throw new DomainError('unsupported text outside <text>');
-      document.add(shape, parent);
+      // collect() already reserved every explicit ID, and generated IDs use the same set.
+      // Each parsed shape is newly constructed. Validate the assembled tree once below.
+      parent.insert(shape);
       if (shape instanceof Group)
         children.forEach((child) => visit(child, shape, depth + 1, childContext));
     };
