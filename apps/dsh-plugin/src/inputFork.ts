@@ -48,7 +48,7 @@ export function inputFork(
     const width = widths[i]!;
     const text = dx
       ? {
-          x: (base.x + end.x - width) / 2 - (width > 12 ? 2 * dx : 0),
+          x: (base.x + end.x - width) / 2 - 2 * dx,
           y: end.y - (width > 12 ? 7 : 5),
         }
       : { x: end.x + 7, y: (base.y + end.y) / 2 + 4 };

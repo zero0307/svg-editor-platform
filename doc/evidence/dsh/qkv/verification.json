@@ -1,6 +1,6 @@
 {
   "plugin": "dsh-svg-editor-0.7.0.tgz",
-  "packageSha256": "053805a3c6b78fd3b501300827dbe733af6cbad83fc414bef4d5fbfbd2b18e23",
+  "packageSha256": "cab129a6e74b6a28d957e174f4bf2511284731b27408a7d1ef2a408dcfcb02be",
   "node": "v24.22.3",
   "dsh": "0.2.2-rc.5",
   "profile": "sdk-minimal",
@@ -43,7 +43,7 @@
       "warnings": [],
       "unresolvedEdges": [],
       "inferredEdges": [],
-      "svgSha256": "60bf27f57982ff8f7cff142ea9dc5b912b2b828c4ff072827ff1f98ad1db60b9"
+      "svgSha256": "d5891346afd51758568d76dee65624f550fa4a8eca49adabe83f8961cc814486"
     },
     {
       "sample": "60-forks",
@@ -59,7 +59,7 @@
       "warnings": [],
       "unresolvedEdges": [],
       "inferredEdges": [],
-      "svgSha256": "2a5c73d4274f12febfbb5ec78aced18b4518fa1e386181effaec395bcb844092"
+      "svgSha256": "36cca6cf4764812a3276c9bf13d3588f97f319dbe928402fba30362c387f345c"
     }
   ]
 }

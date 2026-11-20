@@ -54,6 +54,7 @@ function audit(svg, zoom, only, clearance = 3) {
     radius = clearance * zoom;
   for (const caption of captions) {
     const pixels = raster([caption]);
+    const previouslyClose = close;
     for (let i = 3; i < pixels.length; i += 4) {
       if (pixels[i] < 20) continue;
       ink++;
@@ -73,6 +74,13 @@ function audit(svg, zoom, only, clearance = 3) {
       }
       if (hit) close++;
     }
+    if (clearance && close > previouslyClose)
+      console.log(
+        caption.getAttribute('id'),
+        close - previouslyClose,
+        'glyph pixels within clearance at',
+        zoom + 'x',
+      );
     // Other captions are also obstacles, independently of their paint order.
     for (let i = 3; i < pixels.length; i += 4) if (pixels[i] >= 20) foreground[i] = 255;
   }
