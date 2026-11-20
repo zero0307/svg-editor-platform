@@ -1,5 +1,6 @@
+import { sessionData } from '@svgframe/core';
 import type {
-  CreateShapeRequest,
+  SessionShapeRequest,
   DocumentView,
   EditorSessionPort,
   FileStore,
@@ -21,11 +22,14 @@ export class Phase1EditorSession implements EditorSessionPort {
   init(width: number, height: number): void {
     this.editor.init(width, height);
   }
-  create(request: CreateShapeRequest, parentId?: string): void {
+  create(request: SessionShapeRequest, parentId?: string): void {
     // The whole session is private to a tool call. Keep a single candidate until save.
     const doc = this.editor.document();
     const parent = parentId === undefined ? doc.root : doc.container(parentId);
-    doc.add(this.factory.create(request.type, request.id, request.args), parent);
+    const shape = this.factory.create(request.type, request.id, request.args);
+    for (const [key, value] of Object.entries(sessionData(request)))
+      shape.preserveAttribute(key, value);
+    doc.add(shape, parent);
   }
   snapshot(): DocumentView {
     const doc = this.editor.document();

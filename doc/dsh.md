@@ -1,6 +1,6 @@
 # DeepSeek Harness SVG 插件
 
-当前验收版为 0.2.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
+当前开发版为 0.3.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 根据节点坐标、标签和连线生成可编辑 SVG，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
 
 ## 先跑四节点 demo
 
@@ -10,9 +10,15 @@
 npm run demo:dsh
 ```
 
-运行时真实创建 Agent，工作目录与宿主启动目录独立。它根据[输入文件](../apps/dsh-plugin/demo/review.json)依次调用布局、生成和检查工具。打开终端输出目录中的 `demo.svg`，从左到右应是「提交 → 评审／复核 → 通过」。在同目录的 `verification.json` 查看 `demo.inspected`，应为 4 个组、4 个矩形、4 个文本和 4 条线。修改输入后可运行 `npm run demo:dsh -- --input my-graph.json`。安装到自己的会话试用时，使用同目录中的 .tgz 和[插件使用说明](../apps/dsh-plugin/README.md)。
+运行时真实创建 Agent，工作目录与宿主启动目录独立。它根据[输入文件](../apps/dsh-plugin/demo/review.json)依次调用布局、生成和检查工具。打开终端输出目录中的 `demo.svg`，从左到右应是「提交 → 评审／复核 → 通过」。在同目录的 `verification.json` 查看 `demo.inspected`，当前版本的 `graph` 应有 4 个节点和 4 条边。修改输入后可运行 `npm run demo:dsh -- --input my-graph.json`。安装到自己的会话试用时，使用同目录中的 .tgz 和[插件使用说明](../apps/dsh-plugin/README.md)。
 
-本次交付留存了[实际生成的 SVG](evidence/dsh/demo/demo.svg) 和[三工具验收结果](evidence/dsh/demo/verification.json)。
+0.2.0 留存了[实际生成的 SVG](evidence/dsh/demo/demo.svg) 和[三工具验收结果](evidence/dsh/demo/verification.json)。
+
+## 0.3.0 有向边验收
+
+从下方的宿主环境运行 `npm run demo:dsh -- --input apps/dsh-plugin/demo/shortcut.json`。打开生成的 SVG，可看到「提交 → 审核 → 通过」和绕过「审核」的直达箭头。核对 `verification.json` 中的 `demo.inspected.graph`，边 e3 应为 `a → c`；独立宿主用例还保持布局不变、把 e3 反向，在另一文件中读回 `c → a`。[示例输入](../apps/dsh-plugin/demo/shortcut.json) · [实际 SVG](evidence/dsh/directed/shortcut.svg) · [0.3.0 宿主读回结果](evidence/dsh/directed/verification.json) · [真实宿主验收程序](../apps/dsh-plugin/verification/probe.mjs)
+
+`graph.nodes` 和 `graph.edges` 返回业务节点、标签和方向。新文件带有端点标记，读回时还核对连接线与节点边界。旧版按中心绘制的边只在端点均匹配唯一旧节点时推断，ID 列入 `inferredEdges`。无法识别的线或失去有效端点的边列入 `unresolvedEdges`。`counts` 和 `structure` 仍反映全部 SVG 元素，箭头的两翼属于绘制线段。局部连线可能相交；手工布局无法找到路径时工具报错，并保留现有文件。[接口决策](adr/0004-session-shape-data.md)
 
 ## 安装与使用
 
@@ -22,11 +28,11 @@ npm run demo:dsh
 npm ci
 npm pack --workspace dsh-svg-editor --pack-destination .
 dsh --profile svg-demo --from-default-profile sdk-minimal --dump-config
-dsh plugin --profile svg-demo add ./dsh-svg-editor-0.2.0.tgz
+dsh plugin --profile svg-demo add ./dsh-svg-editor-0.3.0.tgz
 dsh --profile svg-demo --dump-config
 ```
 
-使用已有的 web profile 时，将上面的 `svg-demo` 换成 `web`，安装后以 `dsh web` 启动会话。可以提问“生成一张开始与结束两节点的流程图并保存为 demo.svg，再读回检查文字”。也可按下面的参数调用工具。每个节点的坐标对应矩形左上角，连线根据两端节点中心绘制在矩形下方。直线连接要求端点为两个不同节点。
+使用已有的 web profile 时，将上面的 `svg-demo` 换成 `web`，安装后以 `dsh web` 启动会话。可以提问“生成一张开始与结束两节点的流程图并保存为 demo.svg，再读回检查文字”。也可按下面的参数调用工具。每个节点的坐标对应矩形左上角，连线从源节点边界出发，绕开遮挡的节点，并在目标边界画箭头。每条边的两端须为不同节点。
 
 ```json
 {
@@ -41,7 +47,7 @@ dsh --profile svg-demo --dump-config
 }
 ```
 
-将 `{"path":"demo.svg"}` 交给 `svg_inspect`，可看到 2 个 g、2 个 rect、2 个 text 和 1 条 line。读入范围沿用编辑器的六种 Phase 1 图形，缺少 ID 的图形会在结果中给出警告。工具卸载命令为 `dsh plugin --profile svg-demo remove dsh-svg-editor`。
+将 `{"path":"demo.svg"}` 交给 `svg_inspect`，应在 `graph` 中看到 2 个节点和 1 条从 start 到 end 的边。读入范围沿用编辑器的六种 Phase 1 图形，缺少 ID 的图形会在结果中给出警告。工具卸载命令为 `dsh plugin --profile svg-demo remove dsh-svg-editor`。
 
 ## 按课程要求复验
 
@@ -78,10 +84,12 @@ npm run verify:dsh
 
 2026-11-19 在 Apple Silicon Mac 上使用官方 DeepSeek Harness Desktop 0.2.2-rc.5、插件 `dsh-svg-editor@0.2.0` 和模型 DeepSeek-V4.1-Flash 完成。桌面应用使用自己的 `desktop` profile。[官方桌面版说明](https://github.com/deepseek-ai/deepseek-harness/blob/master/apps/desktop/README.zh.md#bundled-command-runtime)
 
+以下命令展示在当前分支安装 0.3.0 的方法。表中记录对应当时实测的 0.2.0。
+
 1. 在仓库根目录按上文安装依赖并运行 `npm pack --workspace dsh-svg-editor --pack-destination .`。首次使用桌面版时先启动一次，再用 ⌘Q 退出。从同一目录执行以下命令，将验收包安装到桌面版。
 
    ```sh
-   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.2.0.tgz"
+   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.3.0.tgz"
    ```
 
 2. 重新打开桌面应用，确认插件已启用并选择可用模型。在可写的工作区打开会话。首次复验请选择尚无 `桌面验收.svg` 的目录，后续复跑也可以换新的工作区。

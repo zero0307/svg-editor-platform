@@ -1,0 +1,105 @@
+{
+  "pluginPackage": "dsh-svg-editor-0.3.0.tgz",
+  "packageSha256": "970b9485067790d9cf94e4324aa9147379a220bf22bba14c96b1de61f9537529",
+  "dsh": "0.2.2-rc.5",
+  "node": "v24.22.3",
+  "profile": "sdk-minimal",
+  "directionChecks": [
+    {
+      "path": "bypass.svg",
+      "edge": {
+        "id": "e3",
+        "from": "A",
+        "to": "C"
+      },
+      "warnings": []
+    },
+    {
+      "path": "reverse.svg",
+      "edge": {
+        "id": "e3",
+        "from": "C",
+        "to": "A"
+      },
+      "warnings": []
+    }
+  ],
+  "legacyGraph": {
+    "nodes": [
+      {
+        "id": "start",
+        "label": "开始"
+      },
+      {
+        "id": "process",
+        "label": "处理"
+      },
+      {
+        "id": "done",
+        "label": "完成"
+      }
+    ],
+    "edges": [
+      {
+        "id": "start-process",
+        "from": "start",
+        "to": "process"
+      },
+      {
+        "id": "process-done",
+        "from": "process",
+        "to": "done"
+      }
+    ],
+    "inferredEdges": ["start-process", "process-done"],
+    "unresolvedEdges": []
+  },
+  "afterLiveUnload": [],
+  "afterUninstall": [],
+  "inspection": {
+    "width": 448,
+    "height": 96,
+    "counts": {
+      "g": 6,
+      "line": 11,
+      "rect": 3,
+      "text": 3
+    },
+    "graph": {
+      "nodes": [
+        {
+          "id": "a",
+          "label": "提交"
+        },
+        {
+          "id": "b",
+          "label": "审核"
+        },
+        {
+          "id": "c",
+          "label": "通过"
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1",
+          "from": "a",
+          "to": "b"
+        },
+        {
+          "id": "e2",
+          "from": "b",
+          "to": "c"
+        },
+        {
+          "id": "e3",
+          "from": "a",
+          "to": "c"
+        }
+      ],
+      "inferredEdges": [],
+      "unresolvedEdges": []
+    },
+    "warnings": []
+  }
+}

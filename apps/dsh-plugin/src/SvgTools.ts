@@ -2,6 +2,9 @@ import type { DocumentView, EditorSessionPort, ShapeView } from '@svgframe/core'
 
 import { indexFlowchart, type Chart } from './flowchart.js';
 
+import { drawEdges } from './drawEdges.js';
+import { readFlowchart } from './readFlowchart.js';
+
 function summarize(doc: DocumentView) {
   const counts = new Map<string, number>();
   const structure: { id: string; type: string; parent: string | null; text: string | null }[] = [];
@@ -18,7 +21,12 @@ export class SvgTools {
   constructor(private readonly newSession: () => EditorSessionPort) {}
   async inspect(path: string) {
     const { document, warnings } = await this.newSession().read(path);
-    return { path, ...summarize(document), warnings: [...warnings] };
+    return {
+      path,
+      ...summarize(document),
+      graph: readFlowchart(document),
+      warnings: [...warnings],
+    };
   }
   async createFlowchart(chart: Chart) {
     if (![chart.width, chart.height].every((n) => Number.isFinite(n) && n > 0))
@@ -34,20 +42,14 @@ export class SvgTools {
     }
     const session = this.newSession();
     session.init(chart.width, chart.height);
-    // Edges go behind node bodies in SVG paint order.
-    for (const edge of chart.edges) {
-      const from = nodes.get(edge.from)!;
-      const to = nodes.get(edge.to)!;
-      const args = [
-        from.x + from.width / 2,
-        from.y + from.height / 2,
-        to.x + to.width / 2,
-        to.y + to.height / 2,
-      ].map(String);
-      session.create({ type: 'line', id: edge.id, args: [...args, 'black'] });
-    }
+    drawEdges(session, chart, nodes);
     for (const n of nodes.values()) {
-      session.create({ type: 'g', id: n.id, args: [] });
+      session.create({
+        type: 'g',
+        id: n.id,
+        args: [],
+        dataAttributes: { 'data-dsh-role': 'node' },
+      });
       session.create(
         {
           type: 'rect',
@@ -60,7 +62,11 @@ export class SvgTools {
         {
           type: 'text',
           id: n.id + '-label',
-          args: [String(n.x + 4), String(n.y + n.height / 2), n.label],
+          args: [
+            String(n.x + Math.min(12, n.width / 8)),
+            String(n.y + n.height / 2 + Math.min(5, n.height / 8)),
+            n.label,
+          ],
         },
         n.id,
       );

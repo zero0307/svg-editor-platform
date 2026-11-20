@@ -38,6 +38,7 @@ function argumentError(error: unknown): never {
   if (error instanceof RangeError) throw new ToolArgsError([error.message]);
   throw error;
 }
+const idList = { type: 'array', required: true, items: { type: 'string' } } as const;
 const summary = {
   type: 'object',
   additionalProperties: false,
@@ -45,6 +46,12 @@ const summary = {
     path,
     width: number,
     height: number,
+    graph: {
+      type: 'object',
+      required: true,
+      additionalProperties: false,
+      properties: { nodes, edges, inferredEdges: idList, unresolvedEdges: idList },
+    },
     counts: { type: 'object', additionalProperties: true, required: true },
     structure: {
       type: 'array',
@@ -94,7 +101,7 @@ export function apply(ctx: Context): void {
     defineTool({
       name: 'svg_inspect',
       description:
-        'Read an SVG supported by the editor. Return canvas size, ordered structure, leaf text, type counts and import warnings.',
+        'Read an SVG supported by the editor. Return canvas size, ordered structure, leaf text, raw SVG counts, import warnings and graph nodes and directed edges. Use graph.edges for verified links, inferredEdges for legacy geometry and unresolvedEdges for unidentified links.',
       parameters: { path },
       output: {
         schema: summary,
@@ -107,7 +114,7 @@ export function apply(ctx: Context): void {
     defineTool({
       name: 'svg_create_flowchart',
       description:
-        'Create a new editable SVG with labeled rectangle nodes and straight connections. Choose a new .svg path. Coordinates are top-left canvas units.',
+        'Create a new editable SVG with labeled nodes and routed connectors with arrowheads. Choose a new .svg path. Coordinates are top-left canvas units.',
       parameters: {
         path,
         width: number,

@@ -47,3 +47,5 @@ DEC-04 中“undo回保存点”指保存后又编辑、再undo回到该状态�
 ```
 
 公开契约的首个实现和事务调用约定见 [ADR-0003](0003-public-extension-contracts.md)，状态为 Proposed。
+
+会话创建图形时传递 SVG 数据属性的约定见 [ADR-0004](0004-session-shape-data.md)。
