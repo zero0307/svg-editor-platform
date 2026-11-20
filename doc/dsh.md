@@ -40,6 +40,8 @@ node apps/dsh-plugin/verification/transformer-bench.mjs --style arc
 
 新版导入沿用 XML 编解码器的全局 ID 预检、自动分配和最终树校验，省去每插入一个已校验图元时的全树扫描。读回带方向的边时同步检查端点、连续性和箭头的实际方向。端点偏移、箭头缺翼或曲线切线被反转的边会列入 `graph.unresolvedEdges`。[回归用例](../apps/dsh-plugin/test/curves.test.ts) · [接口约定](adr/0006-dsh-quadratic.md)
 
+运行 `npm run verify:visual` 还会独立解析已导出的两份 SVG，并对当前实现重新生成的两份 SVG 执行同样的检查。按输入逐边核对方向、矩形或椭圆边界上的端点、连续性和箭头两翼。参考图的 25 条连接、发布流程的 6 条连接均通过，未检出穿过无关节点、越出画布、意外交叉或线段重叠。二次曲线细分至控制点相对弦中点偏差不超过 0.02 个画布单位，沿线以不超过 0.5 单位的间距检查节点边界。这个交叉检查用于两张有明确版式的验收图；稠密压力图另以拓扑一致性验收。[独立几何验收](../apps/dsh-plugin/verification/connector-audit.mjs)
+
 ## Transformer 架构图与性能验证
 
 概览采用原论文的编码器–解码器结构，左右各画一个代表层，以 ×6 表示重复。每个子层的旁路连接输入与 Add & Norm，编码器最后一层的输出为每个解码器交叉注意力层提供 K/V，查询来自解码器。生成时采用示例指定的双栏坐标。展开测试使用插件的通用自动布局。[原论文第 3 节及图 1](https://arxiv.org/html/1706.03762v7#S3) · [双栏输入](../apps/dsh-plugin/demo/transformer.json) · [实际 SVG](evidence/dsh/transformer/Transformer.svg)
