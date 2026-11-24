@@ -1,0 +1,51 @@
+{
+  "label": "final^{commit}",
+  "tagObject": "25c263bda5515816d59efb383a3790dd2c77df3a",
+  "commit": "e5621a68afd4731626d54566f17ba55885d1bc0f",
+  "node": "v26.13.0",
+  "platform": "win32 x64",
+  "installMethod": "npm ci --cache .npm-cache --prefer-offline (exit 0, 8 packages)",
+  "generatedBy": "node scripts/baseline/record.mjs --entry artifacts/baseline/final-tree/dist/src/bootstrap/main.js --tag final --update --evidence doc/evidence/baseline --install-method npm ci --cache .npm-cache --prefer-offline (exit 0, 8 packages)",
+  "generatedAt": "2026-11-24T12:25:25.887Z",
+  "entry": "artifacts/baseline/final-tree/dist/src/bootstrap/main.js",
+  "workRoot": "artifacts/baseline",
+  "goldenRoot": "test/fixtures/expected/baseline-final",
+  "sessions": [
+    {
+      "name": "basic",
+      "transcript": "doc/transcript/baseline-basic.txt",
+      "exitCode": 1,
+      "stdoutBytes": 1177,
+      "stderrBytes": 0,
+      "files": ["demo.svg"],
+      "goldenSha256": "049613c96169263690580aa5568cc2fcc310ce8ab8d3ed1b64c16913a3c37b76"
+    },
+    {
+      "name": "flowchart",
+      "transcript": "doc/transcript/baseline-flowchart.txt",
+      "exitCode": 0,
+      "stdoutBytes": 824,
+      "stderrBytes": 0,
+      "files": ["flowchart.svg"],
+      "goldenSha256": "c41da97390464e0e74d98756183412d1db52a638dbf7b7f67cfc9352b511fbf1"
+    },
+    {
+      "name": "io",
+      "transcript": "doc/transcript/baseline-io.txt",
+      "exitCode": 1,
+      "stdoutBytes": 643,
+      "stderrBytes": 0,
+      "files": ["other.svg", "saved.svg"],
+      "goldenSha256": "745be63f4ece6944bd68ea3a7ccb54c68b21f7ea38fa12051bfd70f2860314de"
+    },
+    {
+      "name": "dir",
+      "transcript": "doc/transcript/baseline-dir.txt",
+      "exitCode": 1,
+      "stdoutBytes": 65,
+      "stderrBytes": 0,
+      "files": [],
+      "goldenSha256": "dbd6f8dc713e62bdc7338bd080cbbe3720ac05adaacc3cd61840d58bf985e1a2"
+    }
+  ]
+}

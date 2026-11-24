@@ -1,0 +1,19 @@
+canvas 400x300 created
+rect#r created
+svg (400x300)
+└── rect#r  x=10 y=20 w=100 h=50 fill=red
+saved to saved.svg (1 elements)
+error: undo not allowed after io command
+error: undo not allowed after io command
+error: cannot read file: missing.svg
+warning: assigned id rect1 to unnamed <rect>
+read other.svg (7 elements)
+svg (400x300)
+├── rect#rect1  x=0 y=0 w=400 h=300 fill=#ffffff
+├── text#t1  (10,290) "imported"
+├── circle#c1  cx=50 cy=50 r=10
+├── g#g1
+│   ├── rect#r2  x=0 y=0 w=10 h=10
+│   └── circle#c2  cx=5 cy=5 r=2
+└── ellipse#e1  cx=1 cy=2 rx=3 ry=4
+saved to other.svg (7 elements)
