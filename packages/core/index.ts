@@ -61,12 +61,23 @@ export type { ShapeCreationRequest } from './ports/ShapeCreationRequest.js';
 export type { ShapeCreationService } from './ports/ShapeCreationService.js';
 export type { ShapeRestoreService } from './ports/ShapeRestoreService.js';
 export type { FileStore } from './ports/FileStore.js';
+export type { SvgCodec } from './ports/SvgCodec.js';
 export type {
   DirectoryEntry,
   DirectoryEntryKind,
   DirectoryReader,
 } from './ports/DirectoryReader.js';
 export type { EditorSessionPort } from './ports/EditorSessionPort.js';
+
+// Editing services: candidate-document session, attribute dispatch, structure policy.
+export { EditorSession } from './services/EditorSession.js';
+export { AttributeEditingService } from './services/AttributeEditingService.js';
+export { AttributeEditAction } from './services/AttributeEditAction.js';
+export { StructureService } from './services/StructureService.js';
+export { DeleteAction } from './services/DeleteAction.js';
+export { AddToAction } from './services/AddToAction.js';
+export { GroupAction } from './services/GroupAction.js';
+export { UngroupAction } from './services/UngroupAction.js';
 
 // Event boundary.
 export type {
@@ -89,6 +100,9 @@ export type { FakeShapeFactory } from './testing/FakeShapeCreationService.js';
 export { FakeShapeCreationService } from './testing/FakeShapeCreationService.js';
 export { FakeShapeRestoreService } from './testing/FakeShapeRestoreService.js';
 export { FakeDirectoryReader } from './testing/FakeDirectoryReader.js';
+export { FakeFileStore } from './testing/FakeFileStore.js';
+export { FakeSvgCodec } from './testing/FakeSvgCodec.js';
+export type { FakeSvgCodecOptions } from './testing/FakeSvgCodec.js';
 export { FakePluginContext } from './testing/FakePluginContext.js';
 export { FaultyAttributeHandler } from './testing/FaultyAttributeHandler.js';
 export { FaultyTreeDecorator } from './testing/FaultyTreeDecorator.js';

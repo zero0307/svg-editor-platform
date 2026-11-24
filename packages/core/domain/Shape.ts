@@ -39,6 +39,13 @@ export abstract class Shape implements ReadonlyShape {
    * The default accepts the node; plugins reject incomplete composite structures here.
    */
   validateInvariant(): void {}
+  /**
+   * Structural policy: may a generic `ungroup` dissolve this node? Leaves reject
+   * it; `Group` accepts it and composite containers can keep rejecting it.
+   */
+  canUngroup(): boolean {
+    return false;
+  }
   textContent(): string | null {
     return null;
   }
