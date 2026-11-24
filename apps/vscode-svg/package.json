@@ -1,0 +1,23 @@
+{
+  "name": "vscode-svg",
+  "displayName": "SVGFrame SVG",
+  "description": "Explorer decoration for SVG files and native Outline for SVG documents.",
+  "publisher": "svgframe",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "categories": [
+    "Other"
+  ],
+  "engines": {
+    "vscode": "^1.143.0"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/src/extension.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test \"dist/test/*.test.js\""
+  }
+}

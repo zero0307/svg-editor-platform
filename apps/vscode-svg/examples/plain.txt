@@ -1,0 +1,2 @@
+This plain text file must not get the [] Explorer badge.
+目录和普通文本文件都不应有标记。

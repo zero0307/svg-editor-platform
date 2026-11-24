@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="160" viewBox="0 0 320 160">
+  <rect
+    id="frame"
+    x="8"
+    y="8"
+    width="304"
+    height="144"
+    fill="#ffffff"
+    stroke="#333333"
+    stroke-width="2"
+  />
+  <text id="caption" x="24" y="48" font-size="20" fill="#222222">SVG Explorer badge</text>
+</svg>
