@@ -60,6 +60,7 @@ export type { PluginContext } from './extensions/PluginContext.js';
 export type { ShapeCreationRequest } from './ports/ShapeCreationRequest.js';
 export type { ShapeCreationService } from './ports/ShapeCreationService.js';
 export type { ShapeRestoreService } from './ports/ShapeRestoreService.js';
+export type { FileStore } from './ports/FileStore.js';
 export type {
   DirectoryEntry,
   DirectoryEntryKind,

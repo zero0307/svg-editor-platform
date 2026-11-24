@@ -257,6 +257,8 @@ VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转
 
 `DirectoryReader` 是 core 的公开端口，暴露 `cwd()` 与 `list(path)` 或等价的最小能力。`LocalDirectoryReader` 位于 host，适配 Node `process.cwd()` 和 `fs.readdir({ withFileTypes:true })`，在框架阶段完成；dir接入提交不再新增宿主运行逻辑。dir 插件只拿到该接口，负责直接子项的分类和稳定排序。排序采用大小写敏感的 JavaScript 字符串序比较（`a < b`），避免依赖机器 locale。符号链接显示 `[LINK]`，其余特殊项显示 `[OTHER]`，不跟随链接；顺序固定为目录、普通文件、链接、其他，各组按名称排序。标记与名称之间均为两个空格。包含隐藏项，过滤 `.`、`..`。此扩展标记需要测试，目录和普通文件仍按实验规定显示。
 
+实现落点（#9）：core 公开 `DirectoryReader`/`DirectoryEntryKind`（`'directory' | 'file' | 'link' | 'other'`）与框架节点补充的 `FileStore`（`packages/core/ports/FileStore.ts`）；host 包（`packages/host`）提供 `LocalDirectoryReader` 与 `LocalFileStore`。`LocalDirectoryReader.cwd()` 默认 `process.cwd()`、可注入 provider 以便测试且不调用 `process.chdir`；`list()` 只返回直接子项、按 dirent 分类、不递归、不跟随链接、不排序，失败统一 `cannot read directory: <path>`。`LocalFileStore` 保留 Phase 1 的原子保存：同目录临时文件 + rename，失败时清理临时文件并保持 `cannot read file: <path>`/`cannot write file: <path>` 文案；Windows 上对 `EPERM`/`EACCES`/`EBUSY` 做有上限退避重试。注意 core 端口用 `'link'`（不是 `'symlink'`），dir 插件按该值渲染 `[LINK]`，排序与标记仍归插件而不在 host 实现。
+
 实际 cwd 不因 read/save 或插件配置改变。测试通过端口替身控制失败和条目，通过临时目录验证真实组合；日志在该目录外生成。
 
 dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期对 `EditorSessionPort` 使用替身独立开发。接口采用结构化请求/结果，引用公开编辑会话和 codec，不启动 CLI 子进程后解析终端文字。dsh 注册工具与生命周期跟随其官方 API；它不是 CLI PluginModule，不能套用本项目的 contributes 或 activate 形状。外部 API 未验证前不把集成完成写入报告。
