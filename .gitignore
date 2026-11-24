@@ -6,3 +6,4 @@ artifacts/
 *.tmp
 .env*
 !.env.example
+doc/github/
