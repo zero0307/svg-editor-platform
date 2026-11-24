@@ -1,0 +1,34 @@
+{
+  "missingEmbedding": {
+    "status": "unverified",
+    "problems": ["Visible-text candidates for 词嵌入: 1; expected at least 2."],
+    "detail": "unsupported SVG root attribute: role"
+  },
+  "twoPortBoxes": {
+    "status": "failed",
+    "problems": ["Missing verified connection e_out → d_cross with shared input(s) K/V."],
+    "locations": [],
+    "detail": "35 nodes, 40 verified edges"
+  },
+  "damagedArrow": {
+    "status": "failed",
+    "problems": [
+      "Missing verified connection enc-norm2 → dec-cross with shared input(s) K/V.",
+      "Unresolved edge enc-norm2--dec-cross (incomplete arrow: K)."
+    ],
+    "locations": [
+      {
+        "id": "enc-norm2--dec-cross-port-K",
+        "x": 420,
+        "y": 416
+      }
+    ],
+    "detail": "21 nodes, 24 verified edges"
+  },
+  "intactReference": {
+    "status": "passed",
+    "problems": [],
+    "locations": [],
+    "detail": "21 nodes, 25 verified edges"
+  }
+}

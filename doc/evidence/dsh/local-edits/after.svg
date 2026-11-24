@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1680" viewBox="0 0 1500 1680">
+  <rect id="dsh-panel-1" rx="14" x="60" y="95" width="660" height="1540" fill="#FBF7EE" stroke="#DFD0AF" stroke-width="1"/>
+  <rect id="dsh-panel-2" rx="14" x="760" y="95" width="680" height="1540" fill="#FBF7EE" stroke="#DFD0AF" stroke-width="1"/>
+  <g id="e_src_emb" data-dsh-role="edge" data-dsh-from="e_src" data-dsh-to="e_emb">
+    <line id="dsh-line-1" data-dsh-part="route" stroke-linecap="round" x1="350" y1="1535" x2="350" y2="1482" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-2" data-dsh-part="arrow" stroke-linecap="round" x1="353.6" y1="1490" x2="350" y2="1482" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-3" data-dsh-part="arrow" stroke-linecap="round" x1="346.4" y1="1490" x2="350" y2="1482" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_emb_add" data-dsh-role="edge" data-dsh-from="e_emb" data-dsh-to="e_add">
+    <line id="dsh-line-4" data-dsh-part="route" stroke-linecap="round" x1="350" y1="1420" x2="350" y2="1330" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-5" data-dsh-part="arrow" stroke-linecap="round" x1="353.6" y1="1338" x2="350" y2="1330" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-6" data-dsh-part="arrow" stroke-linecap="round" x1="346.4" y1="1338" x2="350" y2="1330" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_pos_add" data-dsh-role="edge" data-dsh-from="e_pos" data-dsh-to="e_add">
+    <line id="dsh-line-7" data-dsh-part="route" stroke-linecap="round" x1="535" y1="1320.5471698113208" x2="394.40709369243456" y2="1305.6920702769364" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-8" data-dsh-part="arrow" stroke-linecap="round" x1="402.74107938326495" y1="1302.952602718261" x2="394.40709369243456" y2="1305.6920702769364" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-9" data-dsh-part="arrow" stroke-linecap="round" x1="401.9845360136362" y1="1310.1127453236754" x2="394.40709369243456" y2="1305.6920702769364" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_add_q" data-dsh-role="edge" data-dsh-from="e_add" data-dsh-to="e_q">
+    <line id="dsh-line-10" data-dsh-part="route" stroke-linecap="round" x1="331.5371668754063" y1="1274.553239037744" x2="287.1698113207547" y2="1211" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-11" data-dsh-part="arrow" stroke-linecap="round" x1="294.7010489647264" y1="1215.498939825117" x2="287.1698113207547" y2="1211" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-12" data-dsh-part="arrow" stroke-linecap="round" x1="288.79735076230327" y1="1219.6203895136011" x2="287.1698113207547" y2="1211" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_add_k" data-dsh-role="edge" data-dsh-from="e_add" data-dsh-to="e_k">
+    <line id="dsh-line-13" data-dsh-part="route" stroke-linecap="round" x1="350" y1="1272" x2="350" y2="1211" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-14" data-dsh-part="arrow" stroke-linecap="round" x1="353.6" y1="1219" x2="350" y2="1211" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-15" data-dsh-part="arrow" stroke-linecap="round" x1="346.4" y1="1219" x2="350" y2="1211" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_add_v" data-dsh-role="edge" data-dsh-from="e_add" data-dsh-to="e_v">
+    <line id="dsh-line-16" data-dsh-part="route" stroke-linecap="round" x1="368.4628331245937" y1="1274.553239037744" x2="412.8301886792453" y2="1211" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-17" data-dsh-part="arrow" stroke-linecap="round" x1="411.20264923769673" y1="1219.6203895136011" x2="412.8301886792453" y2="1211" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-18" data-dsh-part="arrow" stroke-linecap="round" x1="405.2989510352736" y1="1215.498939825117" x2="412.8301886792453" y2="1211" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_q_attn" data-dsh-role="edge" data-dsh-from="e_q" data-dsh-to="e_attn">
+    <line id="dsh-line-19" data-dsh-part="route" stroke-linecap="round" x1="292.44444444444446" y1="1179" x2="305.80555555555554" y2="1166" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-20" data-dsh-part="arrow" stroke-linecap="round" x1="302.5822259635751" y1="1174.1590530297003" x2="305.80555555555554" y2="1166" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-21" data-dsh-part="arrow" stroke-linecap="round" x1="297.56127025299025" y1="1168.9986263271549" x2="305.80555555555554" y2="1166" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_k_attn" data-dsh-role="edge" data-dsh-from="e_k" data-dsh-to="e_attn">
+    <line id="dsh-line-22" data-dsh-part="route" stroke-linecap="round" x1="350" y1="1179" x2="350" y2="1166" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-23" data-dsh-part="arrow" stroke-linecap="round" x1="353.6" y1="1174" x2="350" y2="1166" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-24" data-dsh-part="arrow" stroke-linecap="round" x1="346.4" y1="1174" x2="350" y2="1166" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_v_attn" data-dsh-role="edge" data-dsh-from="e_v" data-dsh-to="e_attn">
+    <line id="dsh-line-25" data-dsh-part="route" stroke-linecap="round" x1="407.55555555555554" y1="1179" x2="394.19444444444446" y2="1166" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-26" data-dsh-part="arrow" stroke-linecap="round" x1="402.43872974700975" y1="1168.9986263271549" x2="394.19444444444446" y2="1166" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-27" data-dsh-part="arrow" stroke-linecap="round" x1="397.4177740364249" y1="1174.1590530297003" x2="394.19444444444446" y2="1166" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_attn_an1" data-dsh-role="edge" data-dsh-from="e_attn" data-dsh-to="e_an1">
+    <line id="dsh-line-28" data-dsh-part="route" stroke-linecap="round" x1="350" y1="1080" x2="350" y2="1038" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-29" data-dsh-part="arrow" stroke-linecap="round" x1="353.6" y1="1046" x2="350" y2="1038" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-30" data-dsh-part="arrow" stroke-linecap="round" x1="346.4" y1="1046" x2="350" y2="1038" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_res_attn" data-dsh-role="edge" data-dsh-from="e_add" data-dsh-to="e_an1">
+    <line id="dsh-line-31" data-dsh-part="route" stroke-linecap="round" x1="305" y1="1301" x2="180" y2="1301" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-32" data-dsh-part="route" stroke-linecap="round" x1="180" y1="1301" x2="180" y2="1009" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-33" data-dsh-part="route" stroke-linecap="round" x1="180" y1="1009" x2="255" y2="1009" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-34" data-dsh-part="arrow" stroke-linecap="round" x1="247" y1="1012.6" x2="255" y2="1009" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-35" data-dsh-part="arrow" stroke-linecap="round" x1="247" y1="1005.4" x2="255" y2="1009" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_an1_ffn" data-dsh-role="edge" data-dsh-from="e_an1" data-dsh-to="e_ffn">
+    <line id="dsh-line-36" data-dsh-part="route" stroke-linecap="round" x1="350" y1="980" x2="350" y2="929" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-37" data-dsh-part="arrow" stroke-linecap="round" x1="353.6" y1="937" x2="350" y2="929" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-38" data-dsh-part="arrow" stroke-linecap="round" x1="346.4" y1="937" x2="350" y2="929" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_res_ffn" data-dsh-role="edge" data-dsh-from="e_an1" data-dsh-to="e_an2">
+    <line id="dsh-line-39" data-dsh-part="route" stroke-linecap="round" x1="445" y1="1009" x2="510" y2="1009" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-40" data-dsh-part="route" stroke-linecap="round" x1="510" y1="1009" x2="510" y2="794" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-41" data-dsh-part="route" stroke-linecap="round" x1="510" y1="794" x2="445" y2="794" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-42" data-dsh-part="arrow" stroke-linecap="round" x1="453" y1="790.4" x2="445" y2="794" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-43" data-dsh-part="arrow" stroke-linecap="round" x1="453" y1="797.6" x2="445" y2="794" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_ffn_an2" data-dsh-role="edge" data-dsh-from="e_ffn" data-dsh-to="e_an2">
+    <line id="dsh-line-44" data-dsh-part="route" stroke-linecap="round" x1="350" y1="865" x2="350" y2="823" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-45" data-dsh-part="arrow" stroke-linecap="round" x1="353.6" y1="831" x2="350" y2="823" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-46" data-dsh-part="arrow" stroke-linecap="round" x1="346.4" y1="831" x2="350" y2="823" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_an2_out" data-dsh-role="edge" data-dsh-from="e_an2" data-dsh-to="e_out">
+    <line id="dsh-line-47" data-dsh-part="route" stroke-linecap="round" x1="350" y1="765" x2="350" y2="725" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-48" data-dsh-part="arrow" stroke-linecap="round" x1="353.6" y1="733" x2="350" y2="725" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-49" data-dsh-part="arrow" stroke-linecap="round" x1="346.4" y1="733" x2="350" y2="725" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="e_out--d_cross" data-dsh-role="edge" data-dsh-from="e_out" data-dsh-to="d_cross" data-dsh-inputs="[&quot;K&quot;,&quot;V&quot;]">
+    <line id="dsh-line-1-edit-1" data-dsh-part="route" stroke-linecap="round" x1="455" y1="708.9391891891892" x2="886" y2="748.527027027027" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-2-edit-1" data-dsh-part="bus" stroke-linecap="round" x1="886" y1="729.527027027027" x2="886" y2="767.527027027027" stroke="#496979" stroke-width="1.65"/>
+    <g id="e_out--d_cross-port-K" data-dsh-part="port">
+      <line id="dsh-line-3-edit-1" data-dsh-part="branch" stroke-linecap="round" x1="886" y1="729.527027027027" x2="920" y2="729.527027027027" stroke="#496979" stroke-width="1.65"/>
+      <line id="dsh-line-4-edit-1" data-dsh-part="arrow" stroke-linecap="round" x1="912" y1="733.127027027027" x2="920" y2="729.527027027027" stroke="#496979" stroke-width="1.65"/>
+      <line id="dsh-line-5-edit-1" data-dsh-part="arrow" stroke-linecap="round" x1="912" y1="725.927027027027" x2="920" y2="729.527027027027" stroke="#496979" stroke-width="1.65"/>
+      <text id="e_out--d_cross-port-K-name" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="11" font-weight="700" x="897.04" y="724.527027027027" fill="#496979">K</text>
+    </g>
+    <g id="e_out--d_cross-port-V" data-dsh-part="port">
+      <line id="dsh-line-6-edit-1" data-dsh-part="branch" stroke-linecap="round" x1="886" y1="767.527027027027" x2="920" y2="767.527027027027" stroke="#496979" stroke-width="1.65"/>
+      <line id="dsh-line-7-edit-1" data-dsh-part="arrow" stroke-linecap="round" x1="912" y1="771.127027027027" x2="920" y2="767.527027027027" stroke="#496979" stroke-width="1.65"/>
+      <line id="dsh-line-8-edit-1" data-dsh-part="arrow" stroke-linecap="round" x1="912" y1="763.927027027027" x2="920" y2="767.527027027027" stroke="#496979" stroke-width="1.65"/>
+      <text id="e_out--d_cross-port-V-name" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="11" font-weight="700" x="897.04" y="762.527027027027" fill="#496979">V</text>
+    </g>
+  </g>
+  
+  
+  
+  <g id="d_tgt_emb" data-dsh-role="edge" data-dsh-from="d_tgt" data-dsh-to="d_emb">
+    <line id="dsh-line-62" data-dsh-part="route" stroke-linecap="round" x1="1090" y1="1370" x2="1090" y2="1312" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-63" data-dsh-part="arrow" stroke-linecap="round" x1="1093.6" y1="1320" x2="1090" y2="1312" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-64" data-dsh-part="arrow" stroke-linecap="round" x1="1086.4" y1="1320" x2="1090" y2="1312" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_emb_add" data-dsh-role="edge" data-dsh-from="d_emb" data-dsh-to="d_add">
+    <line id="dsh-line-65" data-dsh-part="route" stroke-linecap="round" x1="1090" y1="1250" x2="1090" y2="1203" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-66" data-dsh-part="arrow" stroke-linecap="round" x1="1093.6" y1="1211" x2="1090" y2="1203" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-67" data-dsh-part="arrow" stroke-linecap="round" x1="1086.4" y1="1211" x2="1090" y2="1203" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_pos_add" data-dsh-role="edge" data-dsh-from="d_pos" data-dsh-to="d_add">
+    <line id="dsh-line-68" data-dsh-part="route" stroke-linecap="round" x1="1250" y1="1164.204081632653" x2="1134.7982868819108" y2="1171.2572477419237" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-69" data-dsh-part="arrow" stroke-linecap="round" x1="1142.5633389226264" y1="1167.175095514853" x2="1134.7982868819108" y2="1171.2572477419237" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-70" data-dsh-part="arrow" stroke-linecap="round" x1="1143.0033313782387" y1="1174.3616389565225" x2="1134.7982868819108" y2="1171.2572477419237" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_add_q" data-dsh-role="edge" data-dsh-from="d_add" data-dsh-to="d_q">
+    <line id="dsh-line-71" data-dsh-part="route" stroke-linecap="round" x1="1066.7297962033488" y1="1149.178449283572" x2="1015" y2="1094" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-72" data-dsh-part="arrow" stroke-linecap="round" x1="1023.097862965955" y1="1097.374109569148" x2="1015" y2="1094" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-73" data-dsh-part="arrow" stroke-linecap="round" x1="1017.8451950961463" y1="1102.2984856970934" x2="1015" y2="1094" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_add_k" data-dsh-role="edge" data-dsh-from="d_add" data-dsh-to="d_k">
+    <line id="dsh-line-74" data-dsh-part="route" stroke-linecap="round" x1="1090" y1="1145" x2="1090" y2="1094" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-75" data-dsh-part="arrow" stroke-linecap="round" x1="1093.6" y1="1102" x2="1090" y2="1094" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-76" data-dsh-part="arrow" stroke-linecap="round" x1="1086.4" y1="1102" x2="1090" y2="1094" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_add_v" data-dsh-role="edge" data-dsh-from="d_add" data-dsh-to="d_v">
+    <line id="dsh-line-77" data-dsh-part="route" stroke-linecap="round" x1="1113.2702037966512" y1="1149.178449283572" x2="1165" y2="1094" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-78" data-dsh-part="arrow" stroke-linecap="round" x1="1162.1548049038536" y1="1102.2984856970934" x2="1165" y2="1094" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-79" data-dsh-part="arrow" stroke-linecap="round" x1="1156.902137034045" y1="1097.374109569148" x2="1165" y2="1094" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_q_mattn" data-dsh-role="edge" data-dsh-from="d_q" data-dsh-to="d_mattn">
+    <line id="dsh-line-80" data-dsh-part="route" stroke-linecap="round" x1="1019.4594594594595" y1="1062" x2="1036.4864864864865" y2="1048" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-81" data-dsh-part="arrow" stroke-linecap="round" x1="1032.593462037092" y1="1055.8615749463079" x2="1036.4864864864865" y2="1048" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-82" data-dsh-part="arrow" stroke-linecap="round" x1="1028.0207031600255" y1="1050.300111447173" x2="1036.4864864864865" y2="1048" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_k_mattn" data-dsh-role="edge" data-dsh-from="d_k" data-dsh-to="d_mattn">
+    <line id="dsh-line-83" data-dsh-part="route" stroke-linecap="round" x1="1090" y1="1062" x2="1090" y2="1048" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-84" data-dsh-part="arrow" stroke-linecap="round" x1="1093.6" y1="1056" x2="1090" y2="1048" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-85" data-dsh-part="arrow" stroke-linecap="round" x1="1086.4" y1="1056" x2="1090" y2="1048" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_v_mattn" data-dsh-role="edge" data-dsh-from="d_v" data-dsh-to="d_mattn">
+    <line id="dsh-line-86" data-dsh-part="route" stroke-linecap="round" x1="1160.5405405405406" y1="1062" x2="1143.5135135135135" y2="1048" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-87" data-dsh-part="arrow" stroke-linecap="round" x1="1151.9792968399745" y1="1050.300111447173" x2="1143.5135135135135" y2="1048" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-88" data-dsh-part="arrow" stroke-linecap="round" x1="1147.406537962908" y1="1055.8615749463079" x2="1143.5135135135135" y2="1048" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_mattn_an1" data-dsh-role="edge" data-dsh-from="d_mattn" data-dsh-to="d_an1">
+    <line id="dsh-line-89" data-dsh-part="route" stroke-linecap="round" x1="1086.1061946902655" y1="960" x2="1082.5663716814158" y2="920" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-90" data-dsh-part="arrow" stroke-linecap="round" x1="1086.8575658808388" y1="927.6515130753884" x2="1082.5663716814158" y2="920" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-91" data-dsh-part="arrow" stroke-linecap="round" x1="1079.6855946387466" y1="928.2862007959276" x2="1082.5663716814158" y2="920" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_res_attn" data-dsh-role="edge" data-dsh-from="d_add" data-dsh-to="d_an1">
+    <line id="dsh-line-92" data-dsh-part="route" stroke-linecap="round" x1="1045" y1="1174" x2="930" y2="1174" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-93" data-dsh-part="route" stroke-linecap="round" x1="930" y1="1174" x2="930" y2="891" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-94" data-dsh-part="route" stroke-linecap="round" x1="930" y1="891" x2="985" y2="891" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-95" data-dsh-part="arrow" stroke-linecap="round" x1="977" y1="894.6" x2="985" y2="891" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-96" data-dsh-part="arrow" stroke-linecap="round" x1="977" y1="887.4" x2="985" y2="891" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_an1_qcross" data-dsh-role="edge" data-dsh-from="d_an1" data-dsh-to="d_q_cross">
+    <line id="dsh-line-97" data-dsh-part="route" stroke-linecap="round" x1="1085.3703703703704" y1="862" x2="1087.2222222222222" y2="852" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-98" data-dsh-part="arrow" stroke-linecap="round" x1="1089.075925925926" y1="859.5833333333333" x2="1087.2222222222222" y2="852" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-99" data-dsh-part="arrow" stroke-linecap="round" x1="1082.7759259259258" y1="858.4166666666667" x2="1087.2222222222222" y2="852" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_q_cross_attn" data-dsh-role="edge" data-dsh-from="d_q_cross" data-dsh-to="d_cross">
+    <line id="dsh-line-100" data-dsh-part="route" stroke-linecap="round" x1="1090" y1="822" x2="1090" y2="811" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-101" data-dsh-part="arrow" stroke-linecap="round" x1="1093.465" y1="818.7" x2="1090" y2="811" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-102" data-dsh-part="arrow" stroke-linecap="round" x1="1086.535" y1="818.7" x2="1090" y2="811" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_res_cross" data-dsh-role="edge" data-dsh-from="d_an1" data-dsh-to="d_an2">
+    <line id="dsh-line-103" data-dsh-part="route" stroke-linecap="round" x1="1175" y1="891" x2="1270" y2="891" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-104" data-dsh-part="route" stroke-linecap="round" x1="1270" y1="891" x2="1270" y2="669" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-105" data-dsh-part="route" stroke-linecap="round" x1="1270" y1="669" x2="1175" y2="669" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-106" data-dsh-part="arrow" stroke-linecap="round" x1="1183" y1="665.4" x2="1175" y2="669" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-107" data-dsh-part="arrow" stroke-linecap="round" x1="1183" y1="672.6" x2="1175" y2="669" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_cross_an2" data-dsh-role="edge" data-dsh-from="d_cross" data-dsh-to="d_an2">
+    <line id="dsh-line-108" data-dsh-part="route" stroke-linecap="round" x1="1084.8936170212767" y1="715" x2="1083.0851063829787" y2="698" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-109" data-dsh-part="arrow" stroke-linecap="round" x1="1087.5111949071716" y1="705.5742815088962" x2="1083.0851063829787" y2="698" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-110" data-dsh-part="arrow" stroke-linecap="round" x1="1080.3515947322821" y1="706.3359411019695" x2="1083.0851063829787" y2="698" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_an2_ffn" data-dsh-role="edge" data-dsh-from="d_an2" data-dsh-to="d_ffn">
+    <line id="dsh-line-111" data-dsh-part="route" stroke-linecap="round" x1="1082.7619047619048" y1="640" x2="1086.7619047619048" y2="598" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-112" data-dsh-part="arrow" stroke-linecap="round" x1="1089.587215722219" y1="606.3052765142124" x2="1086.7619047619048" y2="598" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-113" data-dsh-part="arrow" stroke-linecap="round" x1="1082.4196483195426" y1="605.6226510472909" x2="1086.7619047619048" y2="598" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_res_ffn" data-dsh-role="edge" data-dsh-from="d_an2" data-dsh-to="d_an3">
+    <line id="dsh-line-114" data-dsh-part="route" stroke-linecap="round" x1="985" y1="669" x2="930" y2="669" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-115" data-dsh-part="route" stroke-linecap="round" x1="930" y1="669" x2="930" y2="469" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-116" data-dsh-part="route" stroke-linecap="round" x1="930" y1="469" x2="985" y2="469" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-117" data-dsh-part="arrow" stroke-linecap="round" x1="977" y1="472.6" x2="985" y2="469" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-118" data-dsh-part="arrow" stroke-linecap="round" x1="977" y1="465.4" x2="985" y2="469" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_ffn_an3" data-dsh-role="edge" data-dsh-from="d_ffn" data-dsh-to="d_an3">
+    <line id="dsh-line-119" data-dsh-part="route" stroke-linecap="round" x1="1086.421052631579" y1="530" x2="1083.0526315789473" y2="498" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-120" data-dsh-part="arrow" stroke-linecap="round" x1="1087.4703294856088" y1="505.5791783991063" x2="1083.0526315789473" y2="498" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-121" data-dsh-part="arrow" stroke-linecap="round" x1="1080.3098902245745" y1="506.33290884763625" x2="1083.0526315789473" y2="498" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_an3_linear" data-dsh-role="edge" data-dsh-from="d_an3" data-dsh-to="d_linear">
+    <line id="dsh-line-122" data-dsh-part="route" stroke-linecap="round" x1="1082.9591836734694" y1="440" x2="1086.8367346938776" y2="402" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-123" data-dsh-part="arrow" stroke-linecap="round" x1="1089.6060281028829" y1="410.32412241709835" x2="1086.8367346938776" y2="402" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-124" data-dsh-part="arrow" stroke-linecap="round" x1="1082.443222276658" y1="409.59322386340193" x2="1086.8367346938776" y2="402" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_linear_softmax" data-dsh-role="edge" data-dsh-from="d_linear" data-dsh-to="d_softmax">
+    <line id="dsh-line-125" data-dsh-part="route" stroke-linecap="round" x1="1090" y1="340" x2="1090" y2="302" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-126" data-dsh-part="arrow" stroke-linecap="round" x1="1093.6" y1="310" x2="1090" y2="302" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-127" data-dsh-part="arrow" stroke-linecap="round" x1="1086.4" y1="310" x2="1090" y2="302" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="d_softmax_probs" data-dsh-role="edge" data-dsh-from="d_softmax" data-dsh-to="d_probs">
+    <line id="dsh-line-128" data-dsh-part="route" stroke-linecap="round" x1="1090" y1="250" x2="1090" y2="219" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-129" data-dsh-part="arrow" stroke-linecap="round" x1="1093.6" y1="227" x2="1090" y2="219" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-130" data-dsh-part="arrow" stroke-linecap="round" x1="1086.4" y1="227" x2="1090" y2="219" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <text id="dsh-title" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="700" text-anchor="start" x="28" y="46" fill="#193B50">原版 Transformer 编码器–解码器架构（中文讲解版）</text>
+  <text id="dsh-panel-1-heading" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="17" font-weight="700" text-anchor="start" x="76" y="122" fill="#193B50">编码器 ENCODER · 一个代表层，重复 6 次</text>
+  <text id="dsh-panel-2-heading" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="17" font-weight="700" text-anchor="start" x="776" y="122" fill="#193B50">解码器 DECODER · 一个代表层，重复 6 次</text>
+  <g id="guide" data-dsh-role="node">
+    <rect id="guide-rect" rx="8" x="110" y="235" width="400" height="190" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="guide-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="start" x="130" y="266" fill="#18384A">读图提示（说明）</text>
+    <text id="guide-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="start" x="130" y="285" fill="#18384A">箭头 = 数据流</text>
+    <text id="guide-label-3" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="start" x="130" y="304" fill="#18384A">整体自下而上</text>
+    <text id="guide-label-4" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="start" x="130" y="323" fill="#18384A">左塔输出 → K / V</text>
+    <text id="guide-label-5" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="start" x="130" y="342" fill="#18384A">每塔展开 1 层</text>
+    <text id="guide-label-6" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="start" x="130" y="361" fill="#18384A">实际重复 6 次</text>
+    <text id="guide-label-7" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="start" x="130" y="380" fill="#18384A">残差绕行到</text>
+    <text id="guide-label-8" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="start" x="130" y="399" fill="#18384A">Add &amp; Norm</text>
+  </g>
+  <g id="e_src" data-dsh-role="node">
+    <rect id="e_src-rect" rx="13" x="200" y="1535" width="300" height="70" fill="#193B50" stroke="#193B50" stroke-width="1.5"/>
+    <text id="e_src-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1564.6" fill="#FFFFFF">源序列输入</text>
+    <text id="e_src-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1585.6" fill="#FFFFFF">「我 喜欢 猫」</text>
+  </g>
+  <g id="e_emb" data-dsh-role="node">
+    <rect id="e_emb-rect" rx="8" x="200" y="1420" width="300" height="62" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="e_emb-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1445.6" fill="#18384A">词嵌入</text>
+    <text id="e_emb-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1466.6" fill="#18384A">Embedding</text>
+  </g>
+  <g id="e_pos" data-dsh-role="node">
+    <rect id="e_pos-rect" rx="8" x="535" y="1300" width="160" height="58" fill="#FFF0D8" stroke="#B67B2E" stroke-width="1.5"/>
+    <text id="e_pos-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="11.6" font-weight="600" text-anchor="middle" x="615" y="1316.704" fill="#684013">位置编码</text>
+    <text id="e_pos-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="11.6" font-weight="600" text-anchor="middle" x="615" y="1332.944" fill="#684013">Positional </text>
+    <text id="e_pos-label-3" data-dsh-part="label-continuation" data-dsh-break="soft" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="11.6" font-weight="600" text-anchor="middle" x="615" y="1349.184" fill="#684013">Encoding</text>
+  </g>
+  <g id="e_add" data-dsh-role="node">
+    <ellipse id="e_add-ellipse" cx="350" cy="1301" rx="45" ry="29" fill="#DFEFED" stroke="#59978F" stroke-width="1.5"/>
+    <text id="e_add-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1306.1" fill="#174D47">相加 ⊕</text>
+  </g>
+  <g id="e_q" data-dsh-role="node">
+    <rect id="e_q-rect" rx="8" x="248" y="1179" width="56" height="32" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="e_q-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="276" y="1200.1" fill="#18384A">Q</text>
+  </g>
+  <g id="e_k" data-dsh-role="node">
+    <rect id="e_k-rect" rx="8" x="322" y="1179" width="56" height="32" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="e_k-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1200.1" fill="#18384A">K</text>
+  </g>
+  <g id="e_v" data-dsh-role="node">
+    <rect id="e_v-rect" rx="8" x="396" y="1179" width="56" height="32" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="e_v-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="424" y="1200.1" fill="#18384A">V</text>
+  </g>
+  <g id="e_attn" data-dsh-role="node">
+    <rect id="e_attn-rect" rx="8" x="190" y="1080" width="320" height="86" fill="#DFEFED" stroke="#59978F" stroke-width="1.5"/>
+    <text id="e_attn-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1107.1" fill="#174D47">多头自注意力</text>
+    <text id="e_attn-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1128.1" fill="#174D47">Multi-Head</text>
+    <text id="e_attn-label-3" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1149.1" fill="#174D47">Self-Attention</text>
+  </g>
+  <g id="e_an1" data-dsh-role="node">
+    <rect id="e_an1-rect" rx="8" x="255" y="980" width="190" height="58" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="e_an1-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1003.6" fill="#18384A">Add &amp; Norm</text>
+    <text id="e_an1-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="1024.6" fill="#18384A">残差 + 层归一化</text>
+  </g>
+  <g id="e_ffn" data-dsh-role="node">
+    <rect id="e_ffn-rect" rx="8" x="200" y="865" width="300" height="64" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="e_ffn-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="891.6" fill="#18384A">前馈网络</text>
+    <text id="e_ffn-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="912.6" fill="#18384A">FFN</text>
+  </g>
+  <g id="e_an2" data-dsh-role="node">
+    <rect id="e_an2-rect" rx="8" x="255" y="765" width="190" height="58" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="e_an2-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="788.6" fill="#18384A">Add &amp; Norm</text>
+    <text id="e_an2-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="809.6" fill="#18384A">残差 + 层归一化</text>
+  </g>
+  <g id="e_out" data-dsh-role="node">
+    <rect id="e_out-rect" rx="12.5" x="245" y="675" width="210" height="50" fill="#193B50" stroke="#193B50" stroke-width="1.5"/>
+    <text id="e_out-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="694.6" fill="#FFFFFF">编码器最终输出</text>
+    <text id="e_out-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="350" y="715.6" fill="#FFFFFF">Encoder Output</text>
+  </g>
+  <g id="e_badge" data-dsh-role="node">
+    <rect id="e_badge-rect" rx="13" x="85" y="145" width="110" height="58" fill="#193B50" stroke="#193B50" stroke-width="1.5"/>
+    <text id="e_badge-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="140" y="168.6" fill="#FFFFFF">代表层</text>
+    <text id="e_badge-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="140" y="189.6" fill="#FFFFFF">× 6</text>
+  </g>
+  <g id="d_tgt" data-dsh-role="node">
+    <rect id="d_tgt-rect" rx="13" x="940" y="1370" width="300" height="70" fill="#193B50" stroke="#193B50" stroke-width="1.5"/>
+    <text id="d_tgt-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1399.6" fill="#FFFFFF">右移目标序列</text>
+    <text id="d_tgt-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1420.6" fill="#FFFFFF">〈BOS〉我 喜欢</text>
+  </g>
+  <g id="d_emb" data-dsh-role="node">
+    <rect id="d_emb-rect" rx="8" x="940" y="1250" width="300" height="62" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_emb-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1275.6" fill="#18384A">词嵌入</text>
+    <text id="d_emb-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1296.6" fill="#18384A">Embedding</text>
+  </g>
+  <g id="d_pos" data-dsh-role="node">
+    <rect id="d_pos-rect" rx="8" x="1250" y="1130" width="170" height="58" fill="#FFF0D8" stroke="#B67B2E" stroke-width="1.5"/>
+    <text id="d_pos-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="11.6" font-weight="600" text-anchor="middle" x="1335" y="1146.704" fill="#684013">位置编码</text>
+    <text id="d_pos-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="11.6" font-weight="600" text-anchor="middle" x="1335" y="1162.944" fill="#684013">Positional </text>
+    <text id="d_pos-label-3" data-dsh-part="label-continuation" data-dsh-break="soft" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="11.6" font-weight="600" text-anchor="middle" x="1335" y="1179.184" fill="#684013">Encoding</text>
+  </g>
+  <g id="d_add" data-dsh-role="node">
+    <ellipse id="d_add-ellipse" cx="1090" cy="1174" rx="45" ry="29" fill="#DFEFED" stroke="#59978F" stroke-width="1.5"/>
+    <text id="d_add-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1179.1" fill="#174D47">相加 ⊕</text>
+  </g>
+  <g id="d_q" data-dsh-role="node">
+    <rect id="d_q-rect" rx="8" x="972" y="1062" width="56" height="32" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_q-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1000" y="1083.1" fill="#18384A">Q</text>
+  </g>
+  <g id="d_k" data-dsh-role="node">
+    <rect id="d_k-rect" rx="8" x="1062" y="1062" width="56" height="32" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_k-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1083.1" fill="#18384A">K</text>
+  </g>
+  <g id="d_v" data-dsh-role="node">
+    <rect id="d_v-rect" rx="8" x="1152" y="1062" width="56" height="32" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_v-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1180" y="1083.1" fill="#18384A">V</text>
+  </g>
+  <g id="d_mattn" data-dsh-role="node">
+    <rect id="d_mattn-rect" rx="8" x="940" y="960" width="300" height="88" fill="#DFEFED" stroke="#59978F" stroke-width="1.5"/>
+    <text id="d_mattn-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="988" fill="#174D47">掩码多头自注意力</text>
+    <text id="d_mattn-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1007" fill="#174D47">Masked</text>
+    <text id="d_mattn-label-3" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1026" fill="#174D47">Self-Attention</text>
+  </g>
+  <g id="d_an1" data-dsh-role="node">
+    <rect id="d_an1-rect" rx="8" x="985" y="862" width="190" height="58" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_an1-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1080" y="885.6" fill="#18384A">Add &amp; Norm</text>
+    <text id="d_an1-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1080" y="906.6" fill="#18384A">残差 + 层归一化</text>
+  </g>
+  <g id="d_q_cross" data-dsh-role="node">
+    <rect id="d_q_cross-rect" rx="7.5" x="1062" y="822" width="56" height="30" fill="#FFF0D8" stroke="#B67B2E" stroke-width="1.5"/>
+    <text id="d_q_cross-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="842.1" fill="#684013">Q</text>
+  </g>
+  <g id="d_cross" data-dsh-role="node">
+    <rect id="d_cross-rect" rx="8" x="920" y="715" width="340" height="96" fill="#DFEFED" stroke="#59978F" stroke-width="1.5"/>
+    <text id="d_cross-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="747.1" fill="#174D47">多头交叉注意力</text>
+    <text id="d_cross-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="768.1" fill="#174D47">Multi-Head</text>
+    <text id="d_cross-label-3" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="789.1" fill="#174D47">Cross-Attention</text>
+  </g>
+  
+  
+  <g id="d_an2" data-dsh-role="node">
+    <rect id="d_an2-rect" rx="8" x="985" y="640" width="190" height="58" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_an2-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1080" y="663.6" fill="#18384A">Add &amp; Norm</text>
+    <text id="d_an2-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1080" y="684.6" fill="#18384A">残差 + 层归一化</text>
+  </g>
+  <g id="d_ffn" data-dsh-role="node">
+    <rect id="d_ffn-rect" rx="8" x="940" y="530" width="300" height="68" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_ffn-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="558.6" fill="#18384A">前馈网络</text>
+    <text id="d_ffn-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="579.6" fill="#18384A">FFN</text>
+  </g>
+  <g id="d_an3" data-dsh-role="node">
+    <rect id="d_an3-rect" rx="8" x="985" y="440" width="190" height="58" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_an3-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1080" y="463.6" fill="#18384A">Add &amp; Norm</text>
+    <text id="d_an3-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1080" y="484.6" fill="#18384A">残差 + 层归一化</text>
+  </g>
+  <g id="d_linear" data-dsh-role="node">
+    <rect id="d_linear-rect" rx="8" x="940" y="340" width="300" height="62" fill="#F3F7FA" stroke="#8CA6B3" stroke-width="1.5"/>
+    <text id="d_linear-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="365.6" fill="#18384A">线性投影</text>
+    <text id="d_linear-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="386.6" fill="#18384A">Linear</text>
+  </g>
+  <g id="d_softmax" data-dsh-role="node">
+    <rect id="d_softmax-rect" rx="8" x="940" y="250" width="300" height="52" fill="#DFEFED" stroke="#59978F" stroke-width="1.5"/>
+    <text id="d_softmax-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="270.6" fill="#174D47">Softmax</text>
+    <text id="d_softmax-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="291.6" fill="#174D47">归一化</text>
+  </g>
+  <g id="d_probs" data-dsh-role="node">
+    <rect id="d_probs-rect" rx="13" x="940" y="155" width="300" height="64" fill="#193B50" stroke="#193B50" stroke-width="1.5"/>
+    <text id="d_probs-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="181" fill="#FFFFFF">输出概率</text>
+    <text id="d_probs-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="202" fill="#FFFFFF">P(next|context)</text>
+  </g>
+  <g id="d_note" data-dsh-role="node">
+    <rect id="d_note-rect" rx="12" x="920" y="1490" width="340" height="58" fill="#FAF5DD" stroke="#CAC08B" stroke-width="1.5"/>
+    <text id="d_note-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1513.6" fill="#655A26">训练：目标右移一位</text>
+    <text id="d_note-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1090" y="1534.6" fill="#655A26">推理：输入已知前缀</text>
+  </g>
+  <g id="d_badge" data-dsh-role="node">
+    <rect id="d_badge-rect" rx="13" x="1320" y="145" width="100" height="58" fill="#193B50" stroke="#193B50" stroke-width="1.5"/>
+    <text id="d_badge-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1370" y="168.6" fill="#FFFFFF">代表层</text>
+    <text id="d_badge-label-2" data-dsh-part="label-continuation" data-dsh-break="lf" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="1370" y="189.6" fill="#FFFFFF">× 6</text>
+  </g>
+</svg>

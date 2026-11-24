@@ -9,7 +9,13 @@ export function apply(ctx) {
   setImmediate(async () => {
     try {
       await ctx.loader.await();
-      const names = ['svg_create_flowchart', 'svg_inspect', 'svg_layout_flowchart'];
+      const names = [
+        'svg_check_flowchart',
+        'svg_create_flowchart',
+        'svg_edit_flowchart',
+        'svg_inspect',
+        'svg_layout_flowchart',
+      ];
       const registered = () =>
         ctx.tools
           .schemas()
@@ -55,6 +61,52 @@ export function apply(ctx) {
       const svg = await readFile(path, 'utf8');
       assert.match(svg, /开始 &amp; 检查/);
       const inspected = await call('svg_inspect', { path });
+      const localEdit = await call('svg_edit_flowchart', {
+        path,
+        output: '局部编辑.svg',
+        operation: 'rename',
+        nodeId: 'start',
+        label: '已核对',
+      });
+      assert.equal(localEdit.verified, true);
+      assert.equal(localEdit.unrelatedNodesMoved, 0);
+      assert.match(await readFile(localEdit.preview, 'utf8'), /修改前/);
+      const requirements = await call('svg_check_flowchart', {
+        path: localEdit.path,
+        labels: [{ label: '已核对', minimum: 1 }],
+        connections: [{ from: 'start', to: 'end' }],
+      });
+      assert.equal(requirements.status, 'passed');
+      const missing = await call('svg_check_flowchart', {
+        path: localEdit.path,
+        requiredNodes: ['missing'],
+      });
+      assert.equal(missing.status, 'failed');
+      const forkFile = '具名端口.svg';
+      await call('svg_create_flowchart', {
+        path: forkFile,
+        width: 600,
+        height: 250,
+        nodes: [
+          { id: 'src', label: '来源', x: 30, y: 60, width: 100, height: 80 },
+          { id: 'dst', label: '目标', x: 350, y: 60, width: 160, height: 80 },
+        ],
+        edges: [{ id: 'fork', from: 'src', to: 'dst', inputs: ['K', 'V'] }],
+      });
+      const completeFork = await readFile(forkFile, 'utf8');
+      const brokenFork = completeFork.replace(/<line [^>]*data-dsh-part="arrow"[^>]*\/>/, '');
+      assert.notEqual(completeFork, brokenFork);
+      await writeFile('坏箭头.svg', brokenFork);
+      const damage = await call('svg_check_flowchart', {
+        path: '坏箭头.svg',
+        markPath: '标记.svg',
+        connections: [{ from: 'src', to: 'dst', inputs: ['K', 'V'] }],
+      });
+      assert.equal(damage.status, 'failed');
+      assert.match(damage.problems.join(' '), /incomplete arrow: K/);
+      assert.equal(damage.locations.length, 1);
+      assert.match(await readFile(damage.marked, 'utf8'), /stroke="#b31936"/);
+
       assert.deepEqual(inspected.counts, { line: 3, g: 3, rect: 2, text: 2 });
       assert.deepEqual(inspected.graph.edges, chart.edges);
       assert.equal(inspected.width, 320);
