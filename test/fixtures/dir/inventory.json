@@ -1,0 +1,56 @@
+{
+  "root": "test/fixtures/dir/tree",
+  "note": "dir 固定目录夹具的重建协议：逐项 path/type/顺序稳定；内容修改或增删条目必须同时更新本清单并说明理由。",
+  "entries": [
+    {
+      "path": ".hidden",
+      "type": "file",
+      "bytes": 7,
+      "sha256": "e084a3683ef795d1cdbf5e9b253f2ca1f783ae0d0d6e47e419acbbc4fc80bbfa"
+    },
+    {
+      "path": "Zeta.md",
+      "type": "file",
+      "bytes": 7,
+      "sha256": "128e1fbe9883cbc61fb305d0cda88a0bfc538962be27f72e4bdad74100b3bb69"
+    },
+    {
+      "path": "alpha.txt",
+      "type": "file",
+      "bytes": 6,
+      "sha256": "b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060"
+    },
+    {
+      "path": "sub-one",
+      "type": "directory"
+    },
+    {
+      "path": "sub-one/placeholder.txt",
+      "type": "file",
+      "bytes": 4,
+      "sha256": "2c8b08da5ce60398e1f19af0e5dccc744df274b826abe585eaba68c525434806"
+    },
+    {
+      "path": "sub-two",
+      "type": "directory"
+    },
+    {
+      "path": "sub-two/placeholder.txt",
+      "type": "file",
+      "bytes": 4,
+      "sha256": "27dd8ed44a83ff94d557f9fd0412ed5a8cbca69ea04922d88c01184a07300a5a"
+    },
+    {
+      "path": "with space.txt",
+      "type": "file",
+      "bytes": 6,
+      "sha256": "9d39745403e5faf662463b32d613eedf45037d0180983ae8bc87f538cf0c9653"
+    },
+    {
+      "path": "中文名.txt",
+      "type": "file",
+      "bytes": 13,
+      "sha256": "e92194e9b14f9986165332d50480080970b4eade242c7aff069e2804d6cc9153"
+    }
+  ]
+}

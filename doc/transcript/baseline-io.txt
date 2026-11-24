@@ -1,0 +1,13 @@
+# IO 屏障与失败后继续：save 后 undo/redo 均被拒绝，读取失败后仍继续执行后续命令，
+# 末尾无参数 save 使用最近一次成功 read/save 记住的路径。
+# 只存命令与注释；预期输出在 test/fixtures/expected/baseline-final/io/。
+init 400 300
+create rect r 10 20 100 50 red
+tree
+save saved.svg
+undo
+redo
+read missing.svg
+read other.svg
+tree
+save

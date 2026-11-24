@@ -1,0 +1,6 @@
+# P2 §2.2–2.3 dir 会话。Phase 1 基线没有 dir 命令，合法输出是 unknown command；
+# 固定目录夹具见 test/fixtures/dir/tree，运行目录是该夹具的副本，日志在所列目录之外。
+# 只存命令与注释；Phase 1 预期输出在 test/fixtures/expected/baseline-final/dir/。
+init 200 100
+dir
+tree

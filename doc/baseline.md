@@ -2,6 +2,8 @@
 
 本文保留 2026-11-15 方案审阅时的基线事实；初始化后的状态与复验结果见 [初始化记录](initialization.md)。来源为两份实验规格，以及 [Phase 1 仓库](https://github.com/zero0307/svg-editor-cli) 的完整只读克隆。
 
+2026-11-24 补充：`final^{commit}` 的逐字节基线与固定夹具已由 TASK-QA-01 生成，见 [基线证据](evidence/baseline/README.md)；本文其余内容保持审阅时快照，不随后续实现改写。
+
 ## 历史与远程
 
 - 当前 Phase 1 `main` 与 `final` 所指向的提交都是 `e5621a68afd4731626d54566f17ba55885d1bc0f`。

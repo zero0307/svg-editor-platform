@@ -2,6 +2,8 @@
 
 状态：设计方案，尚未执行 Phase 2 验证。责任按项目板块划分，不预先绑定个人；实施时在 Issue 中填写负责人和复核人。
 
+2026-11-24 更新：TASK-QA-01 已从 `final^{commit}` 的实际构建生成四个会话的逐字节 golden 与固定夹具（见 [基线证据](evidence/baseline/README.md)），补充 `test/baseline.test.ts` 回归测试。BASE-01 的 Phase 2 对比本身仍未执行，不能据此声明兼容性已通过。
+
 本计划把课程要求落实到可回放的命令、独立测试和证据文件。自动检查通过与人工验收通过分别记录；没有日志、截图或提交链接的项目保留为“待验证”。
 
 ## 1. 基线事实与迁移原则
@@ -25,6 +27,8 @@
 现有 `scripts/check-architecture.mjs` 只认识旧的 `src/` 分层，不能直接证明新包边界正确；框架阶段须升级为检查包依赖、公开导出和禁止跨包内部路径导入。`ci/github-actions.yml` 目前是模板，不是已启用的工作流；其历史权限说明不代表新仓库当前权限状态。
 
 基线准备步骤：保留完整 Git 历史和原始 `final`；在独立工作树运行原提交的 `npm ci`、`npm run check` 和既有视觉验证，保存环境与结果；生成固定会话输出及 SVG 后再开始重构。当前方案不把这些检查记为已通过。
+
+2026-11-24 执行记录：已用 `git archive 'final^{commit}'` 导出隔离树并执行 `npm ci`、构建与四个会话回放，golden 与命令见 [基线证据](evidence/baseline/README.md)；`final` 树上的 `npm run check` 与 `npm run verify:visual` 未重跑，其他平台未执行。
 
 ## 2. 需求追踪矩阵
 
@@ -73,6 +77,8 @@
 ### 3.1 输入和输出分离
 
 `doc/transcript/` 只存命令与注释，不含提示符、终端启动命令或预期输出。`test/fixtures/svg/` 存输入 SVG；`test/fixtures/expected/` 存审阅过的预期文本与产物；`doc/evidence/` 存实际运行记录。输入覆盖 P1 §6、§6.1A、§6.1B，以及 stats/dir 新增会话。
+
+已落地（TASK-QA-01）：`doc/transcript/baseline-{basic,flowchart,io,dir}.txt`、`test/fixtures/svg/`、`test/fixtures/dir/`、`test/fixtures/expected/baseline-final/`；`box`、`stats` 会话仍待对应插件节点。
 
 原任务书里的示例可能包含对齐空格、历史反馈和启动版本的示意文本。兼容测试必须保留 `final` 实际程序输出；若其与课程硬性要求冲突，先建 Issue 并记录裁决，不能为了让 diff 通过而直接改预期结果。
 
