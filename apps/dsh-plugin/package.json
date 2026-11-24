@@ -1,0 +1,27 @@
+{
+  "name": "@svgframe/dsh-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Minimal DSH bundle used to pin the DSH version and verify plugin load/unload and tool registration.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "editor-session-port.js",
+    "cordis.patch.yml"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
