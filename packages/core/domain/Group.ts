@@ -54,6 +54,10 @@ export class Group extends ContainerShape {
   override summary(): string {
     return this.styleSummary().trim();
   }
+  /** Ordinary groups can be dissolved by `ungroup`; composite containers override this. */
+  override canUngroup(): boolean {
+    return true;
+  }
   /**
    * Clone hook kept polymorphic: composite containers override this to retain
    * their actual plugin type while the shared member-copying logic stays in core.

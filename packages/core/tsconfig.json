@@ -13,6 +13,7 @@
     "extensions/**/*.ts",
     "ports/**/*.ts",
     "events/**/*.ts",
+    "services/**/*.ts",
     "testing/**/*.ts",
     "test/**/*.ts"
   ],

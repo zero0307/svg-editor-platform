@@ -139,7 +139,9 @@ CORE ..> PLUGIN : 调用已注册接口
 | `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | 真实 codec 选择与降级（#13）      |
 | `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 真实分发器与内置命令（#14）       |
 | `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | 行尾装饰管线与禁用生命周期（#10） |
-| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | 属性分派与事务（#7）              |
+| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）             |
+
+#7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；#10 的树装饰管线仍待实现。
 
 调用约定：
 
@@ -179,6 +181,8 @@ export interface AttributeHandler {
 
 克隆不得使用 `encode`→`decode`：那会混入导入警告、ID 补全、插件缺失降级和 XML 的信息损失。undo/redo 复用已验证的前后快照，不重新运行可能带副作用的处理器。查询拿到的是只读视图；公开 API 不返回可从查询路径修改当前文档的内部对象。
 
+实现落点（#7）：`packages/core/services/EditorSession.ts` 按上述顺序执行事务，内部 `EditHistory` 保存已验证快照且不向插件开放；`read`/`save` 通过公开 `FileStore` 与 `SvgCodec` 端口完成，成功后才替换文档/更新路径/设置屏障并发布事件；任一失败不改变文档、路径、屏障、undo/redo，也不发事件。`document()`/`hasDocument()`/无尺寸 `canvas` 是纯查询，不清 redo、不改屏障。带尺寸的 `canvas` 克隆候选后一次替换并设置屏障。
+
 保存和读取保持 Phase 1 屏障规则。`read` 先完整解析/校验，失败不替换当前文档；`save` 完成原子写入后才更新保存基准及屏障，写入失败不清理 dirty。`dir` 成功或失败不建立屏障，也不解开已有屏障；已有 redo 分支不能因查询被清空。命令失败保持全部状态这一约束覆盖内置命令与插件命令。
 
 事件建议仅包括 `documentInitialized`、`documentRead`、`documentSaved`、`editCommitted`、`undoCommitted`、`redoCommitted`、`canvasChanged`，携带只读文档快照和必要前后信息；事件只在对应步骤成功后发出，观察者故障经事件总线隔离并上报，不允许破坏已提交状态（[ADR-0003](adr/0003-core-public-contracts.md)）。树标签的事件处理不能抛错破坏已经完成的文档事务；框架捕获并报告装饰器故障，关闭该装饰器并继续使用文档。该策略需配套测试，且禁用标签后不应新增正常路径输出。
@@ -196,6 +200,8 @@ export interface AttributeHandler {
 box 内部维护必要子部件的角色与 ID，通过公开形状服务创建 `<id>-rect` 和 `<id>-label`。创建完整新子树后一次交给 `SvgDocument.add` 校验并加入，任何派生 ID 冲突整次失败。两个必要部件在克隆后根据角色/ID重新绑定，不能指向旧快照。
 
 首选结构保护策略：拒绝通过 `delete`、`addto`、`group`、`ungroup` 等普通命令移除或移走 box 的必要部件；允许删除整个 box，允许对必要部件执行合法属性和几何修改，允许增加额外子图形与嵌套 box。通用操作在候选文档执行后还须完整校验，构成第二道保护。整个 box 子树删除时不需要逐个对内部部件触发“单独移除”策略；API 应明确整个子树删除与对子部件的单独移出语义。
+
+实现落点（#7）：公开策略是 `Shape.canUngroup()`、`ContainerShape.canRemoveChild(child)`、`ContainerShape.canInsertChild(child)`；`StructureService` 提供 `remove`/`moveTo`/`group`/`ungroup`，并由 `DeleteAction`/`AddToAction`/`GroupAction`/`UngroupAction` 包装成候选文档编辑，命令只能经过这些动作。删除整棵复合图形只检查父容器，删除或移出必要部件由复合容器拒绝，文案为 `cannot remove necessary part: <id>`/`cannot move necessary part: <id>`；`ungroup` 先查复合规则再查 Phase 1 顶层限制，并按 P1 物化继承样式。复合容器必须在最终类型重写 `protected newContainer()`，否则 clone 会退回父类并丢失策略（#19 需遵守）。详见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
 读取已安装插件的错误 box 时首选拒绝整个读入，避免默默改变领域语义。缺失必要部件、角色类型错误、重复 ID、循环结构均不能生成不完整 box。未装 box 插件时则使用普通 g provider，保存已有 `data-kind` 元数据并明确说明语义降级；重复 ID 在语义分派前就拒绝，不能通过降级绕过。
 
@@ -280,4 +286,4 @@ dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期�
 - 清单验证在 activate 暂存后、正式提交前执行；A/B 共用事务。
 - 中立 XML 语法层与严格 SVG 语义层分离、完整子树恢复及变换只执行一次。
 
-以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核。
+以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
