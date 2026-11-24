@@ -4,6 +4,7 @@ import { graphicIds, indexFlowchart, type Chart } from './flowchart.js';
 
 import { drawPanels } from './drawPanels.js';
 import { drawEdges } from './drawEdges.js';
+import { portEdits } from './portEdits.js';
 import { readFlowchart } from './readFlowchart.js';
 
 import { chartPaint } from './chartTheme.js';
@@ -25,10 +26,13 @@ export class SvgTools {
   constructor(private readonly newSession: () => EditorSessionPort) {}
   async inspect(path: string) {
     const { document, warnings } = await this.newSession().read(path);
+    const graph = readFlowchart(document);
+    const edits = warnings.length || graph.unresolvedEdges.length ? [] : portEdits(graph);
     return {
       path,
+      ...(edits.length ? { availableEdits: edits } : {}),
+      graph,
       ...summarize(document),
-      graph: readFlowchart(document),
       warnings: [...warnings],
     };
   }

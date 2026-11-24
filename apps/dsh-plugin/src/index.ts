@@ -1,3 +1,4 @@
+import { registerEditTools } from './editTools.js';
 import type { Context } from '@deepseek-ai/cordis';
 import { ToolArgsError, defineTool, type ToolRunContext } from '@deepseek-ai/dsh-tools';
 import { DshFileStore } from './DshFileStore.js';
@@ -64,6 +65,14 @@ const summary = {
   additionalProperties: false,
   properties: {
     path,
+    availableEdits: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        properties: { tool: string, operation: string, from: string, to: string, inputs: idList },
+      },
+    },
     width: number,
     height: number,
     graph: {
@@ -92,6 +101,7 @@ const summary = {
 } as const;
 
 export function apply(ctx: Context): void {
+  registerEditTools(ctx);
   const tools = (exec: ToolRunContext) =>
     new SvgTools(
       () => new Phase1EditorSession(new DshFileStore(ctx, exec), { quadraticPaths: true }),
@@ -123,7 +133,7 @@ export function apply(ctx: Context): void {
     defineTool({
       name: 'svg_inspect',
       description:
-        'Read an SVG supported by the editor. Return canvas size, ordered structure, leaf text, raw SVG counts, import warnings and graph nodes and directed edges. Use graph.edges for verified links, inferredEdges for legacy geometry and unresolvedEdges for unidentified links.',
+        'Inspect an existing SVG before editing. If the requested shared trunk matches an availableEdits entry, call its tool with those node IDs, port names, the source path and a new output path. The edit preserves unrelated geometry, saves a comparison and verifies the file. Return canvas size, ordered structure, leaf text, raw SVG counts, import warnings and graph nodes and directed edges. Use graph.edges for verified links, inferredEdges for legacy geometry and unresolvedEdges for unidentified links.',
       parameters: { path },
       output: {
         schema: summary,

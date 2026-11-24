@@ -1,0 +1,715 @@
+{
+  "model": "deepseek-account/deepseek-flash",
+  "host": "macOS / DeepSeek Harness 0.2.2-rc.5 headless",
+  "pluginVersion": "0.8.1",
+  "packageSha256": "e477cfda0dca8732a7f67b48827d271f71078dd8b50cfa8c65562653cae2f5c8",
+  "conditions": {
+    "a": "no SVG plugin",
+    "d": "0.8.0 fixed tool JSON response",
+    "e": "0.8.1 with actionable inspect output",
+    "g": "0.8.0 explicitly instructed to use the edit and check tools; supplementary"
+  },
+  "prompts": {
+    "transformer": "请修改当前目录的 Transformer.svg，另存为 result.svg。只把编码器最终输出到解码器交叉注意力的 K 和 V 改成从一条可见的共用主干分叉，末端各有带 K、V 标签的箭头。Q 的来源和走线、其他模块的位置与配色、其他所有连线都保留。保留原件。请实际读回 result.svg，核对后简短报告。",
+    "approval": "请修改当前目录的审批.svg，在评审通过到发布之间插入一个“安全检查”节点。从评审到驳回的分支保持原样。保留现有节点的位置、配色和其余连线，保留原件，结果另存 result.svg；从磁盘读回核对后简短报告。"
+  },
+  "summary": {
+    "a": {
+      "transformer": {
+        "visualPass": 3,
+        "foreignEdits": 0,
+        "nativePass": 0,
+        "followUpRename": 0,
+        "usedEdit": 0,
+        "medianSeconds": 138.8,
+        "medianCalls": 27
+      },
+      "approval": {
+        "visualPass": 3,
+        "foreignEdits": 0,
+        "nativePass": 3,
+        "followUpRename": 3,
+        "usedEdit": 0,
+        "medianSeconds": 42.1,
+        "medianCalls": 12
+      }
+    },
+    "d": {
+      "transformer": {
+        "visualPass": 3,
+        "foreignEdits": 0,
+        "nativePass": 1,
+        "followUpRename": 3,
+        "usedEdit": 1,
+        "medianSeconds": 117.2,
+        "medianCalls": 20
+      },
+      "approval": {
+        "visualPass": 3,
+        "foreignEdits": 0,
+        "nativePass": 3,
+        "followUpRename": 3,
+        "usedEdit": 3,
+        "medianSeconds": 49.2,
+        "medianCalls": 19
+      }
+    },
+    "e": {
+      "transformer": {
+        "visualPass": 3,
+        "foreignEdits": 0,
+        "nativePass": 2,
+        "followUpRename": 3,
+        "usedEdit": 2,
+        "medianSeconds": 202.0,
+        "medianCalls": 41
+      },
+      "approval": {
+        "visualPass": 3,
+        "foreignEdits": 0,
+        "nativePass": 3,
+        "followUpRename": 3,
+        "usedEdit": 3,
+        "medianSeconds": 43.7,
+        "medianCalls": 20
+      }
+    }
+  },
+  "samples": {
+    "a1": {
+      "seconds": 219.71,
+      "tools": {
+        "bash": 21,
+        "read": 2,
+        "read_image": 12,
+        "edit": 1
+      },
+      "toolCount": 36,
+      "errors": [],
+      "svgSha256": "0e1e15232b93d2ba5c150a0f218a895808b433721b451d0bb9967fd3f2461fe3",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "failed",
+      "followUpRename": false,
+      "checkNotes": [
+        "Missing verified connection e_out → d_cross with shared input(s) K/V.",
+        "Unresolved edge e_out_v."
+      ]
+    },
+    "a2": {
+      "seconds": 138.79,
+      "tools": {
+        "bash": 14,
+        "glob": 1,
+        "read": 2,
+        "read_image": 9,
+        "edit": 1
+      },
+      "toolCount": 27,
+      "errors": [],
+      "svgSha256": "93e102b6a9b621d3acb8035ad63c975cb132e0e0fdcc3cb1fbfbe6034c423d1e",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "failed",
+      "followUpRename": false,
+      "checkNotes": [
+        "Missing verified connection e_out → d_cross with shared input(s) K/V.",
+        "Unresolved edge e_out_kv."
+      ]
+    },
+    "a3": {
+      "seconds": 98.03,
+      "tools": {
+        "bash": 16,
+        "read": 5,
+        "edit": 1,
+        "read_image": 2
+      },
+      "toolCount": 24,
+      "errors": [],
+      "svgSha256": "39d75b4c7755cc31d99cf385de7faaa2f6ce3d1b1ed1491e7327f4e1143bb077",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "failed",
+      "followUpRename": false,
+      "checkNotes": [
+        "Missing verified connection e_out → d_cross with shared input(s) K/V.",
+        "Unresolved edge e_out_kv."
+      ]
+    },
+    "a4": {
+      "seconds": 42.15,
+      "tools": {
+        "bash": 9,
+        "read": 2,
+        "write": 1
+      },
+      "toolCount": 12,
+      "errors": [],
+      "svgSha256": "33f9eb00e74be283c341d6a7049ce0fed35ea6d6938e273d63e48cba989c5b9c",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "a5": {
+      "seconds": 42.15,
+      "tools": {
+        "bash": 8,
+        "read": 2,
+        "read_image": 1
+      },
+      "toolCount": 11,
+      "errors": [],
+      "svgSha256": "875f77d01f732ebb5c50f6b76da8c3fd2638882a6db73596e39ea514bb9c7ddf",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "a6": {
+      "seconds": 40.47,
+      "tools": {
+        "bash": 10,
+        "read": 1,
+        "write": 1,
+        "read_image": 1
+      },
+      "toolCount": 13,
+      "errors": [],
+      "svgSha256": "9f588d3afa1de93f990532f41ab1281a366c02a1c506c333df4ceecaf81e4d0c",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "d1": {
+      "seconds": 117.2,
+      "tools": {
+        "bash": 13,
+        "svg_inspect": 2,
+        "read": 1,
+        "edit": 1,
+        "read_image": 2,
+        "svg_check_flowchart": 1
+      },
+      "toolCount": 20,
+      "errors": [],
+      "svgSha256": "2bf21c2b00131bc6e06789b43fb7f4524626cb9ba1a7ae8418976bcc0008bbfb",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "failed",
+      "followUpRename": true,
+      "checkNotes": ["Missing verified connection e_out → d_cross with shared input(s) K/V."]
+    },
+    "d2": {
+      "seconds": 97.28,
+      "tools": {
+        "bash": 9,
+        "svg_inspect": 2,
+        "read": 4,
+        "edit": 1,
+        "read_image": 2,
+        "svg_check_flowchart": 2
+      },
+      "toolCount": 20,
+      "errors": [],
+      "svgSha256": "25c3b9add38140b045a9a524bcce0554803828c62544e6cfe54126b740d264a1",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "failed",
+      "followUpRename": true,
+      "checkNotes": ["Missing verified connection e_out → d_cross with shared input(s) K/V."]
+    },
+    "d3": {
+      "seconds": 169.84,
+      "tools": {
+        "bash": 22,
+        "svg_inspect": 3,
+        "read": 5,
+        "svg_edit_flowchart": 1,
+        "read_image": 4,
+        "svg_check_flowchart": 2
+      },
+      "toolCount": 37,
+      "errors": [],
+      "svgSha256": "21ba44a4a3133c7298ff6ea625fd83c0999e9b7841859712e65eed7965227a0d",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "d4": {
+      "seconds": 59.63,
+      "tools": {
+        "bash": 12,
+        "svg_inspect": 3,
+        "read": 3,
+        "svg_edit_flowchart": 1,
+        "read_image": 2,
+        "write": 1,
+        "svg_check_flowchart": 1
+      },
+      "toolCount": 23,
+      "errors": [],
+      "svgSha256": "40e69155672b7c7fbc1804e73cad4f2575c295c8f97e38d125d0832df09f9180",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "d5": {
+      "seconds": 42.71,
+      "tools": {
+        "bash": 10,
+        "svg_inspect": 2,
+        "read": 2,
+        "svg_edit_flowchart": 2,
+        "svg_check_flowchart": 2,
+        "read_image": 1
+      },
+      "toolCount": 19,
+      "errors": ["Error: Supply a new node ID and label, keeping the existing edge endpoints."],
+      "svgSha256": "530aa47aa1edce95689eba948fe7a1dc70180eb7d895306532f1a5caf390f9a3",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "d6": {
+      "seconds": 49.17,
+      "tools": {
+        "bash": 9,
+        "svg_inspect": 3,
+        "read": 2,
+        "svg_edit_flowchart": 1,
+        "write": 1,
+        "svg_check_flowchart": 1,
+        "read_image": 1
+      },
+      "toolCount": 18,
+      "errors": [],
+      "svgSha256": "ed22524ddda65a15eedd810dc2e566c98125a8ae8966a82d5e8624593e7c0f8a",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "e1": {
+      "seconds": 126.19,
+      "tools": {
+        "bash": 23,
+        "svg_inspect": 2,
+        "read": 4,
+        "svg_edit_flowchart": 1,
+        "read_image": 3,
+        "edit": 2,
+        "svg_check_flowchart": 3
+      },
+      "toolCount": 38,
+      "errors": [],
+      "svgSha256": "f9185754d66fc91f8814d64357b79c908bbada0b1bdd05abe532fbb65b9864ab",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "e2": {
+      "seconds": 201.99,
+      "tools": {
+        "bash": 24,
+        "svg_inspect": 4,
+        "read": 6,
+        "read_image": 4,
+        "edit": 3
+      },
+      "toolCount": 41,
+      "errors": ["Error: unknown shape type: polyline (is the plugin loaded?)"],
+      "svgSha256": "c5d11f86e11c15ec88a9508fdad221662df80f510e6c2eba73caeb772accfcc6",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "failed",
+      "followUpRename": true,
+      "checkNotes": ["Missing verified connection e_out → d_cross with shared input(s) K/V."]
+    },
+    "e3": {
+      "seconds": 220.08,
+      "tools": {
+        "bash": 31,
+        "svg_inspect": 11,
+        "read": 4,
+        "svg_edit_flowchart": 1,
+        "read_image": 6,
+        "edit": 2,
+        "svg_check_flowchart": 2
+      },
+      "toolCount": 57,
+      "errors": [],
+      "svgSha256": "37b3b9b567926c4c0b9b660c0356671d6d2d206543d96445f4e78abaa5abe403",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "e4": {
+      "seconds": 68.33,
+      "tools": {
+        "bash": 10,
+        "svg_inspect": 2,
+        "read": 3,
+        "svg_edit_flowchart": 1,
+        "svg_check_flowchart": 2,
+        "read_image": 2
+      },
+      "toolCount": 20,
+      "errors": [],
+      "svgSha256": "a1c08f218b65671c1d6240e8413306695865133f21f73481dd50a2e404c7b1f8",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "e5": {
+      "seconds": 37.92,
+      "tools": {
+        "bash": 11,
+        "glob": 1,
+        "read": 3,
+        "svg_inspect": 3,
+        "svg_edit_flowchart": 2,
+        "svg_check_flowchart": 2,
+        "edit": 3
+      },
+      "toolCount": 25,
+      "errors": ["Error: Supply a new node ID and label, keeping the existing edge endpoints."],
+      "svgSha256": "c5b5a9c5950dd64e0e6f4ee4c9d9e6a7bf5da7961752f851cd85b0af948e2d7d",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "e6": {
+      "seconds": 43.71,
+      "tools": {
+        "bash": 8,
+        "read": 3,
+        "svg_inspect": 1,
+        "svg_edit_flowchart": 1,
+        "svg_check_flowchart": 2,
+        "edit": 3
+      },
+      "toolCount": 18,
+      "errors": [],
+      "svgSha256": "73d6db8ddcebe2b9ae1050c4ba93a8f2555dd9d8aef60d4061404b35acfb952e",
+      "originalSha256": "b4f10c22be11368207b924e4eaff95f30ac56d0a6952d838aa16b7c800a653a0",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "intoGate": 1,
+          "outOfGate": 1,
+          "bypass": 0
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    },
+    "g1": {
+      "seconds": 199.19,
+      "tools": {
+        "bash": 33,
+        "svg_inspect": 2,
+        "read": 6,
+        "svg_edit_flowchart": 5,
+        "svg_check_flowchart": 2,
+        "read_image": 7
+      },
+      "toolCount": 55,
+      "errors": [
+        "Error: cannot overwrite existing \"[test-workspace]/g1/result.svg\" without reading it first",
+        "Error: cannot overwrite existing \"[test-workspace]/g1/result.svg\" without reading it first",
+        "Error: cannot overwrite existing \"[test-workspace]/g1/result.svg\" without reading it first"
+      ],
+      "svgSha256": "2e6857230779e00bf6a66feb4c4569e16c9f6a7a0630aeb582fc10c562114202",
+      "originalSha256": "dd6d38d6609c61f89e4f0693147f69329a20d655a36c7560b4898fed800df9ac",
+      "assessment": {
+        "visualEdit": true,
+        "unrelatedGroupsChanged": [],
+        "canvasPreserved": true,
+        "geometry": {
+          "sourceContacts": 1,
+          "reachableArrowTips": 2,
+          "sharedTrunk": true,
+          "labels": true
+        },
+        "passed": true,
+        "originalPreserved": true
+      },
+      "nativeCheck": "passed",
+      "followUpRename": true,
+      "checkNotes": []
+    }
+  },
+  "developmentRuns": {
+    "b1": {
+      "completion": "completed",
+      "calls": 62,
+      "errors": [
+        "Error: tool \"svg_edit_flowchart\" returned invalid output: value is not lossless JSON",
+        "Error: Provide two or more different input names.",
+        "Error: tool \"svg_edit_flowchart\" returned invalid output: value is not lossless JSON",
+        "Error: Reporting fatalError \"Opening and ending tag mismatch: \"svg\" != \"g\"\" caused Error: Opening and ending tag mismatch: \"svg\" != \"g\"",
+        "Error: Reporting fatalError \"Opening and ending tag mismatch: \"svg\" != \"g\"\" caused Error: Opening and ending tag mismatch: \"svg\" != \"g\"",
+        "Error: Reporting fatalError \"Opening and ending tag mismatch: \"svg\" != \"g\"\" caused Error: Opening and ending tag mismatch: \"svg\" != \"g\"",
+        "Error: Reporting fatalError \"Opening and ending tag mismatch: \"svg\" != \"g\"\" caused Error: Opening and ending tag mismatch: \"svg\" != \"g\""
+      ]
+    },
+    "b2": {
+      "completion": "interrupted",
+      "calls": 10,
+      "errors": []
+    },
+    "b4": {
+      "completion": "completed",
+      "calls": 15,
+      "errors": []
+    },
+    "b5": {
+      "completion": "completed",
+      "calls": 14,
+      "errors": []
+    },
+    "b6": {
+      "completion": "completed",
+      "calls": 14,
+      "errors": []
+    },
+    "c1": {
+      "completion": "interrupted",
+      "calls": 6,
+      "errors": []
+    },
+    "c4": {
+      "completion": "completed",
+      "calls": 16,
+      "errors": []
+    },
+    "c5": {
+      "completion": "interrupted",
+      "calls": 3,
+      "errors": []
+    }
+  },
+  "method": "Each natural condition used three fresh, tool-choice-neutral sessions per task and byte-identical inputs. Visual checks allow raw SVG and check actual geometry and preserved SVG elements. Native checks and subsequent edits use the same plugin on every final file. Timing includes network/model latency and runs partially overlapped."
+}

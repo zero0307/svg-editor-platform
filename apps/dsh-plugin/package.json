@@ -1,6 +1,6 @@
 {
   "name": "dsh-svg-editor",
-  "version": "0.7.0",
+  "version": "0.8.1",
   "private": true,
   "type": "module",
   "description": "Inspect SVG documents and create editable flowcharts in DeepSeek Harness",
@@ -11,6 +11,7 @@
   "files": [
     "dist/src/*.js",
     "dist/src/session.cjs",
+    "dist/src/xml.cjs",
     "cordis.patch.yml",
     "xmldom-LICENSE"
   ],
@@ -41,7 +42,7 @@
     "@deepseek-ai/dsh-working-directory": "0.2.2-rc.5"
   },
   "scripts": {
-    "bundle": "esbuild ../../src/bootstrap/Phase1EditorSession.ts --bundle --platform=node --format=cjs --outfile=dist/src/session.cjs",
+    "bundle": "esbuild ../../src/bootstrap/Phase1EditorSession.ts --bundle --platform=node --format=cjs --outfile=dist/src/session.cjs && esbuild @xmldom/xmldom --bundle --platform=node --format=cjs --outfile=dist/src/xml.cjs",
     "build": "tsc -b && npm run bundle --silent",
     "test": "npm run build --silent && node --test dist/test/*.test.js",
     "prepack": "npm run build"

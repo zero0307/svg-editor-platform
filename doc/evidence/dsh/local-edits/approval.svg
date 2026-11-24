@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="850" height="390" viewBox="0 0 850 390">
+  <g id="submit-review" data-dsh-role="edge" data-dsh-from="request" data-dsh-to="review">
+    <line id="dsh-line-1" data-dsh-part="route" stroke-linecap="round" x1="138" y1="196" x2="238" y2="196" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-2" data-dsh-part="arrow" stroke-linecap="round" x1="230" y1="199.6" x2="238" y2="196" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-3" data-dsh-part="arrow" stroke-linecap="round" x1="230" y1="192.4" x2="238" y2="196" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="allow" data-dsh-role="edge" data-dsh-from="review" data-dsh-to="publish">
+    <line id="dsh-line-4" data-dsh-part="route" stroke-linecap="round" x1="346" y1="196" x2="688" y2="196" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-5" data-dsh-part="arrow" stroke-linecap="round" x1="680" y1="199.6" x2="688" y2="196" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-6" data-dsh-part="arrow" stroke-linecap="round" x1="680" y1="192.4" x2="688" y2="196" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <g id="deny" data-dsh-role="edge" data-dsh-from="review" data-dsh-to="reject">
+    <line id="dsh-line-7" data-dsh-part="route" stroke-linecap="round" x1="292" y1="222" x2="292" y2="285" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-8" data-dsh-part="arrow" stroke-linecap="round" x1="288.4" y1="277" x2="292" y2="285" stroke="#496979" stroke-width="1.65"/>
+    <line id="dsh-line-9" data-dsh-part="arrow" stroke-linecap="round" x1="295.6" y1="277" x2="292" y2="285" stroke="#496979" stroke-width="1.65"/>
+  </g>
+  <text id="dsh-title" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="32" font-weight="700" text-anchor="start" x="28" y="46" fill="#193B50">变更发布流程</text>
+  <g id="request" data-dsh-role="node">
+    <rect id="request-rect" rx="13" x="30" y="170" width="108" height="52" fill="#193B50" stroke="#193B50" stroke-width="1.5"/>
+    <text id="request-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="84" y="201.1" fill="#FFFFFF">提交</text>
+  </g>
+  <g id="review" data-dsh-role="node">
+    <rect id="review-rect" rx="8" x="238" y="170" width="108" height="52" fill="#FFF0D8" stroke="#B67B2E" stroke-width="1.5"/>
+    <text id="review-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="292" y="201.1" fill="#684013">评审</text>
+  </g>
+  <g id="publish" data-dsh-role="node">
+    <rect id="publish-rect" rx="13" x="688" y="170" width="108" height="52" fill="#166758" stroke="#166758" stroke-width="1.5"/>
+    <text id="publish-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="742" y="201.1" fill="#FFFFFF">发布</text>
+  </g>
+  <g id="reject" data-dsh-role="node">
+    <rect id="reject-rect" rx="12.5" x="238" y="285" width="108" height="50" fill="#166758" stroke="#166758" stroke-width="1.5"/>
+    <text id="reject-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="292" y="315.1" fill="#FFFFFF">驳回</text>
+  </g>
+</svg>
