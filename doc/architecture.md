@@ -121,7 +121,7 @@ CORE ..> PLUGIN : 调用已注册接口
 
 ## 4. 四扩展点及公共契约
 
-以下名称为接口设计草案，编码前通过契约 PR 固定签名和测试夹具。插件均由类或类实例实现，不能仅注册无归属自由函数。
+四个扩展点的契约已以可编译骨架发布于 `@svgframe/core`（[ADR-0003](adr/0003-core-public-contracts.md)，状态 Proposed）。插件均由类或类实例实现，不能仅注册无归属自由函数。下表是目标调用位置；本节点只交付接口、注册表、只读视图与测试替身，事务、编解码、加载与树装饰管线分别在 #7、#13、#8、#10 落地。
 
 | 接口               | 主要操作                                                  | 框架调用位置（目标）                      | 无可选实现时                                                                   |
 | ------------------ | --------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------ |
@@ -130,11 +130,27 @@ CORE ..> PLUGIN : 调用已注册接口
 | `TreeDecorator`    | 对只读树行返回可选后缀；接收提交后的文档事件              | core 树展示服务的行尾装饰管线             | 零后缀，Phase 1 树输出逐字节不变                                               |
 | `AttributeHandler` | 稳定注册名、纯 `handles`、候选文档上的 `apply`            | core 属性修改服务，被 Set 编辑事务调用    | 执行目标形状原有属性白名单与多态方法                                           |
 
-正式扩展点清单须再补“实际文件名与函数名、每个实现、违反契约的错误行为与测试”。上表是设计位置，不能作为已完成的验收证据。
+### 4.1 扩展点清单（初版）
+
+契约文件均位于 `packages/core`，公共入口只有包根的 `index.ts`（`exports` → `dist/index.js`）。注册名是稳定字符串：命令用命令名，图形用领域类型名，装饰器与属性处理器用标签/处理器名；注册表拒绝重复名并保持注册顺序。测试位于 `packages/core/test/`。
+
+| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                        |
+| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | --------------------------------- |
+| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | 真实 codec 选择与降级（#13）      |
+| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 真实分发器与内置命令（#14）       |
+| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | 行尾装饰管线与禁用生命周期（#10） |
+| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | 属性分派与事务（#7）              |
+
+调用约定：
+
+- provider 的 `matches` 是纯查询，只声明“显式语义命中”；标签默认恢复由 `defaultTag` 表达，两阶段选择与歧义拒绝在 #13 的 codec 中实现。
+- `Command.prepare` 返回 `requiresDocument` 与 `effect`（`query`/`edit`/`document`/`history`）；`edit` 附带一个 `EditAction`，`document`/`history` 附带操作对象；分发器只按元数据路由。`canvas` 无参数是 `query`，带参数是 `document`。
+- `EditorSessionPort.document()` 返回只读投影；查询上下文只持有该投影，编辑只能通过 `EditAction` 在候选文档上执行。
+- `TreeDecorator.decorate` 只读行上下文；提交后事件经 `EditorEventBus` 分发，观察者异常被隔离并上报。
 
 provider 使用的 `SvgElementView` 等中立数据接口也定义于 core 公开入口，DOM 到这些接口的适配由 svg-xml 实现；不能让 core 为声明恢复接口反向依赖 XML 包。
 
-建议的属性接口表达如下；`ReadonlyShape` 和 `EditableDocument` 均为 core 公开能力接口，字段保持封装：
+建议的属性接口表达如下（已按 [ADR-0003](adr/0003-core-public-contracts.md) 发布）；`ReadonlyShape` 和 `EditableDocument` 均为 core 公开能力接口，字段保持封装：
 
 ```ts
 export interface AttributeHandler {
@@ -165,7 +181,7 @@ export interface AttributeHandler {
 
 保存和读取保持 Phase 1 屏障规则。`read` 先完整解析/校验，失败不替换当前文档；`save` 完成原子写入后才更新保存基准及屏障，写入失败不清理 dirty。`dir` 成功或失败不建立屏障，也不解开已有屏障；已有 redo 分支不能因查询被清空。命令失败保持全部状态这一约束覆盖内置命令与插件命令。
 
-事件建议仅包括 `documentInitialized`、`documentRead`、`documentSaved`、`editCommitted`、`undoCommitted`、`redoCommitted`、`canvasChanged`，携带只读文档快照和必要前后信息。树标签的事件处理不能抛错破坏已经完成的文档事务；框架捕获并报告装饰器故障，关闭该装饰器并继续使用文档。该策略需配套测试，且禁用标签后不应新增正常路径输出。
+事件建议仅包括 `documentInitialized`、`documentRead`、`documentSaved`、`editCommitted`、`undoCommitted`、`redoCommitted`、`canvasChanged`，携带只读文档快照和必要前后信息；事件只在对应步骤成功后发出，观察者故障经事件总线隔离并上报，不允许破坏已提交状态（[ADR-0003](adr/0003-core-public-contracts.md)）。树标签的事件处理不能抛错破坏已经完成的文档事务；框架捕获并报告装饰器故障，关闭该装饰器并继续使用文档。该策略需配套测试，且禁用标签后不应新增正常路径输出。
 
 ## 6. box 在不改内核的情况下成立的前提
 
@@ -260,4 +276,4 @@ dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期�
 - 清单验证在 activate 暂存后、正式提交前执行；A/B 共用事务。
 - 中立 XML 语法层与严格 SVG 语义层分离、完整子树恢复及变换只执行一次。
 
-以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。
+以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核。
