@@ -208,11 +208,13 @@ box 包一次注册三类贡献：shape `box`、attribute `box-attributes`（处
 1. 中立 XML 语法层：不要求 CLI 白名单、不补 id，不实例化可编辑领域模型，产出元素名、可选 id、子元素与源码范围。Outline 直接使用它，可显示无 id 元素和 CLI 暂不支持的 SVG 标签。不完整 XML 可报告失败并返回空大纲。
 2. 严格 SVG 语义层：保留 Phase 1 导入约束、警告、坐标规范化、唯一 ID 及 schema 检查；通过 provider 恢复具体图形。CLI 和 dsh 的 SVG 编辑服务使用这一层。
 
+中立语法层已落地在 `packages/svg-xml`（#6）：公共入口 `parseSvgSyntax(source)` 返回 `{ ok: true; root } | { ok: false; message }`，元素带 `tag`、原始 `id`、直接文本、子元素与 `outerSpan`/`startTagSpan`/`nameSpan`；偏移统一为 0-based UTF-16 code unit、end 独占，行/列与 VSCode `Range` 转换由 `apps/vscode-svg` 完成。`xmldom` 不提供源码范围，语法层因此使用自写单遍扫描器，不依赖领域模型或 CLI 白名单；未知标签、重复标签、无 id 与同一行多元素都按源码位置保留。开放问题与取舍见 [ADR-0008](adr/0008-neutral-xml-syntax.md)。
+
 现有导入器在创建空 Group 后马上对节点施加变换，再读入子节点。box 需要完整子树后才能验证，因此不能简单地在现有 `fromSvg(tag)` 增加 box 特例。框架阶段先构建中立 SVG 中间树：全局预检 ID/命名空间/限制，逐叶规范化变换与继承属性，再以完整子树调用 provider 的恢复接口。明确每片叶子的几何只变换一次；恢复 box 后不能对整个子树再次施加累计变换。
 
 provider 选择由 SVG 标签与元数据匹配，允许普通 g 与标记 box 的特定匹配共存：先选择明确语义标记匹配，再使用标签默认 provider；同一级有多个匹配则拒绝，不按加载先后静默覆盖。没有特定 provider 的未知 `data-kind` 允许标签默认行为；未知 SVG 标签继续保留 Phase 1 的拒绝策略。codec 不得出现 `if (kind === 'box')`。
 
-VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转换留在 `apps/vscode-svg`。语法层的源码位置统一为偏移与行列约定，VSCode 适配器负责 UTF-16/行列转换和 `selectionRange`，覆盖中文、换行及同一行多个元素；不能只依赖搜索标签文本来定位。语法解析库能否可靠提供源码范围在开工时做小型验证，无法满足时单独实现范围扫描，不让 CLI 模型承担编辑器语法容错职责。
+VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转换留在 `apps/vscode-svg`。语法层的源码位置统一为偏移约定：`packages/svg-xml` 的 span 是 0-based UTF-16 code unit、end 独占；VSCode 适配器负责转成 UTF-16 `Position`/`Range` 与 `selectionRange`，覆盖中文、emoji、换行及同一行多个元素。定位只使用扫描器给出的 span，不能搜索标签文本；解析依赖能否提供可靠范围在 #6 中已核对，结论是 xmldom 不提供，故自写范围扫描器，不让 CLI 模型承担编辑器语法容错职责。
 
 ## 8. 标签、dirty 与只读展示
 

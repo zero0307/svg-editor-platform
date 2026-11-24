@@ -1,0 +1,20 @@
+{
+  "name": "@svgframe/svg-xml",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Neutral SVG syntax entry with source ranges and the strict provider-driven codec",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b .",
+    "test": "npm run build --silent && node --test \"dist/test/*.test.js\""
+  },
+  "dependencies": {
+    "@svgframe/core": "*"
+  }
+}
