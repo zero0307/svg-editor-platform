@@ -79,6 +79,10 @@ export { AddToAction } from './services/AddToAction.js';
 export { GroupAction } from './services/GroupAction.js';
 export { UngroupAction } from './services/UngroupAction.js';
 
+// Presentation: neutral tree/show renderer and decoration pipeline.
+export { TreePresenter } from './presentation/TreePresenter.js';
+export type { DecoratorFailureReporter } from './presentation/TreePresenter.js';
+
 // Event boundary.
 export type {
   CanvasChangedEvent,
