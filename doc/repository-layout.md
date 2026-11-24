@@ -20,9 +20,29 @@
 
 根 `package.json` 和锁文件维护当前安装、构建与检查入口；`.nvmrc` 固定团队主环境。根配置和公共契约由集成协调者组织修改，功能分支说明变更原因，不同时更换包管理器、升级依赖和迁移目录。
 
+## 工作区（Phase 2）
+
+根 `package.json` 声明 npm workspaces：`packages/*`、`apps/*`、`plugins/*`。当前实际包为 `@svgframe/core`、`vscode-svg`、`@svgframe/dsh-plugin`；`plugins/` 只声明 glob，建立实际插件包前不创建空目录。
+
+- 库包（`packages/*`）公开入口是包根 `index.ts`，`exports["."]` 只暴露 `dist/index.js` 与 `dist/index.d.ts`，测试放包根 `test/` 并编译到包内 `dist/test/`；包 `build` 用 `tsc -b .`，因此构建会自动带上项目引用。
+- `apps/vscode-svg` 保持扩展自己的 `src/`、`dist/src` 与 `main` 入口；`apps/dsh-plugin` 是 JS 包，不参与 TypeScript 构建。apps 的依赖方向同样受边界检查约束，接入内部包时须在 `package.json` 声明并由检查脚本的允许矩阵覆盖。
+- 新增库包时在 `tsconfig.build.json` 追加 `references`，按 `@svgframe/core` 形状设置 `composite`、`rootDir: "."`、`declaration` 与 `exports`；具体约定见 [ADR-0007](adr/0007-workspaces-and-package-boundaries.md)。
+
+实际可用的工作区命令：
+
+```sh
+npm ci                     # 干净安装，同时建立 workspace 链接
+npm run build:packages     # tsc -b tsconfig.build.json，按项目引用构建库包
+npm run test:packages      # 先构建库包，再执行每个 workspace 的 test
+npm test -w @svgframe/core # 单包构建并测试；其他包替换为实际包名
+npm run check              # 格式 + 文档 + 旧 89 项回归 + 包构建/测试 + 边界检查
+```
+
+旧入口语义未变：`npm run build`、`npm test`、`npm run cli`、`npm run verify:visual` 仍只构建和运行 `src/`、`test/`。
+
 ## 后续目标目录
 
-以下是方案目标，按对应任务建立，不提前创建空运行包。
+以下是方案目标，按对应任务建立，不提前创建空运行包。其中 `packages/core`、`apps/vscode-svg`、`apps/dsh-plugin` 已按本表建立；其余行仍描述目标职责。
 
 | 目标位置                                            | 职责                                   | 开始建立的条件                         |
 | --------------------------------------------------- | -------------------------------------- | -------------------------------------- |
@@ -66,6 +86,8 @@
 ## 自动检查
 
 `npm run check:docs` 扫描Git跟踪和未忽略的新Markdown文件，检查本地链接及图片目标、代码围栏、目标是否会随仓库提交，并检查被跟踪路径中是否混入依赖、构建输出或材料克隆。该检查也接入 `npm run check`。
+
+`node scripts/check-architecture.mjs` 保留 `src/` 的分层方向、一类一文件与禁止 tag/type switch 规则，并检查 workspace：包名与目录对应、跨包只能 import 包根且在 `package.json` 中声明、相对 import 不得跨包、`core` 禁止 Node 内置模块与 XML DOM、插件只依赖 `core`、各 apps 按允许矩阵导入。矩阵与命令见 [ADR-0007](adr/0007-workspaces-and-package-boundaries.md)。根 `npm run check` 依次执行 `prettier --check .`、文档检查、旧 89 项回归、`build:packages`、`test:packages` 和该脚本。
 
 检查跳过外部URL、纯锚点、代码围栏和行内代码，不把方案中的反引号目录当作必须存在的文件，也不检查GitHub在线权限或锚点是否存在。Markdown引用式链接的目标定义同样检查。
 

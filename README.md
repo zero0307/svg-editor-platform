@@ -2,7 +2,7 @@
 
 高级软件开发 Lab1 的 SVG 编辑平台，基于 [svg-editor-cli](https://github.com/zero0307/svg-editor-cli) 的 Phase 1 完整历史继续开发。现有 CLI 使用 TypeScript、Command 与 Composite 模式，已具备六种内置图形、19 条命令、SVG 读写及撤销重做。
 
-当前运行代码仍为 Phase 1 实现；Phase 2 的插件框架、VSCode 扩展和 DSH 插件按已确定的开发方案逐步推进。原始 `final` 标签保留为兼容基线，最终验收后另建 `p2`。目标工作区目录和Phase 2工作区专用检查属于后续工程任务；当前已提供根检查与文档/目录检查。
+当前运行代码仍为 Phase 1 实现；Phase 2 已建立 npm workspaces（`packages/*`、`apps/*`、`plugins/*`）与包边界检查，`@svgframe/core`、VSCode 扩展和 DSH 插件的契约/骨架已按节点落地，插件框架仍在推进。旧 `src/` CLI 保留到默认命令迁移（#14），`final` 标签仍是兼容基线，最终验收后另建 `p2`。工作区命令与当前包布局见 [文件组织规范](doc/repository-layout.md#工作区phase-2) 和 [ADR-0007](doc/adr/0007-workspaces-and-package-boundaries.md)。
 
 ## 团队开发入口
 
@@ -45,6 +45,8 @@ npm run cli -- --script examples/flowchart.commands
 npm run cli -- --script examples/history.commands
 npm run cli -- --script examples/transforms.commands
 npm run check
+npm run build:packages
+npm run test:packages
 npm run test:coverage
 npm run verify:visual
 ```
