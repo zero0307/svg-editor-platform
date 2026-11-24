@@ -134,14 +134,14 @@ CORE ..> PLUGIN : 调用已注册接口
 
 契约文件均位于 `packages/core`，公共入口只有包根的 `index.ts`（`exports` → `dist/index.js`）。注册名是稳定字符串：命令用命令名，图形用领域类型名，装饰器与属性处理器用标签/处理器名；注册表拒绝重复名并保持注册顺序。测试位于 `packages/core/test/`。
 
-| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                        |
-| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | --------------------------------- |
-| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | 真实 codec 选择与降级（#13）      |
-| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 真实分发器与内置命令（#14）       |
-| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | 行尾装饰管线与禁用生命周期（#10） |
-| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）             |
+| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                         |
+| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | ---------------------------------- |
+| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | 真实 codec 选择与降级（#13）       |
+| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 真实分发器与内置命令（#14）        |
+| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | box/modified-star 插件（#19/TREE） |
+| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）              |
 
-#7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；#10 的树装饰管线仍待实现。
+#7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。#10 已把树展示与行尾装饰管线落为 `TreePresenter`（见 [ADR-0005](adr/0005-tree-display-and-decoration.md)），真实 CLI 接入仍属 #14。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
 调用约定：
 
@@ -230,6 +230,8 @@ VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转
 
 选择祖先传播：叶子变化、节点插入/删除或重排会使其祖先及根行出现 `*`。删除节点无法显示自身标签，但保存基准中的旧父链须参与祖先计算。各 decorator 只返回本标签后缀，按稳定注册顺序拼接，每个后缀前一个空格；默认装配 box 标签早于 modified 标签。零标签保留原字节输出，两个标签不互相读取状态。
 
+实现落点（#10）：`packages/core/presentation/TreePresenter.ts` 的 `tree`/`show` 基础行与 Phase 1 逐字节一致；每行构造只读 `TreeRow`（整棵树的根行为 `document.root`、`tree id`/`show` 首行 depth 0），按注册顺序拼接非空后缀且每个后缀前一个空格。装饰器抛错时上报并只在该 presenter 实例中禁用该装饰器，其余后缀与后续行继续；`connect(session.events)` 转发七类已提交事件，`onEvent` 失败同样禁用。两个实例的禁用状态互不影响，新增装饰器无需改渲染代码。详见 [ADR-0005](adr/0005-tree-display-and-decoration.md)，CLI 实际接入归 #14。
+
 ## 9. A/B 同一路径的加载与回滚
 
 通用加载器位于 host。A 的组合根显式提供模块对象、真实 package manifest 与 options；B 读取配置、解析模块与 package manifest。两种入口最终调用同一个 `PluginInstaller.install`：
@@ -286,4 +288,4 @@ dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期�
 - 清单验证在 activate 暂存后、正式提交前执行；A/B 共用事务。
 - 中立 XML 语法层与严格 SVG 语义层分离、完整子树恢复及变换只执行一次。
 
-以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
+以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)。

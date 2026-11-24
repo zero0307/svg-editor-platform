@@ -14,6 +14,7 @@
     "ports/**/*.ts",
     "events/**/*.ts",
     "services/**/*.ts",
+    "presentation/**/*.ts",
     "testing/**/*.ts",
     "test/**/*.ts"
   ],
