@@ -119,7 +119,7 @@ CORE ..> PLUGIN : 调用已注册接口
 @enduml
 ```
 
-可编辑源文件：[Phase 1](architecture/phase1.puml)、[Phase 2 方案](architecture/phase2-proposed.puml)。源码已保存，本轮未渲染 SVG；实现阶段更新为实际依赖并补渲染结果。图中的运行时回调不能被误判为 core 对插件源码的依赖。
+可编辑源文件：[Phase 1](architecture/phase1.puml)、[Phase 2 方案](architecture/phase2-proposed.puml)、[Phase 2 实际依赖](architecture/phase2-actual.puml)（候选 `fb0427a` 的实际包依赖，边来自各 `package.json` 的 `dependencies`）。实际图**未渲染 SVG**：本机没有 PlantUML jar（仅有 Java 17），保留 `.puml` 源文件；安装 PlantUML 后可运行 `java -jar plantuml.jar -tsvg doc/architecture/phase2-actual.puml` 生成。图中的运行时回调不能被误判为 core 对插件源码的依赖。
 
 ## 4. 四扩展点及公共契约
 

@@ -1,0 +1,66 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+
+title SVG Editor Platform — Phase 2 actual dependencies (candidate fb0427a)
+
+package "apps" {
+  [apps/cli\nA/B composition roots + REPL] as CLI
+  [apps/vscode-svg\nfile badge + native outline] as VSCODE
+  [apps/dsh-plugin\nsvg_inspect / svg_create_flowchart] as DSH
+}
+
+package "packages" {
+  [packages/core\ncontracts, registries, session,\ntransactions, tree pipeline] as CORE
+  [packages/host\nloader, install transaction,\nfile + directory adapters] as HOST
+  [packages/svg-xml\nneutral syntax + strict SVG codec] as XML
+  [packages/builtins\ndefault commands + six shape providers] as BUILTINS
+}
+
+package "plugins (optional)" {
+  [command-stats] as STATS
+  [command-dir] as DIR
+  [shape-box] as BOX
+  [tree-modified] as TREE
+}
+
+CLI --> CORE
+CLI --> HOST
+CLI --> XML
+CLI --> BUILTINS
+CLI --> STATS
+CLI --> DIR
+CLI --> BOX
+CLI --> TREE
+
+HOST --> CORE
+XML --> CORE
+BUILTINS --> CORE
+STATS --> CORE
+DIR --> CORE
+BOX --> CORE
+TREE --> CORE
+
+VSCODE --> XML
+DSH --> CORE
+DSH --> XML
+DSH --> BUILTINS
+
+HOST ..> STATS : 运行时按模块名加载（B：plugins.config.json）
+HOST ..> DIR
+HOST ..> BOX
+HOST ..> TREE
+CORE ..> BOX : 调用已注册的 provider / attribute handler / decorator
+CORE ..> TREE
+
+note right of HOST
+  A root: apps/cli/src/main.ts imports the four plugins
+  B root: same entry with --config plugins.config.json
+  both enter PluginInstaller.install
+end note
+
+note bottom of CORE
+  core imports no host/plugin/Node/VSCode/DSH API
+end note
+
+@enduml

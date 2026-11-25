@@ -1,8 +1,10 @@
 # ADR-0012 provider 驱动的严格 SVG 读回与匹配
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-25  
 关联：Issue #13（TASK-XML-02）；需求条目 BASE-01、EXT-01、BOX-03；消费者 #14（CLI 与 builtins）、#19（box）、#21（A/B 回放）
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 

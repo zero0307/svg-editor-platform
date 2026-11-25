@@ -1,8 +1,10 @@
 # ADR-0006 默认命令插件化、A/B 组合根与旧内核迁移
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-25  
 关联：Issue #14（TASK-CLI-01）；需求条目 BASE-01、BASE-02、EXT-01、EXT-02、LOAD-01、ASM-01；消费者 #15、#16、#17~#20
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 

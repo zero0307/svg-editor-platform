@@ -1,8 +1,10 @@
 # ADR-0004 候选文档事务、属性分派与通用结构策略
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-24  
 关联：Issue #7（TASK-CORE-02）；需求条目 BASE-01、EXT-01、ATTR-02、ATTR-03、BOX-02、BOX-04、TREE-02；消费者 #8、#10、#13、#14、#16、#17~#20
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 
