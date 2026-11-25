@@ -5,6 +5,7 @@
     { "path": "./packages/svg-xml" },
     { "path": "./packages/host" },
     { "path": "./packages/builtins" },
+    { "path": "./plugins/command-stats" },
     { "path": "./apps/cli" }
   ]
 }

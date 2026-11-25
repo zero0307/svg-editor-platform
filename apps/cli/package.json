@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@svgframe/builtins": "*",
+    "@svgframe/command-stats": "*",
     "@svgframe/core": "*",
     "@svgframe/host": "*",
     "@svgframe/svg-xml": "*"

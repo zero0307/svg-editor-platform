@@ -43,7 +43,7 @@ plugins/
   tree-modified/          # modified-star 标签与实例级 dirty 状态
 ```
 
-包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin`，`plugins/*` 随各插件节点建立。
+包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin` 与 `plugins/command-stats`（#17），其余 `plugins/*` 随各插件节点建立。
 
 | 模块                    | 可依赖                                                                | 不可依赖                                                        |
 | ----------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
@@ -136,16 +136,18 @@ CORE ..> PLUGIN : 调用已注册接口
 
 契约文件均位于 `packages/core`，公共入口只有包根的 `index.ts`（`exports` → `dist/index.js`）。注册名是稳定字符串：命令用命令名，图形用领域类型名，装饰器与属性处理器用标签/处理器名；注册表拒绝重复名并保持注册顺序。测试位于 `packages/core/test/`。
 
-| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                         |
-| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | ---------------------------------- |
-| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | box 等可选 provider（#19）         |
-| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 可选命令插件（#17/#18）            |
-| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | box/modified-star 插件（#19/TREE） |
-| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）              |
+| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                                   |
+| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | -------------------------------------------- |
+| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | box 等可选 provider（#19）                   |
+| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | `dir` 命令插件（#18）；`stats` 已由 #17 接入 |
+| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | box/modified-star 插件（#19/TREE）           |
+| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）                        |
 
 #7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。#10 已把树展示与行尾装饰管线落为 `TreePresenter`（见 [ADR-0005](adr/0005-tree-display-and-decoration.md)）。#14 已把六种图形和 19 条默认命令迁入 `packages/builtins`，并由 `apps/cli` 经同一 `PluginInstaller` 装配（见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)）。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
 M2 框架冻结（F = `a21f758`）时的**实际**文件/函数、每个实现、无可选实现时的缺省行为与违约错误测试记录在 [扩展点清单](evidence/framework/extension-points.md)。#17–#20 的插件接入以该清单为契约入口；清单没有补齐的通用能力，不在接入提交里改内核。
+
+#17 已接入 `stats`（`plugins/command-stats`）：命令以 `requiresDocument:true` + `effect:'query'` 声明前置条件与只读效果，DFS 用 `kind` 计叶子、用公开 `ContainerShape` 计容器，A 在 `apps/cli/src/main.ts` 显式装入、B 在 `plugins.config.json` 声明，两条路径都经同一 `PluginInstaller`；`core`/`host`/`builtins`/`svg-xml` 零差异。逐条验收与实测输出见 [017-cmd-01](evidence/acceptance/017-cmd-01.md)。
 
 调用约定：
 
