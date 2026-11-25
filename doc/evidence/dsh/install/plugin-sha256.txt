@@ -1,0 +1,7 @@
+﻿plugin: @svgframe/dsh-plugin
+artifact: apps/dsh-plugin/dist/plugin.js
+size: 292147
+sha256: 51A45AEB79CA25ACB28462A80B721CD51E955BC2EF013FB8F7C8C36BC2EB2FB3
+dsh: 0.2.2-rc.5
+node (host runtime): 24.21.0
+node (repo toolchain): v26.13.0

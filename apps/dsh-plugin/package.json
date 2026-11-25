@@ -1,23 +1,29 @@
 {
   "name": "@svgframe/dsh-plugin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Minimal DSH bundle used to pin the DSH version and verify plugin load/unload and tool registration.",
+  "description": "DSH tools for SVG inspection and flowchart creation, bundled for standalone installation.",
   "type": "module",
+  "main": "./dist/plugin.js",
   "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "default": "./index.js"
-    }
+    ".": "./dist/plugin.js"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
-    "editor-session-port.js",
-    "cordis.patch.yml"
+    "dist/plugin.js",
+    "cordis.patch.yml",
+    "package.json"
   ],
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "build": "tsc -p tsconfig.json && node build.mjs",
+    "test": "npm run build --silent && node --test \"dist/test/*.test.js\""
+  },
+  "dependencies": {
+    "@svgframe/builtins": "*",
+    "@svgframe/core": "*",
+    "@svgframe/svg-xml": "*"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   },
   "dsh": {
     "bundle": {
