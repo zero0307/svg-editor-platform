@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <g id="flowchart">
+    <g id="n1" data-kind="box" transform="translate(10,20)">
+      <rect id="n1-rect" x="0" y="0" width="160" height="60" fill="#4a90d9"/>
+      <text id="n1-label" x="20" y="35">开始</text>
+      <rect id="n1-extra" x="5" y="5" width="10" height="10"/>
+      <g id="n2" data-kind="box">
+        <rect id="n2-rect" x="200" y="0" width="80" height="30" fill="#f5a623"/>
+        <text id="n2-label" x="210" y="15">内层</text>
+      </g>
+    </g>
+  </g>
+</svg>

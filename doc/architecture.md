@@ -1,6 +1,6 @@
 # SVG Editor Platform 架构与接口方案
 
-状态：框架内核、默认命令、严格 codec、宿主加载器与 CLI 已按本方案落地（`packages/core`、`host`、`svg-xml`、`builtins`、`apps/cli`）；旧 `src/` 已在 #14 删除。可选插件中 `stats`（#17）与 `dir`（#18）已接入，剩余工作集中在 `box`、修改标签、VSCode/dsh 深入集成与验收指标；方案面向 `zero0307/svg-editor-platform`，采用 npm workspaces，保留 TypeScript、面向对象、Node 内置测试运行器与现有 Prettier。
+状态：框架内核、默认命令、严格 codec、宿主加载器与 CLI 已按本方案落地（`packages/core`、`host`、`svg-xml`、`builtins`、`apps/cli`）；旧 `src/` 已在 #14 删除。可选插件中 `stats`（#17）、`dir`（#18）与 `box`（#19）已接入，剩余工作集中在修改标签（#20）、VSCode/dsh 深入集成与验收指标；方案面向 `zero0307/svg-editor-platform`，采用 npm workspaces，保留 TypeScript、面向对象、Node 内置测试运行器与现有 Prettier。
 
 本方案从 Phase 1 的 `final^{commit}` 开始渐进重构。已核对的基线提交为 `e5621a68afd4731626d54566f17ba55885d1bc0f`。先冻结基线并建立回归，再完成框架通用能力，最后用独立提交接入插件。新增 `box` 或标签时，内核、加载器与既有插件均不再修改。
 
@@ -43,7 +43,7 @@ plugins/
   tree-modified/          # modified-star 标签与实例级 dirty 状态
 ```
 
-包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin` 与 `plugins/command-stats`（#17）、`plugins/command-dir`（#18），其余 `plugins/*` 随各插件节点建立。
+包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin` 与 `plugins/command-stats`（#17）、`plugins/command-dir`（#18）、`plugins/shape-box`（#19），其余 `plugins/*` 随各插件节点建立。
 
 | 模块                    | 可依赖                                                                | 不可依赖                                                        |
 | ----------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
@@ -136,12 +136,12 @@ CORE ..> PLUGIN : 调用已注册接口
 
 契约文件均位于 `packages/core`，公共入口只有包根的 `index.ts`（`exports` → `dist/index.js`）。注册名是稳定字符串：命令用命令名，图形用领域类型名，装饰器与属性处理器用标签/处理器名；注册表拒绝重复名并保持注册顺序。测试位于 `packages/core/test/`。
 
-| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                          |
-| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | ----------------------------------- |
-| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | box 等可选 provider（#19）          |
-| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 无（`stats` #17、`dir` #18 已接入） |
-| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | box/modified-star 插件（#19/TREE）  |
-| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）               |
+| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                                              |
+| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | ------------------------------------------------------- |
+| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | 无（`box` #19 已接入）                                  |
+| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 无（`stats` #17、`dir` #18 已接入）                     |
+| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | `box-type-label` #19 已接入；`modified-star` #20 待接入 |
+| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | 无（`box-attributes` #19 已接入）                       |
 
 #7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。#10 已把树展示与行尾装饰管线落为 `TreePresenter`（见 [ADR-0005](adr/0005-tree-display-and-decoration.md)）。#14 已把六种图形和 19 条默认命令迁入 `packages/builtins`，并由 `apps/cli` 经同一 `PluginInstaller` 装配（见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)）。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
@@ -150,6 +150,8 @@ M2 框架冻结（F = `a21f758`）时的**实际**文件/函数、每个实现�
 #17 已接入 `stats`（`plugins/command-stats`）：命令以 `requiresDocument:true` + `effect:'query'` 声明前置条件与只读效果，DFS 用 `kind` 计叶子、用公开 `ContainerShape` 计容器，A 在 `apps/cli/src/main.ts` 显式装入、B 在 `plugins.config.json` 声明，两条路径都经同一 `PluginInstaller`；`core`/`host`/`builtins`/`svg-xml` 零差异。逐条验收与实测输出见 [017-cmd-01](evidence/acceptance/017-cmd-01.md)。
 
 #18 已接入 `dir`（`plugins/command-dir`）：`requiresDocument:false` + `effect:'query'`，只通过 `QueryContext.directories()` 读取 `cwd()` 与直接子项，排序、`[DIR]/[FILE]/[LINK]/[OTHER]` 标记、空目录与失败文案全在插件内，适配器角色与策略见 [dir.md](dir.md)；Phase 1 兼容性回放通过空配置禁用可选插件（`test/fixtures/plugins/no-optional-plugins.json`），golden 未改。逐条验收见 [018-cmd-02](evidence/acceptance/018-cmd-02.md)。
+
+#19 已接入 `box`（`plugins/shape-box`）：一个包原子注册 `box` provider、`box-attributes` 处理器与 `box-type-label` 装饰器；`BoxShape extends Group` 并用派生 ID `<id>-rect`/`<id>-label`、`data-kind="box"`、`canRemoveChild`/`canUngroup` 与 `validateInvariant` 保护结构；`restore` 只按显式标记匹配、拒绝坏结构，未装插件时自动降级为普通 `g` 并保留 `data-kind`。命令反馈仍使用框架的 `tag`#`id` 文案（未实现多态反馈钩子），`ungroup` 文案为框架固定的 `cannot ungroup box: <id>`，两处偏差记入 [ADR-0014](adr/0014-box-structure-and-readback.md) 并作为后续独立框架补丁；逐条验收见 [019-box-01](evidence/acceptance/019-box-01.md)。
 
 调用约定：
 
@@ -214,6 +216,8 @@ box 内部维护必要子部件的角色与 ID，通过公开形状服务创建 
 读取已安装插件的错误 box 时首选拒绝整个读入，避免默默改变领域语义。缺失必要部件、角色类型错误、重复 ID、循环结构均不能生成不完整 box。未装 box 插件时则使用普通 g provider，保存已有 `data-kind` 元数据并明确说明语义降级；重复 ID 在语义分派前就拒绝，不能通过降级绕过。
 
 box 包一次注册三类贡献：shape `box`、attribute `box-attributes`（处理 fill/label）、decorator `box-type-label`。三个贡献随插件加载事务一起提交或回滚。树中的基准名仍是 `g#id`，`(box)` 由自己的 decorator 提供；不能把标签直接写死在 shape summary 或渲染器里。
+
+实现落点（#19）：`plugins/shape-box` 的 `BoxShape`、`BoxProvider`、`BoxAttributeHandler`、`BoxTypeLabelDecorator` 按本节实现，具体模板、派生 ID、结构策略、读回/降级、序列化与偏差见 [ADR-0014](adr/0014-box-structure-and-readback.md)。其中“命令反馈多态钩子”在 F 中未落地，`ungroup` 文案由 `StructureService` 固定为 `cannot ungroup <kind>: <id>`；两处偏差不在 #19 接入提交中补内核，列为后续独立框架补丁。
 
 ## 7. XML 与 VSCode 的复用边界
 
@@ -315,7 +319,7 @@ dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期�
 - 清单验证在 activate 暂存后、正式提交前执行；A/B 共用事务。
 - 中立 XML 语法层与严格 SVG 语义层分离、完整子树恢复及变换只执行一次。
 
-以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)；默认命令插件化、A/B 组合根与旧 `src/` 删除见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)。
+以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)；默认命令插件化、A/B 组合根与旧 `src/` 删除见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)；box 的结构、属性语义与读回见 [ADR-0014](adr/0014-box-structure-and-readback.md)。
 
 ## 13. 指标口径与路径分类
 

@@ -1,0 +1,16 @@
+# Phase 2 box 会话（对应 P1 §6.1B 版本 B 的命令集）
+# 只存命令与注释，不含提示符或期望输出；期望输出见 test/fixtures/expected/box/。
+# 回放时在空目录中运行，save 产物与日志都落在该目录。
+
+init 800 600
+create box n1 120 100 160 60 "开始"
+create box n2 520 100 160 60 "处理数据"
+create line arrow1 280 130 520 130 black
+group flowchart n1 n2 arrow1
+move n2 0 100
+undo
+set n2 fill #f5a623
+set n2 label "处理数据 v2"
+undo
+tree
+save flowchart-box.svg

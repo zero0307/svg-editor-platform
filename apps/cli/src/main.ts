@@ -1,6 +1,7 @@
 import { createReadStream } from 'node:fs';
 import dirPlugin from '@svgframe/command-dir';
 import statsPlugin from '@svgframe/command-stats';
+import boxPlugin from '@svgframe/shape-box';
 import { createApplication } from './Application.js';
 import { Repl } from './Repl.js';
 
@@ -10,11 +11,12 @@ const USAGE = 'error: usage: npm run cli -- [--script <file> | --help]';
  * A-mode (explicit code assembly) contributions for this top-level composition
  * root. B-mode reads the same plugins from `plugins.config.json`; both enter the
  * shared `PluginInstaller` path. Order matches the config file, so `help` lists
- * the optional commands in the same order for both roots.
+ * the optional commands and shape types in the same order for both roots.
  */
 const embeddedPlugins = [
   { module: statsPlugin, manifest: statsPlugin.manifest },
   { module: dirPlugin, manifest: dirPlugin.manifest },
+  { module: boxPlugin, manifest: boxPlugin.manifest },
 ];
 
 interface ParsedArguments {
