@@ -5,10 +5,10 @@
 
 ## 1. 进度总览
 
-- 已完成并合并到集成分支：**21 / 22** 个节点。
-- 已完成节点：`#2`、`#1`、`#3`、`#4`、`#5`、`#6`、`#9`、`#7`、`#10`、`#8`、`#12`、`#13`、`#11`、`#14`、`#15`、`#17`、`#18`、`#19`、`#20`、`#16`、`#21`。
-- **仅剩 `#22`（QA-03 收口报告、指标与发布 p2）**。
-- 集成分支 `integration/phase2` 当前 HEAD：`308bb47`（`merge #21 TASK-QA-02`），已推送，本地与 `origin` 一致。
+- 已完成并合并到集成分支：**22 / 22** 个节点（全部完成）。
+- 已完成节点：`#2`、`#1`、`#3`、`#4`、`#5`、`#6`、`#9`、`#7`、`#10`、`#8`、`#12`、`#13`、`#11`、`#14`、`#15`、`#17`、`#18`、`#19`、`#20`、`#16`、`#21`、`#22`。
+- `p2` 标签**未创建**（用户约束：不合并 `main`）；发布清单与候选 SHA 已就绪，等待确认。
+- 集成分支 `integration/phase2` 当前 HEAD：`97803e6`（`merge #22 TASK-QA-03`），已推送，本地与 `origin` 一致。
 - `main` 未合并、未推送新内容；`final` 未移动；未创建 `p2` 标签（发布需经用户确认与主线合并）。
 
 ## 2. 分支与提交
@@ -152,3 +152,27 @@
 - 六个子智能体全部空闲；负责人最后合并 #21 并推送 `integration/phase2`、三个证据分支。
 - 本日志提交为 `docs(records): update development log after node #21` 后推送。
 - 恢复时先读本文件第 7、8 节；下一步是 `#22`（丙）。
+
+## 11. #22 收口完成（最终状态）
+
+- **22 / 22 节点全部完成**。`#22` 节点提交：`412727f`（指标）、`39381af`（报告）；合并提交：`7492201`、`97803e6`；`integration/phase2` HEAD = `97803e6`，已推送。
+- **最终指标**（rules v1，`final`=`e5621a6` → 候选 `fb0427a`，由脚本从 Git 生成）：
+
+  | 分类        | 文件 | 行数 | 复杂度 | 函数数 | 最大 |
+  | ----------- | ---: | ---: | -----: | -----: | ---: |
+  | kernel      |   61 | 2197 |    354 |    200 |   16 |
+  | assembly    |   28 | 1910 |    482 |    144 |   21 |
+  | plugin      |   67 | 1924 |    272 |    182 |   13 |
+  | CLI 合计    |  156 | 6031 |   1108 |    526 |   21 |
+  | vscode 单列 |   14 |  402 |     46 |     27 |    4 |
+  | dsh 单列    |   11 |  724 |    100 |     51 |   10 |
+
+  报告提交 `412727f` 上重跑指标并核对源文件集合/基线/汇总/规则/分类哈希：**PASS**（`sourceDigest 19683ac3…` 相同，差异仅 `inputs.to`/`command` 字段与 tracked 计数）。证据：`doc/evidence/release/metrics-recheck.log`。
+
+- **验收矩阵**（矩阵实际 35 个需求 ID）：**31 通过 / 4 部分通过 / 0 未执行**。部分通过：`MET-01`（p2 未创建，final→p2 待重跑）、`DSH-01` 与 `PKG-02`（干净安装/加载/卸载已验，模型侧工具调用缺 `DEEPSEEK_API_KEY`）、`REL-01`（候选就绪，发布待确认）。逐条证据见 [acceptance.md §8](../acceptance.md) 与 [closeout 记录](2026-11-25-quality-closeout.md)。
+- **ADR**：`0003`–`0008`、`0011`、`0012`、`0014`–`0017` 已标 Accepted（有实现/测试/证据）；`0010`（DSH）保持 Proposed（缺真实模型调用）；`0013` 为空号未补。
+- **架构图**：新增 `doc/architecture/phase2-actual.puml`（边来自各 `package.json`）；本机只有 Java 17、无 PlantUML jar，**未渲染 SVG**，已在 `doc/architecture.md` 写明原因与渲染命令。
+- **最终检查真实结果**：`npm ci --prefer-offline` exit 0（两个 postinstall 被环境 allowScripts 阻止，已记录）；`npm run check` exit 0（根 128、workspace 310、文档 96/471、架构 11 包/257 源/119 导入）；`npm run verify:visual` exit 0（`differingChannels: 0`）；CLI `--help` 与含 box/stats/dir/tree 的会话 exit 0。日志在 `doc/evidence/release/`。
+- **p2 发布步骤（未执行，待用户确认）**：确认后把 `integration/phase2` 合并到 `main` → 在发布提交上创建附注标签 `p2`（不移动 `final`）→ 推送 `main` 与 `p2` → 用 `node scripts/metrics/metrics.mjs --from 'final^{commit}' --to 'p2^{commit}'` 重跑并在 p2 上核对源码散列 → 更新 `doc/release-checklist.md` 的最终 SHA。详见 [发布清单](../release-checklist.md)。
+- **仍可改进项**：`C_A`/`C_B` 在 F 上因缺少 `creationParts()` 钩子不可构建（仅 diff 证据）；可用 `0df080b` 的 pre-hook 插件实现重做，或把框架补丁纳入新 F′ 后重建。DSH 模型侧真实调用需 API key；跨平台/Node 22–24/CI 未复跑；VSCode 编辑后 `Ctrl+Z` 刷新未判定。
+- 工作树干净；所有子智能体空闲；本轮到此结束。
