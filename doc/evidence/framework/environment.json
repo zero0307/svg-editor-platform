@@ -1,0 +1,22 @@
+{
+  "recordedFor": "TASK-FRAME-01 (Issue #15) framework freeze F",
+  "frameworkCommit": "a21f758bf072a7d8c0ff683bc579db124c6d209d",
+  "frameworkShort": "a21f758",
+  "branch": "team/bing-quality",
+  "evidenceBranch": "evidence/p2-framework-base",
+  "node": "v26.13.0",
+  "npm": "12.2.1",
+  "typescript": "7.0.2",
+  "platform": "win32",
+  "architecture": "x64",
+  "osRelease": "10.0.19045",
+  "nvmrc": "24.22.1",
+  "runtimeNote": "Runs were executed on the machine runtime above; .nvmrc pins the team 24.x line. No cross-platform or Node 22/24 run was executed for this freeze.",
+  "metricsRulesVersion": 1,
+  "commands": {
+    "rootCheck": "npm run check",
+    "rootTests": "npm test",
+    "packageTests": "npm run test:packages",
+    "metrics": "node scripts/metrics/metrics.mjs --from 'final^{commit}' --to a21f758 --out docs/metrics"
+  }
+}

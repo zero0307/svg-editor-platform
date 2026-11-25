@@ -1,0 +1,133 @@
+{
+  "framework": {
+    "commit": "a21f758bf072a7d8c0ff683bc579db124c6d209d",
+    "short": "a21f758",
+    "evidenceBranch": "evidence/p2-framework-base",
+    "tag": null,
+    "note": "Protected branch points at the same commit; no intermediate tag was created."
+  },
+  "plugins": {
+    "configPath": "plugins.config.json",
+    "sha256": "5775237a361a9183f19cef427633bade5d3d96b4b219e5fc455a304e70319320",
+    "plugins": [],
+    "order": [],
+    "options": [],
+    "builtins": "packages/builtins is installed by the composition root through PluginInstaller, not by this config"
+  },
+  "frozenInputs": [
+    {
+      "path": "doc/transcript/baseline-basic.txt",
+      "bytes": 569,
+      "sha256": "ad85a886305c8804ba2d9ffc46962248404d73fee6adc020141fdd6467b540f5"
+    },
+    {
+      "path": "doc/transcript/baseline-dir.txt",
+      "bytes": 333,
+      "sha256": "ae4061d8afcd1c0ffcabfa2f36d0e50cd4fb7151586b55836f211411e4323fc5"
+    },
+    {
+      "path": "doc/transcript/baseline-flowchart.txt",
+      "bytes": 653,
+      "sha256": "099f807fa29b38b50bef21d93e91d6719361098b9ee3060af3ead576e1456fdb"
+    },
+    {
+      "path": "doc/transcript/baseline-io.txt",
+      "bytes": 392,
+      "sha256": "44539233ffbe0212c815fae63748100116dae4c75add17ecfb7ebfc0f5c738c0"
+    },
+    {
+      "path": "plugins.config.json",
+      "bytes": 20,
+      "sha256": "5775237a361a9183f19cef427633bade5d3d96b4b219e5fc455a304e70319320"
+    },
+    {
+      "path": "test/fixtures/dir/inventory.json",
+      "bytes": 1519,
+      "sha256": "15161e64be4f988dc8e8b3b147aec67cce48ce13666ef4a24ac3c0a9cb03a798"
+    },
+    {
+      "path": "test/fixtures/dir/tree/.hidden",
+      "bytes": 7,
+      "sha256": "e084a3683ef795d1cdbf5e9b253f2ca1f783ae0d0d6e47e419acbbc4fc80bbfa"
+    },
+    {
+      "path": "test/fixtures/dir/tree/Zeta.md",
+      "bytes": 7,
+      "sha256": "128e1fbe9883cbc61fb305d0cda88a0bfc538962be27f72e4bdad74100b3bb69"
+    },
+    {
+      "path": "test/fixtures/dir/tree/alpha.txt",
+      "bytes": 6,
+      "sha256": "b6a98d9ce9a2d9149288fa3df42d377c3e42737afdcdaf714e33c0a100b51060"
+    },
+    {
+      "path": "test/fixtures/dir/tree/sub-one/placeholder.txt",
+      "bytes": 4,
+      "sha256": "2c8b08da5ce60398e1f19af0e5dccc744df274b826abe585eaba68c525434806"
+    },
+    {
+      "path": "test/fixtures/dir/tree/sub-two/placeholder.txt",
+      "bytes": 4,
+      "sha256": "27dd8ed44a83ff94d557f9fd0412ed5a8cbca69ea04922d88c01184a07300a5a"
+    },
+    {
+      "path": "test/fixtures/dir/tree/with space.txt",
+      "bytes": 6,
+      "sha256": "9d39745403e5faf662463b32d613eedf45037d0180983ae8bc87f538cf0c9653"
+    },
+    {
+      "path": "test/fixtures/dir/tree/中文名.txt",
+      "bytes": 13,
+      "sha256": "e92194e9b14f9986165332d50480080970b4eade242c7aff069e2804d6cc9153"
+    },
+    {
+      "path": "test/fixtures/svg/other.svg",
+      "bytes": 453,
+      "sha256": "93f1d325c18c3a4d4743aa771c4d86ac06b5ce277d6c15f7761434191a767f69"
+    }
+  ],
+  "directoryProtocol": {
+    "root": "test/fixtures/dir/tree",
+    "inventory": {
+      "path": "test/fixtures/dir/inventory.json",
+      "bytes": 1519,
+      "sha256": "15161e64be4f988dc8e8b3b147aec67cce48ce13666ef4a24ac3c0a9cb03a798"
+    },
+    "rebuild": "delete the run directory, copy test/fixtures/dir/tree into it, run the session with that copy as cwd, and keep scripts/output logs outside the listed directory"
+  },
+  "metrics": {
+    "file": "docs/metrics/e5621a6-to-a21f758.json",
+    "sha256": "37c15db79e636d6f7f748e0991d863d7c93747dea1ef996bf162b8f76f921d7d",
+    "summary": "docs/metrics/summary.md",
+    "rulesVersion": 1,
+    "classificationDigest": "39b9251f0a5b4c0e4d2f0655a35af0ce2def9d9c6a408f4e37610e10b90faa6e",
+    "inputs": {
+      "from": {
+        "rev": "final^{commit}",
+        "ref": "e5621a68afd4731626d54566f17ba55885d1bc0f",
+        "tagObject": null,
+        "commit": "e5621a68afd4731626d54566f17ba55885d1bc0f"
+      },
+      "to": {
+        "rev": "a21f758",
+        "ref": "a21f758bf072a7d8c0ff683bc579db124c6d209d",
+        "tagObject": null,
+        "commit": "a21f758bf072a7d8c0ff683bc579db124c6d209d"
+      }
+    }
+  },
+  "tests": {
+    "root": 101,
+    "rootFile": "dist/test/framework-acceptance.test.js",
+    "packages": 203,
+    "packagesBreakdown": {
+      "core": 96,
+      "host": 39,
+      "svg-xml": 36,
+      "dsh-plugin": 7,
+      "vscode-svg": 25
+    }
+  },
+  "checkLog": "doc/evidence/framework/check.log",
+  "fileCountAtFreeze": 413
+}

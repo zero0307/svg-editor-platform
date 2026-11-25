@@ -1,0 +1,383 @@
+npm notice run svg-editor-cli@1.0.0 check
+npm notice run npm run format:check && npm run check:docs && npm test && npm run build:packages && npm run test:packages && node scripts/check-architecture.mjs
+npm notice run svg-editor-cli@1.0.0 format:check
+npm notice run prettier --check .
+Checking formatting...
+All matched files use Prettier code style!
+npm notice run svg-editor-cli@1.0.0 check:docs
+npm notice run node scripts/check-docs.mjs
+notice: phase_cli_2-研-1.md:19: original course image not supplied: docs/images/vscode-svg-badge.jpg
+notice: phase_cli_2-研-1.md:29: original course image not supplied: docs/images/vscode-svg-outline.jpg
+Documentation check passed: 81 Markdown files, 343 local links, 2 documented source-image omissions; repository layout checked.
+npm notice run svg-editor-cli@1.0.0 test
+npm notice run npm run build --silent && node --test "dist/test/*.test.js"
+✔ course transcript: save barrier, invalid ancestor grouping, restore and external import (17.4042ms)
+✔ course flowchart example replays and exports eight elements (3.3638ms)
+✔ deterministic edit sequence preserves complete undo/redo history (seed 7) (63.8526ms)
+✔ deterministic edit sequence preserves complete undo/redo history (seed 42) (44.7447ms)
+✔ deterministic edit sequence preserves complete undo/redo history (seed 2026) (30.013ms)
+✔ deterministic edit sequence preserves complete undo/redo history (seed 65535) (28.8366ms)
+✔ baseline golden: four sessions are complete, LF-only and machine independent (15.1505ms)
+✔ baseline golden: provenance pins the final tag object and its dereferenced commit (1.3756ms)
+✔ baseline transcripts: commands and comments only, no prompts or expected output (2.0008ms)
+✔ dir fixture: committed tree matches its rebuild inventory (4.3218ms)
+✔ compare entry: pair mode detects byte differences with context (184.3202ms)
+✔ phase 1 golden replays byte-exactly against the current build (637.6032ms)
+✔ tokenizer supports empty quoted text, literal paths, escaped quotes, colors and comments (2.4657ms)
+✔ quoted in text is not a container clause; empty and escaped text survives (4.3072ms)
+✔ bad argument counts produce one-line errors without mutations (4.1538ms)
+✔ REPL processes input serially, continues after errors and emits prompt only interactively (8.5659ms)
+✔ real filesystem writes atomically, replaces a file and cleans failed temporaries (203.1179ms)
+✔ compiled executable supports pipes, scripts with spaces, help and failure exit codes (595.8279ms)
+✔ all six create types, optional presentation and create-in work (5.5074ms)
+✔ each edit is one undo unit and undo/redo round-trip exact structure (13.8315ms)
+✔ group preserves paint order and ungroup occupies the former slot (0.7381ms)
+✔ cross-parent group uses lowest common ancestor and document order (0.6996ms)
+✔ front/back change only sibling paint order; reparent appends (0.6322ms)
+✔ successful new edit discards redo, queries and failed edits preserve redo (1.9785ms)
+✔ IO barriers block both stacks; a successful edit starts fresh history (8.1521ms)
+✔ explicit save keeps the original read path as the parameterless save target (2.1704ms)
+✔ failed IO preserves document, history and remembered save path (2.198ms)
+✔ errors are atomic across geometry, ids, hierarchy, parsing and cycles (5.5339ms)
+✔ overflow partway through recursive group mutation leaves all children intact (0.5107ms)
+✔ group presentation uses SVG inheritance; ungroup preserves explicit inherited values (0.3865ms)
+✔ before initialization all operational commands fail, help and comments work (0.2912ms)
+✔ successful CLI edits always remain within the readable SVG nesting limit (53.679ms)
+✔ history can undo and redo every edit beyond 100 steps (6.8119ms)
+✔ ungroup resolves explicit inherit before the child changes parent (0.4997ms)
+✔ ungroup resolves inherit chains and falls back to SVG initial values (0.3719ms)
+✔ composition roots A and B produce byte-identical output without plugins (298.8648ms)
+✔ the built-in capability set is installed through the plugin installer (1.6318ms)
+✔ requiresDocument:false commands run without a document while others fail (0.8705ms)
+✔ each leaf owns move, scale, geometry validation and clone behavior (3.3358ms)
+✔ Composite traverses nested children exactly once, independent of ids (0.6222ms)
+✔ dimensions, numeric grammar, finite arithmetic and attributes are validated (0.5207ms)
+✔ document ids include descendants, remain case-sensitive and do not reserve canvas (0.7478ms)
+✔ create: a composite provider builds role parts through the public creation service (3.8327ms)
+✔ clone and undo/redo keep the plugin type, parts and parent links (4.0601ms)
+✔ invariant and structural policy protect necessary parts without kernel branches (1.1864ms)
+✔ provider restore roundtrip keeps the composite type and applies transforms once (4.7334ms)
+✔ one attribute request edits several parts and stays a single undo unit (1.2355ms)
+✔ a failing handler keeps document, history and committed events unchanged (1.1159ms)
+✔ decorator suffix and decorator failure isolation keep the base tree bytes (1.3629ms)
+✔ a failing decorator event observer is isolated and others still receive events (0.426ms)
+✔ the four registries reject duplicate names and unknown names (0.4255ms)
+✔ SVG strings reject XML 1.0 forbidden characters and unpaired surrogates (3.5948ms)
+✔ illegal strings fail atomically and preserve redo history (27.0814ms)
+✔ legal Unicode, Chinese, emoji, tabs and newlines remain valid SVG content (2.5426ms)
+✔ carriage returns and attribute whitespace survive standard XML normalization (0.8809ms)
+✔ SVG round-trip preserves six types, styles, order, nesting and escaped text (13.4865ms)
+✔ missing ids skip every explicit id, including later and nested elements (0.8592ms)
+✔ import preserves text typography, custom metadata and degrades box to g (1.222ms)
+✔ invalid/unsupported SVG is rejected atomically: prefixed attributes (1.3959ms)
+✔ invalid/unsupported SVG is rejected atomically: malformed (0.9536ms)
+✔ invalid/unsupported SVG is rejected atomically: duplicate ids (0.7374ms)
+✔ invalid/unsupported SVG is rejected atomically: unknown type (0.772ms)
+✔ invalid/unsupported SVG is rejected atomically: wrong root (0.3099ms)
+✔ invalid/unsupported SVG is rejected atomically: wrong namespace (0.3442ms)
+✔ invalid/unsupported SVG is rejected atomically: nested namespace (0.5561ms)
+✔ invalid/unsupported SVG is rejected atomically: unsupported transforms (0.9578ms)
+✔ invalid/unsupported SVG is rejected atomically: external CSS (0.5453ms)
+✔ invalid/unsupported SVG is rejected atomically: nested CSS instruction (0.6053ms)
+✔ invalid/unsupported SVG is rejected atomically: CSS (0.4206ms)
+✔ invalid/unsupported SVG is rejected atomically: root styles (0.4169ms)
+✔ invalid/unsupported SVG is rejected atomically: tspan (0.4221ms)
+✔ invalid/unsupported SVG is rejected atomically: unexpected text (0.255ms)
+✔ invalid/unsupported SVG is rejected atomically: group text (0.292ms)
+✔ invalid/unsupported SVG is rejected atomically: different coordinates (0.2711ms)
+✔ invalid/unsupported SVG is rejected atomically: mismatched dimensions (0.2306ms)
+✔ invalid/unsupported SVG is rejected atomically: percent sizes (0.2499ms)
+✔ invalid/unsupported SVG is rejected atomically: negative size (0.3853ms)
+✔ invalid/unsupported SVG is rejected atomically: DTD (0.2163ms)
+✔ invalid/unsupported SVG is rejected atomically: events (0.2066ms)
+✔ ungroup preserves inherited text styles without spreading group metadata (1.1059ms)
+✔ nesting limit fails before traversal can exhaust the call stack (0.9403ms)
+✔ successful read publishes warnings once; save without path remembers read target (1.2115ms)
+✔ transform lists use SVG matrix order, including nested composition (2.931ms)
+✔ course transform example imports to canvas geometry and round-trips canonically (17.0769ms)
+✔ normalization preserves inheritance and resets a cancelling local scale (1.2771ms)
+✔ all six types normalize uniformly; stroke and text lengths scale during import (0.7302ms)
+✔ explicit inherit remains inherited after normalization, including whitespace (0.6802ms)
+✔ default text and stroke sizes are materialized when scaling has no explicit styles (0.6092ms)
+✔ invalid transform preserves document and history: rotate(30) (1.5915ms)
+✔ invalid transform preserves document and history: matrix(1,0,0,1,0,0) (0.8736ms)
+✔ invalid transform preserves document and history: scale(2,3) (0.7586ms)
+✔ invalid transform preserves document and history: scale(-1) (0.8773ms)
+✔ invalid transform preserves document and history: scale(0) (0.7574ms)
+✔ invalid transform preserves document and history: translate(1,,2) (0.953ms)
+✔ invalid transform preserves document and history: translate(1,) (0.7808ms)
+✔ invalid transform preserves document and history: ,scale(2) (0.5297ms)
+✔ invalid transform preserves document and history: scale(2), (0.3275ms)
+✔ invalid transform preserves document and history: scale(NaN) (0.2841ms)
+✔ invalid transform preserves document and history: translate(1) trailing (0.2896ms)
+✔ invalid transform preserves document and history: scale(1e308) scale(2) (0.4911ms)
+✔ unhandled length-sensitive attributes and relative font sizes fail explicitly under scaling (1.0662ms)
+ℹ tests 101
+ℹ suites 0
+ℹ pass 101
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1040.8196
+npm notice run svg-editor-cli@1.0.0 build:packages
+npm notice run tsc -b tsconfig.build.json
+npm notice run svg-editor-cli@1.0.0 test:packages
+npm notice run npm run build:packages && npm test --workspaces --if-present
+npm notice run svg-editor-cli@1.0.0 build:packages
+npm notice run tsc -b tsconfig.build.json
+npm notice run @svgframe/core@0.0.0 test
+npm notice run npm run build --silent && node --test "dist/test/*.test.js"
+✔ no matching handler falls back to the default attribute rules (5.3373ms)
+✔ unknown default attributes fail with the Phase 1 wording and no change (1.3138ms)
+✔ a matched handler owns the feedback and modifies the candidate only (0.6982ms)
+✔ a partial handler failure is propagated without default fallback (0.6025ms)
+✔ two matching handlers are rejected before touching the candidate (0.4886ms)
+✔ handles observes the request before any default fallback (1.5547ms)
+✔ handles is a pure query over a read-only shape (3.2451ms)
+✔ apply modifies only the detached candidate document (1.3195ms)
+✔ two matching handlers are rejected before any mutation (1.6834ms)
+✔ no match falls back to the default attribute rules (0.6104ms)
+✔ a matching handler failure propagates without default fallback (0.6149ms)
+✔ preparation declares prerequisites and effects instead of names (1.6353ms)
+✔ prerequisites come from metadata, never from a command name (0.7742ms)
+✔ a command that needs no document runs without one (0.1737ms)
+✔ unknown commands fail with the Phase 1 wording (0.1918ms)
+✔ each command owns its parameter rules (0.1809ms)
+✔ a query does not clear history or set the I/O barrier (1.6141ms)
+✔ canvas size arguments are a document effect that sets the barrier (0.7895ms)
+✔ a failing edit leaves document, history and redo untouched (0.6032ms)
+✔ history commands are routed through the history effect (0.4747ms)
+✔ edit and history commands require an existing document (0.3799ms)
+✔ a plugin activates only through the staged public context (2.9933ms)
+✔ the demo provider builds its parts through ShapeCreationService (1.4445ms)
+✔ the fake creation service reports a missing provider (0.6945ms)
+✔ provider restore uses the restore service and applies transforms once (0.6675ms)
+✔ clone keeps the composite plugin type and copies children (0.6701ms)
+✔ commands, decorators and handlers consume only the public contracts (1.6759ms)
+✔ consumer examples import only the public package entry (10.6603ms)
+✔ zero decorators keep the base row bytes (1.8232ms)
+✔ a decorator returns a suffix from the read-only row (0.2777ms)
+✔ suffix order follows registration order (1.349ms)
+✔ a failing decorator does not change the document or other suffixes (1.0192ms)
+✔ document keeps Phase 1 defaults and id rules (2.7795ms)
+✔ clone copies polymorphic types without sharing mutable children (0.7734ms)
+✔ validate rejects duplicate ids, broken parent links and invariant failures (0.6008ms)
+✔ validate enforces the depth limit and structural cycle guard (0.8878ms)
+✔ the read-only document projection exposes queries only (0.2922ms)
+✔ the event bus keeps subscription order and supports unsubscribe (2.153ms)
+✔ a failing observer is isolated and reported without blocking others (0.6813ms)
+✔ decorator event observer failures cannot escape the committed event (0.3785ms)
+✔ the fake session publishes exactly the committed events (1.8389ms)
+✔ a failed step publishes no event and leaves the document intact (0.9191ms)
+✔ a broken observer cannot break a successful session step (0.2155ms)
+✔ read events carry the path and warnings (0.1647ms)
+✔ document() fails before init/read and hasDocument reports the state (1.2023ms)
+✔ init and I/O steps set the Phase 1 undo barrier (0.9104ms)
+✔ edit/undo/redo replace the document and clear the redo branch (0.9938ms)
+✔ save remembers the first successful path and init resets it (0.3761ms)
+✔ read replaces the document and returns warnings plus a summary (0.2357ms)
+✔ canvas queries without size and resizes with both arguments (0.2004ms)
+✔ a failing edit leaves document and history unchanged (0.207ms)
+✔ commands keep registration order and reject duplicate names (1.7634ms)
+✔ unknown registration uses the Phase 1 command wording (0.1646ms)
+✔ shape providers are keyed by domain type and keep the plugin hint (0.2186ms)
+✔ decorators and attribute handlers are keyed by stable names (0.2406ms)
+✔ conflict error carries the competing handler names (0.1551ms)
+✔ document and hasDocument expose the initialized state (1.5543ms)
+✔ init creates a fresh canvas, resets the path and sets the barrier (0.5681ms)
+✔ read decodes, validates, remembers the path and sets the barrier (1.2173ms)
+✔ read failures keep document, path, barrier, history and events unchanged (0.6313ms)
+✔ save encodes and writes before committing path and barrier (0.2589ms)
+✔ an explicit save keeps the path established by read (0.2472ms)
+✔ save failures do not set the barrier, clear dirty state or publish events (0.308ms)
+✔ canvas queries keep redo and the barrier; resizing commits a new canvas (0.3135ms)
+✔ a partial canvas size is rejected and leaves state untouched (0.153ms)
+✔ publishes the seven committed event types in order (0.2806ms)
+✔ observer failures are isolated and reported after successful steps (0.1816ms)
+✔ a failed init publishes no event and keeps the previous document (0.1291ms)
+✔ delete removes a leaf as one undo unit (2.0668ms)
+✔ delete removes a whole composite subtree when its parent allows it (0.3115ms)
+✔ delete rejects a necessary part and keeps document and history (0.6746ms)
+✔ addto moves an ordinary shape into a public container (0.3352ms)
+✔ moving a necessary part out of its composite is rejected (0.275ms)
+✔ group preserves document order and reports Phase 1 feedback (0.4837ms)
+✔ group rejects a necessary part before mutating the candidate (0.2442ms)
+✔ ungroup materializes inherited presentation and keeps child order (0.49ms)
+✔ ungroup rejects a composite before the ordinary top-level restriction (0.2665ms)
+✔ ungroup keeps the Phase 1 top-level restriction for ordinary groups (0.3218ms)
+✔ a target container can reject an insertion through the public policy (0.2733ms)
+✔ structure failures keep the existing redo branch intact (0.2485ms)
+✔ an edit runs on a detached clone and commits one undo unit (1.7059ms)
+✔ undo and redo swap validated snapshots without re-running the action (0.4326ms)
+✔ a multi-part handler produces exactly one undo unit and is not re-run (0.5286ms)
+✔ edits keep the plugin runtime type and never share mutable children (0.3311ms)
+✔ a partial modification followed by an error keeps every state and the redo branch (1.1902ms)
+✔ an invariant failure discards the candidate and publishes no event (0.2747ms)
+✔ an attribute conflict keeps the document and an existing redo branch (0.4294ms)
+✔ read-only queries do not clear history or unblock the barrier (0.486ms)
+✔ zero decorators reproduce the Phase 1 tree/show bytes (2.2394ms)
+✔ suffixes are appended in registration order after one space (0.4142ms)
+✔ a decorator can mark the root row and empty documents (0.2221ms)
+✔ a failing decorator is reported, disabled, and other suffixes continue (0.3273ms)
+✔ display failures never mutate the document (0.2233ms)
+✔ two presenter instances keep independent disabled state (0.1746ms)
+✔ committed events reach decorators and a failing observer is disabled (0.9401ms)
+✔ a third decorator needs no renderer change (0.2311ms)
+ℹ tests 96
+ℹ suites 0
+ℹ pass 96
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 196.7945
+npm notice run @svgframe/host@0.0.0 test
+✔ cwd() uses the process directory by default without calling process.chdir (0.6999ms)
+✔ cwd() accepts an injected provider and leaves the process directory alone (0.1124ms)
+✔ lists direct children only and keeps hidden, Unicode and spaced names (14.2507ms)
+✔ returns an empty list for an empty directory (3.3184ms)
+✔ reports a missing directory with the required wording (2.8235ms)
+✔ reports a file passed as a directory with the required wording (5.3554ms)
+✔ reports links without following them (6.7568ms)
+✔ reads an existing UTF-8 file (7.5077ms)
+✔ reports a missing file with the Phase 1 wording (5.5749ms)
+✔ writes a new file and leaves no temporary file behind (11.4714ms)
+✔ replaces an existing file atomically (6.0617ms)
+✔ keeps the error wording and cleans up when the target is a directory (189.8058ms)
+✔ reports a write into a missing parent directory and leaves no temporary file (1.5922ms)
+✔ installs a plugin, passes frozen options and connects staged subscriptions (17.5425ms)
+✔ rejects a plugin without a default export using the frozen message (7.3463ms)
+✔ rejects a default export without an activate function (6.814ms)
+✔ reports a manifest mismatch with sorted declared and registered names (4.7343ms)
+✔ rejects a name already registered by a previous plugin (6.8385ms)
+✔ rejects a plugin that registers the same name twice (10.9689ms)
+✔ rolls back registrations and staged subscriptions after activate throws (9.3947ms)
+✔ compares declared names as a multiset instead of silently deduplicating (4.1287ms)
+✔ accepts the same name in different categories (4.2183ms)
+✔ maps package.json attributes to core attributeHandlers (3.5205ms)
+✔ accepts a core-shaped manifest with attributeHandlers (3.3473ms)
+✔ drops a subscription disposed before commit (3.6197ms)
+✔ installAll keeps going after a failing plugin (12.125ms)
+✔ loads entries in config order and continues after a missing module (22.0271ms)
+✔ reports a module without a default export and keeps loading later entries (8.5138ms)
+✔ distinguishes top-level evaluation and internal dependency failures from not found (12.0226ms)
+✔ rejects invalid JSON and returns the frozen invalid-config message (3.4974ms)
+✔ rejects invalid config structures without partially loading plugins (7.377ms)
+✔ reports a malformed package manifest as an activation failure (9.3777ms)
+✔ skips enabled:false without resolving or evaluating the module (8.2612ms)
+✔ resolves relative modules against the config directory (5.7922ms)
+✔ resolves a bare package specifier from the config directory (6.2547ms)
+✔ passes read-only options from the config entry (4.4775ms)
+✔ keeps subscriptions of a failed loader plugin off the live bus (4.4041ms)
+✔ rolls back every failure category between two good plugins (20.7886ms)
+✔ A and B produce identical results and registrations for the same plugins (6.7266ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 313.7497
+npm notice run @svgframe/svg-xml@0.0.0 test
+✔ decodes the six Phase 1 types and encodes them byte-identically (8.884ms)
+✔ assigns missing ids with the Phase 1 counters and warning order (0.5128ms)
+✔ applies each leaf world transform exactly once in nested groups (1.2394ms)
+✔ normalizes translate/scale composition in source order (0.7265ms)
+✔ keeps Phase 1 inheritance and resolves a cancelling inner scale (0.7165ms)
+✔ materializes default text and stroke sizes when a scale has no explicit styles (0.3018ms)
+✔ rejects length-sensitive attributes under a scale like Phase 1 (0.6082ms)
+✔ restores a composite fake-box subtree and keeps its type through clone (1.1747ms)
+✔ keeps the marker and degrades a box without an installed provider (0.3949ms)
+✔ applies the group transform to children once even for a composite provider (0.3023ms)
+✔ decodes entity references in ids like the Phase 1 DOM importer (0.6225ms)
+✔ keeps an unknown data-kind on the default tag provider (0.2429ms)
+✔ rejects ambiguous tag-default providers (0.1859ms)
+✔ preserves text typography, CDATA text and custom metadata (0.4857ms)
+✔ rejects duplicate ids before any provider selection or degradation (0.1358ms)
+✔ rejects unknown tags and ambiguous explicit providers (0.2157ms)
+✔ rejects Phase 1 unsupported documents with the expected wording (0.9989ms)
+✔ a failing provider aborts the read and leaves the session document untouched (0.4343ms)
+✔ normalizes CRLF text and attribute values before encoding (0.2242ms)
+✔ exposes numeric geometry through the public projection (0.1365ms)
+✔ parses a nested root, containers and leaves with exact spans (1.1131ms)
+✔ keeps duplicate tags and several elements on the same line distinct (0.2ms)
+✔ keeps unknown tags and nested svg elements instead of applying a CLI whitelist (0.1304ms)
+✔ keeps duplicate nested tags and resolves spans by position, not by tag text (0.4435ms)
+✔ collects direct text only, raw and without decoding (0.1307ms)
+✔ treats CJK and emoji offsets as UTF-16 code units (0.1044ms)
+✔ handles CRLF line endings and leading whitespace (0.0979ms)
+✔ skips xml declaration, doctype with internal subset, comments and instructions before the root (0.1339ms)
+✔ allows a self-closing root and CDATA text (0.105ms)
+✔ reads attribute values containing > and quotes (0.1192ms)
+✔ allows trailing whitespace and comments after the root (0.0781ms)
+✔ accepts a BOM, multiline start tags, spaced slashes and whitespace before > (0.1216ms)
+✔ keeps raw id values with entities and dotted or dashed tag names (0.0681ms)
+✔ ignores processing instructions and comments inside an element (0.0967ms)
+✔ reports malformed and incomplete XML without throwing (0.3819ms)
+✔ reports a controlled failure when trailing content follows the root element (0.1204ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 137.6714
+npm notice run @svgframe/dsh-plugin@0.1.0 test
+npm notice run node --test test/*.test.js
+✔ fake port reports the seeded document view (0.9788ms)
+✔ fake port can fail on purpose so callers can test the error path (0.385ms)
+✔ fake port observes cancellation and closes (0.8474ms)
+✔ apply registers a structured read-only tool (7.8833ms)
+✔ tool result follows the declared output schema and uses the port fake (0.9725ms)
+✔ disposing the effect releases the registration without residue (0.7322ms)
+✔ cancelled execution stops before touching the port (0.8178ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.3472
+npm notice run vscode-svg@0.2.0 test
+
+  dist\extension.js  234.5kb
+
+Done in 13ms
+✔ marks regular SVG files with the empty bracket badge (1.6938ms)
+✔ ignores non-SVG files and names without a real extension (0.1779ms)
+✔ ignores directories whose name looks like an SVG file (0.0972ms)
+✔ ignores symlinks and other file types (0.0765ms)
+✔ ignores entries from non-file schemes (0.093ms)
+✔ handles hidden directories, spaces and non-ASCII paths (0.1071ms)
+✔ never throws for degenerate paths (0.1636ms)
+✔ shows the root, containers and leaves with tag#id and plain tag labels (13.6431ms)
+✔ keeps nested groups and leaves in source order (0.2127ms)
+✔ never invents an id and never needs one (0.1186ms)
+✔ keeps unknown tags and duplicate tag names as labels (0.1297ms)
+✔ selectionRange is the start tag and stays inside the whole-element range (0.266ms)
+✔ falls back to the whole range when the start tag span is unusable (0.1309ms)
+✔ returns an empty outline when there is no root (0.0753ms)
+✔ marks a single-element root as a leaf when it has no children (0.0804ms)
+✔ treats an empty id as no id instead of emitting a trailing hash (0.1096ms)
+✔ returns an empty outline and a warning for incomplete XML (1.2001ms)
+✔ refreshes the outline on every read instead of caching (0.5335ms)
+✔ labels root, containers and leaves with ids and without ids (0.1856ms)
+✔ keeps the selection range inside the element range for every symbol (0.176ms)
+✔ maps neutral syntax spans verbatim into outline nodes (1.0502ms)
+✔ parses nested groups, missing ids and duplicate tags from real SVG (0.6346ms)
+✔ converts CRLF, CJK and emoji offsets as UTF-16 code units (0.1924ms)
+✔ keeps several elements on the same line distinct (0.1451ms)
+✔ reports incomplete XML as a controlled failure instead of throwing (0.2369ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.1688
+Architecture check passed: 0 legacy files, 0 legacy imports, 7 workspace packages, 197 workspace sources, 65 cross-package imports, matching class filenames.
