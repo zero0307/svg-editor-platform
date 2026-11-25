@@ -1,8 +1,6 @@
-src/**
-test/**
-types/**
-examples/**
-.vscode/**
-tsconfig.json
-**/*.ts
-**/*.map
+# Allow-list: only the extension manifest, its README and the bundled entry are packaged.
+# Sources, tests, examples, build script and maps stay out of the VSIX.
+**
+!package.json
+!README.md
+!dist/extension.js
