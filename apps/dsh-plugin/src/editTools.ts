@@ -19,7 +19,7 @@ export function registerEditTools(ctx: Context) {
     defineTool({
       name: 'svg_edit_flowchart',
       description:
-        'Edit an existing native SVG in place geometrically and save a new file. Use merge_inputs for a shared trunk with labeled arrows: from/to can be node IDs or unique visible labels, inputs e.g. ["K","V"]. Handles existing port boxes automatically. Preserves all unrelated elements and creates a cropped before/after comparison. To insert a step on one edge, use operation "insert" with edgeId, new nodeId and label; coordinates are optional. Use "rename" with nodeId/label and "reconnect" with edgeId and from/to. Returned output is geometry-verified; use svg_check_flowchart to recheck the delivered file after any subsequent edit.',
+        'For a picked node, use the path and nodeId from its SVG selection. Rename one line with operation=rename, labelLine (1 is the node title) and label. It saves and rereads the file, verifies all other bytes and returns the full saved label. Edit an existing native SVG in place geometrically and save a new file. Use merge_inputs for a shared trunk with labeled arrows: from/to can be node IDs or unique visible labels, inputs e.g. ["K","V"]. Handles existing port boxes automatically. Preserves all unrelated elements and creates a cropped before/after comparison. To insert a step on one edge, use operation "insert" with edgeId, new nodeId and label; coordinates are optional. Use "rename" with nodeId/label and "reconnect" with edgeId and from/to. Returned output is geometry-verified; use svg_check_flowchart to recheck the delivered file after any subsequent edit.',
       parameters: {
         path: required,
         output: required,
@@ -33,6 +33,10 @@ export function registerEditTools(ctx: Context) {
         inputs: names,
         nodeId: str,
         label: str,
+        labelLine: {
+          ...num,
+          description: '1-based line INSIDE nodeId: 1 = node title, 2 = next label line.',
+        },
         edgeId: str,
         x: num,
         y: num,
@@ -60,6 +64,20 @@ export function registerEditTools(ctx: Context) {
             },
             removedPortNodes: names,
             changedNode: str,
+            labelLine: num,
+            savedLabel: str,
+            diskReadBack: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                originalUnchanged: { type: 'boolean', required: true },
+                outputSha256: required,
+                nodes: { ...num, required: true },
+                edges: { ...num, required: true },
+                warnings: { ...names, required: true },
+              },
+            },
+            otherBytesUnchanged: { type: 'boolean' },
             unrelatedNodesMoved: num,
             verified: { type: 'boolean' },
           },

@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type { Element } from '@xmldom/xmldom';
 import type { FileStore } from '@svgframe/core';
 import {
@@ -11,6 +12,7 @@ import {
 import { indexFlowchart, validPortName, type ChartNode, type GraphEdge } from './flowchart.js';
 import { SvgTools } from './SvgTools.js';
 import { checkInsertSpace } from './editGeometry.js';
+import { renameLine } from './renameLine.js';
 import { changePreview } from './changePreview.js';
 
 export interface EditRequest {
@@ -22,6 +24,7 @@ export interface EditRequest {
   inputs?: string[];
   nodeId?: string;
   label?: string;
+  labelLine?: number;
   edgeId?: string;
   x?: number;
   y?: number;
@@ -36,6 +39,8 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
     (req.previewPath && [req.path, req.output].includes(req.previewPath))
   )
     throw new RangeError('Choose distinct .svg paths for the original, output and preview.');
+  if (req.labelLine !== undefined && req.operation !== 'rename')
+    throw new RangeError('labelLine is only valid for rename.');
   const before = await files.read(req.path);
   const { graph, warnings } = await nativeGraph(before);
   if (warnings.length || graph.unresolvedEdges.length || graph.inferredEdges.length)
@@ -67,6 +72,7 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
   const context: ChartNode[] = [];
   let newNode: ChartNode | undefined;
   let rename: ChartNode | undefined;
+  let lineEdit: ReturnType<typeof renameLine> | undefined;
   let edgeColor: string | undefined;
   const fresh = (base: string) => {
     let result = base,
@@ -128,7 +134,9 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
     rename = resolve(req.nodeId);
     if (!req.label?.trim()) throw new RangeError('Provide a new label.');
     context.push(rename);
-    rename.label = req.label;
+    if (req.labelLine !== undefined)
+      lineEdit = renameLine(before, byId(rename.id), rename, req.labelLine, req.label);
+    rename.label = lineEdit?.label ?? req.label;
   } else {
     const old = graph.edges.find((e) => e.id === req.edgeId);
     if (!old) throw new RangeError('Choose an existing edge ID.');
@@ -184,14 +192,15 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
   const expectedEdges = [...graph.edges.filter((e) => !removedEdges.has(e.id)), ...addEdges];
   indexFlowchart({ nodes: kept, edges: expectedEdges });
   const scratch = memorySession('');
-  await new SvgTools(scratch.session).createFlowchart({
-    path: 'generated.svg',
-    width: Number(root.getAttribute('width')),
-    height: Number(root.getAttribute('height')),
-    nodes: kept,
-    edges: addEdges,
-  });
-  const generated = parseSvg(scratch.contents());
+  if (!lineEdit)
+    await new SvgTools(scratch.session).createFlowchart({
+      path: 'generated.svg',
+      width: Number(root.getAttribute('width')),
+      height: Number(root.getAttribute('height')),
+      nodes: kept,
+      edges: addEdges,
+    });
+  const generated = lineEdit ? root : parseSvg(scratch.contents());
   const resultElements = new Map(elements(generated).map((e) => [e.getAttribute('id'), e]));
   const taken = new Set(
     all.filter((e) => !drop.has(e.getAttribute('id')!)).map((e) => e.getAttribute('id')),
@@ -215,7 +224,9 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
     .filter((e) => !drop.has(e.getAttribute('id')!) && e.getAttribute('id') !== rename?.id)
     .map((e) => ({ id: e.getAttribute('id'), xml: serialize(e) }));
   const changedElements: Element[] = [];
-  if (rename) {
+  if (rename && lineEdit) {
+    changedElements.push(top(rename.id));
+  } else if (rename) {
     const old = top(rename.id);
     const oldLabels = Array.from(old.getElementsByTagName('text')).filter(
       (e) =>
@@ -260,7 +271,7 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
       changedElements.push(inserted);
     }
   }
-  const after = serialize(root);
+  const after = lineEdit?.source ?? serialize(root);
   const outputGroups = new Map(elements(parseSvg(after)).map((e) => [e.getAttribute('id'), e]));
   const changedUnrelated = untouched.filter(({ id, xml }) => {
     const group = outputGroups.get(id);
@@ -283,14 +294,25 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
   await files.write(req.output, after);
   const delivered = await files.read(req.output);
   if (delivered !== after) throw new Error('Saved SVG differs from the verified candidate.');
+  const diskReadBack = lineEdit
+    ? {
+        originalUnchanged: (await files.read(req.path)) === before,
+        outputSha256: createHash('sha256').update(delivered).digest('hex'),
+        nodes: checked.graph.nodes.length,
+        edges: checked.graph.edges.length,
+        warnings: [...checked.warnings],
+      }
+    : undefined;
   const previewPath = req.previewPath ?? req.output.replace(/\.svg$/i, '-对照.svg');
   let preview: string | undefined, previewError: string | undefined;
   try {
-    await files.write(
-      previewPath,
-      changePreview(before, after, context, [...drop].map(byId), changedElements),
-    );
-    preview = previewPath;
+    if (!lineEdit || req.previewPath) {
+      await files.write(
+        previewPath,
+        changePreview(before, after, context, [...drop].map(byId), changedElements),
+      );
+      preview = previewPath;
+    }
   } catch (error) {
     previewError = String(error);
   }
@@ -303,6 +325,14 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
     removedPortNodes: [...drop].filter((id) => !removedEdges.has(id)),
     ...(rename || newNode ? { changedNode: (rename ?? newNode)!.id } : {}),
     unrelatedNodesMoved: changedUnrelated.length,
+    ...(lineEdit
+      ? {
+          labelLine: req.labelLine,
+          savedLabel: rename!.label,
+          otherBytesUnchanged: true,
+          diskReadBack,
+        }
+      : {}),
     verified: true,
   };
 }
