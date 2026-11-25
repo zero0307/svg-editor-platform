@@ -33,7 +33,7 @@
 
 - **职责**：对只读 `TreeRow` 返回可选后缀；按注册顺序拼接，每个后缀前一个空格；可选 `onEvent` 接收已提交事件。
 - **框架调用位置**：`TreePresenter.decorateLine`（`packages/core/presentation/TreePresenter.ts:141-153`）负责后缀拼接；`handleEvent`（`TreePresenter.ts:96-105`）转发提交事件；`disable`（`TreePresenter.ts:154-161`）隔离故障装饰器。
-- **现有实现**：当前内核与内置能力**没有**正式装饰器；可选标签 `plugins/shape-box/BoxTypeLabelDecorator.ts`（#19，`kind==='box'` → `(box)`）与 `#20` 的 `modified-star`（待接入）。现有测试替身为 `packages/core/test/support/DemoTreeDecorator.ts`、`packages/core/testing/FaultyTreeDecorator.ts`、`test/framework/StampBadgeDecorator.ts`。
+- **现有实现**：当前内核与内置能力**没有**正式装饰器；可选标签 `plugins/shape-box/BoxTypeLabelDecorator.ts`（#19，`kind==='box'` → `(box)`）与 `plugins/tree-modified/ModifiedStarDecorator.ts`（#20，内容基准 → `*`，经暂存 `context.subscribe` 接收事件）。现有测试替身为 `packages/core/test/support/DemoTreeDecorator.ts`、`packages/core/testing/FaultyTreeDecorator.ts`、`test/framework/StampBadgeDecorator.ts`。
 - **缺省行为**：无装饰器时树/`show` 的输出与 Phase 1 逐字节相同（零后缀、零额外空格）；单个装饰器抛错只禁用该实例并上报，其余后缀与已提交文档不变。
 - **错误与测试**：`packages/core/test/decorator.test.ts:41/49/59/70`（零装饰器基线、后缀、顺序、故障隔离）、`packages/core/test/tree-presenter.test.ts`（行格式与事件）、`test/framework-acceptance.test.ts`（`(stamp)` 后缀、故障上报、事件故障隔离）。
 

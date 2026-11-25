@@ -21,6 +21,7 @@
     "@svgframe/core": "*",
     "@svgframe/host": "*",
     "@svgframe/shape-box": "*",
-    "@svgframe/svg-xml": "*"
+    "@svgframe/svg-xml": "*",
+    "@svgframe/tree-modified": "*"
   }
 }

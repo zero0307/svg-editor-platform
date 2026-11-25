@@ -4,15 +4,15 @@
 
 ## 当前冻结基线 F
 
-| 项目         | 值                                                                                                                                                                                                                      |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 提交         | `a21f758bf072a7d8c0ff683bc579db124c6d209d`（简称 `a21f758`）                                                                                                                                                            |
-| 受保护引用   | 分支 `evidence/p2-framework-base`（本地与 `origin` 都指向同一提交）                                                                                                                                                     |
-| 标签         | 无（冻结阶段不打 tag；`p2` 由 `#22` 在验收提交上创建）                                                                                                                                                                  |
-| 组件         | 框架完整、业务插件未接入：`packages/{core,host,svg-xml,builtins}`、`apps/{cli,vscode-svg,dsh-plugin}`；F 时 `plugins.config.json` 的 `plugins` 为空（`#17` 起含 `stats`、`#18` 起含 `dir`、`#19` 起含 `box`，见 M3 行） |
-| 冻结证据     | [framework/freeze.json](evidence/framework/freeze.json)（SHA、配置哈希、14 个输入文件 sha256）                                                                                                                          |
-| 冻结会话输入 | `doc/transcript/baseline-{basic,flowchart,io,dir}.txt`、`test/fixtures/svg/other.svg`、`test/fixtures/dir/`                                                                                                             |
-| 目录重建协议 | `test/fixtures/dir/inventory.json` + [framework/freeze.json](evidence/framework/freeze.json) 的 `directoryProtocol`                                                                                                     |
+| 项目         | 值                                                                                                                                                                                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 提交         | `a21f758bf072a7d8c0ff683bc579db124c6d209d`（简称 `a21f758`）                                                                                                                                                                                        |
+| 受保护引用   | 分支 `evidence/p2-framework-base`（本地与 `origin` 都指向同一提交）                                                                                                                                                                                 |
+| 标签         | 无（冻结阶段不打 tag；`p2` 由 `#22` 在验收提交上创建）                                                                                                                                                                                              |
+| 组件         | 框架完整、业务插件未接入：`packages/{core,host,svg-xml,builtins}`、`apps/{cli,vscode-svg,dsh-plugin}`；F 时 `plugins.config.json` 的 `plugins` 为空（`#17` 起含 `stats`、`#18` 起含 `dir`、`#19` 起含 `box`、`#20` 起含 `tree-modified`，见 M3 行） |
+| 冻结证据     | [framework/freeze.json](evidence/framework/freeze.json)（SHA、配置哈希、14 个输入文件 sha256）                                                                                                                                                      |
+| 冻结会话输入 | `doc/transcript/baseline-{basic,flowchart,io,dir}.txt`、`test/fixtures/svg/other.svg`、`test/fixtures/dir/`                                                                                                                                         |
+| 目录重建协议 | `test/fixtures/dir/inventory.json` + [framework/freeze.json](evidence/framework/freeze.json) 的 `directoryProtocol`                                                                                                                                 |
 
 ## F 后框架补丁
 
@@ -23,31 +23,32 @@
 
 ## 证据目录
 
-| 里程碑           | 路径                                                                             | 内容                                                                                |
-| ---------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Phase 1 基线     | [evidence/baseline/README.md](evidence/baseline/README.md)                       | golden、四会话退出码、规格差异、生成与比较日志                                      |
-| M2 框架冻结（F） | [evidence/framework/extension-points.md](evidence/framework/extension-points.md) | 四扩展点契约/调用位置/实现/缺省/错误测试                                            |
-| M2 环境          | [evidence/framework/environment.json](evidence/framework/environment.json)       | Node/npm/TypeScript/OS、`.nvmrc` 差异、实测命令                                     |
-| M2 检查          | [evidence/framework/check.log](evidence/framework/check.log)                     | `npm run check` 原始输出                                                            |
-| M2 指标          | [evidence/framework/metrics-v1.log](evidence/framework/metrics-v1.log)           | `final^{commit}` → F 的指标生成日志                                                 |
-| M3 stats（#17）  | [evidence/acceptance/017-cmd-01.md](evidence/acceptance/017-cmd-01.md)           | stats 插件逐条验收、A/B 字节一致、禁用与无文档行为                                  |
-| M3 dir（#18）    | [evidence/acceptance/018-cmd-02.md](evidence/acceptance/018-cmd-02.md)           | dir 插件逐条验收、真实目录组合、A/B 字节一致                                        |
-| M3 box（#19）    | [evidence/acceptance/019-box-01.md](evidence/acceptance/019-box-01.md)           | box 三类贡献逐条验收、transcript 回放、读回/降级、结构保护                          |
-| 指标产物         | [docs/metrics/README.md](../docs/metrics/README.md)                              | `e5621a6-to-a21f758.json`、`summary.md`、重算说明                                   |
-| 节点验收         | `doc/evidence/acceptance/`                                                       | `001-qa-01`、`012-met-01`、`015-frame-01`、`017-cmd-01`、`018-cmd-02`、`019-box-01` |
+| 里程碑           | 路径                                                                             | 内容                                                                                               |
+| ---------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Phase 1 基线     | [evidence/baseline/README.md](evidence/baseline/README.md)                       | golden、四会话退出码、规格差异、生成与比较日志                                                     |
+| M2 框架冻结（F） | [evidence/framework/extension-points.md](evidence/framework/extension-points.md) | 四扩展点契约/调用位置/实现/缺省/错误测试                                                           |
+| M2 环境          | [evidence/framework/environment.json](evidence/framework/environment.json)       | Node/npm/TypeScript/OS、`.nvmrc` 差异、实测命令                                                    |
+| M2 检查          | [evidence/framework/check.log](evidence/framework/check.log)                     | `npm run check` 原始输出                                                                           |
+| M2 指标          | [evidence/framework/metrics-v1.log](evidence/framework/metrics-v1.log)           | `final^{commit}` → F 的指标生成日志                                                                |
+| M3 stats（#17）  | [evidence/acceptance/017-cmd-01.md](evidence/acceptance/017-cmd-01.md)           | stats 插件逐条验收、A/B 字节一致、禁用与无文档行为                                                 |
+| M3 dir（#18）    | [evidence/acceptance/018-cmd-02.md](evidence/acceptance/018-cmd-02.md)           | dir 插件逐条验收、真实目录组合、A/B 字节一致                                                       |
+| M3 box（#19）    | [evidence/acceptance/019-box-01.md](evidence/acceptance/019-box-01.md)           | box 三类贡献逐条验收、transcript 回放、读回/降级、结构保护                                         |
+| M3 tree（#20）   | [evidence/acceptance/020-tree-01.md](evidence/acceptance/020-tree-01.md)         | modified-star 状态机、保存/撤销、双标签顺序、禁用与 A/B                                            |
+| 指标产物         | [docs/metrics/README.md](../docs/metrics/README.md)                              | `e5621a6-to-a21f758.json`、`summary.md`、重算说明                                                  |
+| 节点验收         | `doc/evidence/acceptance/`                                                       | `001-qa-01`、`012-met-01`、`015-frame-01`、`017-cmd-01`、`018-cmd-02`、`019-box-01`、`020-tree-01` |
 
 ## 命令
 
 ```bash
-npm test                    # 根测试 120 项（含 Phase 1 基线、9 项框架验收、stats/dir/box 插件测试）
-npm run test:packages       # 工作区 268 项（core 98、host 39、svg-xml 36、cli 2、dsh 7、vscode 25、command-stats 14、command-dir 17、shape-box 30）
+npm test                    # 根测试 128 项（含 Phase 1 基线、框架验收、stats/dir/box/tree 插件测试）
+npm run test:packages       # 工作区 298 项（core 102、host 39、svg-xml 36、cli 2、dsh 7、vscode 25、command-stats 14、command-dir 17、shape-box 30、tree-modified 26）
 npm run check               # 格式、文档、根测试、包构建、包测试、架构检查
 node scripts/metrics/metrics.mjs --from 'final^{commit}' --to a21f758 --out docs/metrics
 node scripts/baseline/compare.mjs --entry apps/cli/dist/main.js
 # 回放以 test/fixtures/plugins/no-optional-plugins.json 禁用可选插件，对照 final 的 Phase 1 字节；golden 未改
 ```
 
-Phase 1 回放与可选插件：A 默认入口已装入 `stats`/`dir`/`box`，`compare.mjs` 因此显式以空配置（B 模式）运行，使 `dir` 会话仍断言 Phase 1 的 `error: unknown command: dir`；`record.mjs` 录制 `final` 时不传 `--config`。目录端口补丁见“F 后框架补丁”行。
+Phase 1 回放与可选插件：A 默认入口已装入 `stats`/`dir`/`box`/`tree-modified`，`compare.mjs` 因此显式以空配置（B 模式）运行，使 `dir` 会话仍断言 Phase 1 的 `error: unknown command: dir`；`record.mjs` 录制 `final` 时不传 `--config`。目录端口与多态反馈补丁见“F 后框架补丁”行；`#19` box transcript 回放固定使用 stats/dir/box 插件集，避免 `modified-star` 后缀改变冻结字节。
 
 ## 环境
 
@@ -55,8 +56,7 @@ Windows `win32 x64`，Node `v26.13.0`，npm `12.2.1`，TypeScript `7.0.2`。`.nv
 
 ## 未执行项
 
-- `#20` 的 C_A/C_B 证据分支与真实插件接入（`#17`/`#18`/`#19` 已接入 `stats`/`dir`/`box`，A/B 在同一提交内验证；独立 C_A/C_B 差异证据仍由 `#21` 统一建立）。
-- **#19 记录的框架缺口**：命令反馈缺少多态描述钩子（create/move/delete 输出 `g#…` 而不是 `box#…`），`ungroup` 文案为 `cannot ungroup box: <id>` 而非 P1 原文；两者需独立框架补丁，详见 [ADR-0014](adr/0014-box-structure-and-readback.md) §7。`doc/transcript/box.txt` 的期望字节按当前框架实测冻结。
-- `#21` 的完整 A/B 回放、`#22` 的 p2 指标与发布清单。
+- `#21` 的 C_A/C_B 证据分支、完整 A/B 回放、`#22` 的 p2 指标与发布清单（默认装配的四个可选插件已全部接入；A/B 在同一提交内验证）。
+- **可选插件的已知语义差异**：多态命令反馈已由 [ADR-0017](adr/0017-polymorphic-command-feedback.md) 补丁实现（box 输出 `box#…`、`cannot ungroup composite shape: <id>`）；undo 仍为统一的 `undone: <原消息>`，P1 §6.1B 的 `moved back by` 等示意文案不实现。dirty 状态不跨进程持久化（[ADR-0015](adr/0015-dirty-semantics.md)）。
 - 真实 VSCode Extension Host 与真实 DSH 会话的安装演示（由 V/D 板块单独记录）。
 - 跨平台与 Node 22/24 检查；`npm run verify:visual` 未作为冻结门槛重跑。

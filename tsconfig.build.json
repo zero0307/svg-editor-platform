@@ -8,6 +8,7 @@
     { "path": "./plugins/command-stats" },
     { "path": "./plugins/command-dir" },
     { "path": "./plugins/shape-box" },
+    { "path": "./plugins/tree-modified" },
     { "path": "./apps/cli" }
   ]
 }
