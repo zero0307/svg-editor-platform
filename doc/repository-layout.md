@@ -22,9 +22,10 @@
 
 ## 工作区（Phase 2）
 
-根 `package.json` 声明 npm workspaces：`packages/*`、`apps/*`、`plugins/*`。当前实际包为 `@svgframe/core`、`vscode-svg`、`@svgframe/dsh-plugin`；`plugins/` 只声明 glob，建立实际插件包前不创建空目录。
+根 `package.json` 声明 npm workspaces：`packages/*`、`apps/*`、`plugins/*`。当前实际包为 `@svgframe/core`、`@svgframe/svg-xml`、`@svgframe/host`、`vscode-svg`、`@svgframe/dsh-plugin`；`plugins/` 只声明 glob，建立实际插件包前不创建空目录。
 
 - 库包（`packages/*`）公开入口是包根 `index.ts`，`exports["."]` 只暴露 `dist/index.js` 与 `dist/index.d.ts`，测试放包根 `test/` 并编译到包内 `dist/test/`；包 `build` 用 `tsc -b .`，因此构建会自动带上项目引用。
+- `packages/host` 除 `LocalFileStore`/`LocalDirectoryReader` 外提供 `PluginInstaller`/`PluginLoader`：A 传模块对象、B 读 `plugins.config.json`，二者走同一注册事务；插件 manifest 在插件包 `package.json` 的 `svgframe.contributes`。
 - `apps/vscode-svg` 保持扩展自己的 `src/`、`dist/src` 与 `main` 入口；`apps/dsh-plugin` 是 JS 包，不参与 TypeScript 构建。apps 的依赖方向同样受边界检查约束，接入内部包时须在 `package.json` 声明并由检查脚本的允许矩阵覆盖。
 - 新增库包时在 `tsconfig.build.json` 追加 `references`，按 `@svgframe/core` 形状设置 `composite`、`rootDir: "."`、`declaration` 与 `exports`；具体约定见 [ADR-0007](adr/0007-workspaces-and-package-boundaries.md)。
 
