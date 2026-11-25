@@ -46,7 +46,17 @@ function aggregate(entries) {
     addToBucket(byCategory[entry.category], entry);
     addToBucket(totals, entry);
   }
-  return { totals, byCategory };
+  // CLI scope is exactly the three course categories; VSCode and DSH stay separate.
+  const cli = emptyBucket();
+  for (const category of ['kernel', 'assembly', 'plugin']) {
+    const bucket = byCategory[category];
+    cli.files += bucket.files;
+    cli.lines += bucket.lines;
+    cli.complexity.total += bucket.complexity.total;
+    cli.complexity.functions += bucket.complexity.functions;
+    cli.complexity.max = Math.max(cli.complexity.max, bucket.complexity.max);
+  }
+  return { totals, cli, byCategory };
 }
 
 function minus(after, before) {
@@ -69,7 +79,11 @@ function deltaOf(fromAggregate, toAggregate) {
       fromAggregate.byCategory[category],
     );
   }
-  return { totals: minus(toAggregate.totals, fromAggregate.totals), byCategory };
+  return {
+    totals: minus(toAggregate.totals, fromAggregate.totals),
+    cli: minus(toAggregate.cli, fromAggregate.cli),
+    byCategory,
+  };
 }
 
 async function readJson(file) {
@@ -190,11 +204,16 @@ function summaryMarkdown(report, migration, outLabel) {
     );
   }
   lines.push(
-    row('CLI 合计', measured.from.summary.totals, measured.to.summary.totals, delta.totals),
+    row(
+      'CLI 合计（内核+装配+插件）',
+      measured.from.summary.cli,
+      measured.to.summary.cli,
+      delta.cli,
+    ),
   );
   lines.push('');
   lines.push(
-    `范围：${measured.from.measuredFiles} → ${measured.to.measuredFiles} 个源文件（各提交跟踪 ${measured.from.trackedFiles} → ${measured.to.trackedFiles} 个文件）。VSCode 与 DSH 单列，不计入 CLI 合计。`,
+    `范围：${measured.from.measuredFiles} → ${measured.to.measuredFiles} 个源文件（各提交跟踪 ${measured.from.trackedFiles} → ${measured.to.trackedFiles} 个文件）。VSCode 与 DSH 单列，不计入 CLI 合计；上表“CLI 合计”只含内核/装配/插件三类，JSON 的 \`totals\` 是测得的全部类别之和。`,
   );
   lines.push('');
   lines.push('## 目标提交中复杂度最高的文件（前 10）');

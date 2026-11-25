@@ -1,0 +1,25 @@
+{
+  "node": "v26.13.0",
+  "npm": "12.2.1",
+  "typescript": "7.0.2",
+  "platform": "win32",
+  "architecture": "x64",
+  "osRelease": "10.0.19045",
+  "nvmrc": "24.22.1",
+  "candidateCommit": "fb0427ad5895eaaebb13a5c18be8cb19ffa30183",
+  "candidateShort": "fb0427a",
+  "baselineTagObject": "25c263bda5515816d59efb383a3790dd2c77df3a",
+  "baselineCommit": "e5621a68afd4731626d54566f17ba55885d1bc0f",
+  "recordedAt": "2026-11-25T15:10:38.871Z",
+  "commands": {
+    "install": "npm ci --prefer-offline",
+    "check": "npm run check",
+    "visual": "npm run verify:visual",
+    "cliSmoke": "npm run cli -- --help; node apps/cli/dist/main.js --script artifacts/smoke/commands.txt",
+    "metrics": "node scripts/metrics/metrics.mjs --from 'final^{commit}' --to fb0427a --out docs/metrics"
+  },
+  "notes": [
+    "npm ci 在干净 node_modules 上执行；其中 @vscode/vsce-sign 与 esbuild 的 postinstall 被 allowScripts 策略阻止，日志已保存，未影响本节点检查（vscode 打包不在本次范围）。",
+    ".nvmrc 固定 24.22.1，本机实际运行 Node v26.13.0；跨平台与 Node 22/24 未验证。"
+  ]
+}

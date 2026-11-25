@@ -13,13 +13,16 @@
 | ------------------------- | ---------------------------- | -------------------------------------------------- | ------------ |
 | `e5621a6-to-17f9a78.json` | `final^{commit}` = `e5621a6` | `17f9a78`（含 `#7`/`#8`/`#10` 的集成分支）         | 框架候选首版 |
 | `e5621a6-to-a21f758.json` | `final^{commit}` = `e5621a6` | `a21f758`（F：框架完整、业务插件未接入，#15 冻结） | F 的首版指标 |
+| `e5621a6-to-fb0427a.json` | `final^{commit}` = `e5621a6` | `fb0427a`（21 个节点后的 Phase 2 最终候选，#22）   | 最终候选指标 |
 
-这两个都是**框架候选**数据，不是 p2 终版：`e5621a6-to-17f9a78` 里 `plugin` 类为 0（builtins、cli 尚未落地，旧 `src/` 与新包同时在测）；`e5621a6-to-a21f758` 的 `plugin` 45 个文件全部来自默认能力 `packages/builtins`，`plugins/*` 仍为 0。`#22` 打 `p2` 前必须重跑并在报告中写明被测提交；终版指标不能用本文件冒充。
+`e5621a6-to-17f9a78` 是早期候选（`plugin` 类为 0，旧 `src/` 与新包同时在测）；`e5621a6-to-a21f758` 是框架冻结快照；`e5621a6-to-fb0427a` 是 Phase 2 最终候选的完整指标，**在创建 `p2` 之前测量**。`p2` 只能由用户在确认后于主线创建；创建后必须用同一脚本在 `p2` 上重跑并核对 CLI 源码文件集合与指标不变（复核命令见 `doc/evidence/release/README.md`）。
+
+表中“CLI 合计（内核+装配+插件）”只汇总三类；JSON 里的 `totals` 是全部测得类别（含单列的 VSCode 与 DSH），两者不要混用。
 
 ## 重算
 
 ```bash
-node scripts/metrics/metrics.mjs --from 'final^{commit}' --to a21f758
+node scripts/metrics/metrics.mjs --from 'final^{commit}' --to fb0427a
 ```
 
 换目标提交（例如 p2 候选）时使用 `--to <sha>`；希望不影响已提交产物时用 `--out artifacts/metrics-candidate`。同一输入与同一 `--out` 必须得到逐字节相同的文件，比较方式见 `doc/evidence/acceptance/012-met-01.md`。
