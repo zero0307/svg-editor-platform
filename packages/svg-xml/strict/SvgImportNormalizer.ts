@@ -58,6 +58,9 @@ export class SvgImportNormalizer {
   }
 
   private precheckDuplicates(elements: readonly SvgSyntaxElement[], depth: number): void {
+    // An empty child list at depth 129 is not itself a 129-level element; Phase 1
+    // rejects only elements deeper than the limit.
+    if (elements.length === 0) return;
     if (depth > 128) throw new DomainError('SVG nesting exceeds 128 levels');
     for (const element of elements) {
       const id = explicitId(element);

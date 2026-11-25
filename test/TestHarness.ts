@@ -1,17 +1,46 @@
 import assert from 'node:assert/strict';
-import { ShapeFactory } from '../src/application/ShapeFactory.js';
-import { SvgEditor } from '../src/application/SvgEditor.js';
-import type { FileStore } from '../src/application/ports/FileStore.js';
-import { CommandRouter } from '../src/cli/CommandRouter.js';
-import { XmlSvgCodec } from '../src/infrastructure/XmlSvgCodec.js';
-import { DomainError } from '../src/domain/DomainError.js';
+import {
+  AttributeHandlerRegistry,
+  CommandRegistry,
+  DomainError,
+  EditorSession,
+  ProviderShapeCreationService,
+  ShapeProviderRegistry,
+  TreeDecoratorRegistry,
+  TreePresenter,
+} from '@svgframe/core';
+import { CommandDispatcher } from '@svgframe/cli';
+import { registerDefaultCommands, registerDefaultShapes } from '@svgframe/builtins';
+import { XmlSvgCodec } from '@svgframe/svg-xml';
+import type { FileStore } from '@svgframe/core';
 
+/**
+ * Phase 1 test harness rebuilt from the public packages: default providers and
+ * commands are registered into live registries, the session owns the candidate
+ * transaction, and the dispatcher applies only metadata routing.
+ */
 export class TestHarness implements FileStore {
   readonly files = new Map<string, string>();
-  readonly factory = new ShapeFactory();
-  readonly codec = new XmlSvgCodec(this.factory);
-  readonly editor = new SvgEditor(this, this.codec);
-  readonly router = new CommandRouter(this.editor, this.factory);
+  readonly shapeProviders = new ShapeProviderRegistry();
+  readonly commands = new CommandRegistry();
+  readonly treeDecorators = new TreeDecoratorRegistry();
+  readonly attributeHandlers = new AttributeHandlerRegistry();
+  readonly shapes = new ProviderShapeCreationService(this.shapeProviders);
+  readonly codec = new XmlSvgCodec(this.shapeProviders);
+  readonly editor = new EditorSession(this, this.codec);
+  readonly presenter = new TreePresenter(this.treeDecorators);
+  readonly router: CommandDispatcher;
+  constructor() {
+    registerDefaultShapes(this.shapeProviders);
+    registerDefaultCommands(this.commands, {
+      shapes: this.shapes,
+      commands: this.commands,
+      shapeProviders: this.shapeProviders,
+      treeDecorators: this.treeDecorators,
+      attributeHandlers: this.attributeHandlers,
+    });
+    this.router = new CommandDispatcher(this.commands, this.editor);
+  }
   async read(path: string): Promise<string> {
     if (!this.files.has(path)) throw new DomainError(`cannot read file: ${path}`);
     return this.files.get(path)!;
