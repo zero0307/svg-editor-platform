@@ -145,6 +145,8 @@ CORE ..> PLUGIN : 调用已注册接口
 
 #7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。#10 已把树展示与行尾装饰管线落为 `TreePresenter`（见 [ADR-0005](adr/0005-tree-display-and-decoration.md)）。#14 已把六种图形和 19 条默认命令迁入 `packages/builtins`，并由 `apps/cli` 经同一 `PluginInstaller` 装配（见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)）。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
+M2 框架冻结（F = `a21f758`）时的**实际**文件/函数、每个实现、无可选实现时的缺省行为与违约错误测试记录在 [扩展点清单](evidence/framework/extension-points.md)。#17–#20 的插件接入以该清单为契约入口；清单没有补齐的通用能力，不在接入提交里改内核。
+
 调用约定：
 
 - provider 的 `matches` 是纯查询，只声明“显式语义命中”；标签默认恢复由 `defaultTag` 表达，两阶段选择与歧义拒绝在 #13 的 codec 中实现。

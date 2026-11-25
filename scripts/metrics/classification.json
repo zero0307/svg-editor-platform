@@ -15,6 +15,7 @@
     { "match": "**/dist/**", "reason": "构建产物" },
     { "match": "**/node_modules/**", "reason": "依赖" },
     { "match": "package-lock.json", "reason": "锁文件" },
+    { "match": "plugins.config.json", "reason": "插件装配配置，不是运行源码" },
     { "match": "**/package.json", "reason": "包元数据" },
     { "match": "**/tsconfig*.json", "reason": "构建配置" },
     { "match": "tsconfig*.json", "reason": "构建配置" },
