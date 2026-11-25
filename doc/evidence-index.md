@@ -14,6 +14,12 @@
 | 冻结会话输入 | `doc/transcript/baseline-{basic,flowchart,io,dir}.txt`、`test/fixtures/svg/other.svg`、`test/fixtures/dir/`                                                                         |
 | 目录重建协议 | `test/fixtures/dir/inventory.json` + [framework/freeze.json](evidence/framework/freeze.json) 的 `directoryProtocol`                                                                 |
 
+## F 后框架补丁
+
+| 补丁             | 关联     | 说明                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ---------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 查询命令目录端口 | #18 前置 | 提交 `feat(core): expose directory port to query commands (#18 prerequisite)`，基于 F=`a21f758`。`QueryContext` 增加可选 `DirectoryReader` 与 `directories()`（缺失报 `directory access is not available`），`CommandDispatcher` 与 A/B 组合根注入同一 `LocalDirectoryReader`；不改变既有命令输出、文档/历史/屏障。补丁后 core 98、cli 2、workspace 221；#18~#20 的 A/B 证据以本补丁后提交为新基线。 |
+
 ## 证据目录
 
 | 里程碑           | 路径                                                                             | 内容                                                    |

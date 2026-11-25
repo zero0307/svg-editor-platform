@@ -4,7 +4,12 @@ import { spawnSync } from 'node:child_process';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { CommandRegistry, FakeEditorSession, FakeFileStore } from '@svgframe/core';
+import {
+  CommandRegistry,
+  FakeDirectoryReader,
+  FakeEditorSession,
+  FakeFileStore,
+} from '@svgframe/core';
 import { CommandDispatcher, createApplication } from '@svgframe/cli';
 import type { Command, CommandPreparation } from '@svgframe/core';
 
@@ -67,7 +72,7 @@ test('requiresDocument:false commands run without a document while others fail',
   registry.register(queryOnly);
   registry.register(needsDocument);
   const session = new FakeEditorSession();
-  const dispatcher = new CommandDispatcher(registry, session);
+  const dispatcher = new CommandDispatcher(registry, session, new FakeDirectoryReader());
   assert.deepEqual(await dispatcher.execute('status'), ['ready']);
   assert.equal(session.hasDocument(), false);
   assert.deepEqual(await dispatcher.execute('peek'), [

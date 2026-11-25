@@ -45,6 +45,13 @@
 - `baseline.test.ts` 与 `cli.test.ts` 的编译入口改为 `apps/cli/dist/main.js`；`scripts/verify-visual.mjs` 改用公开包构造 codec；`check-architecture.mjs` 在 `src/` 不存在时跳过旧分层规则、仍执行 workspace 边界检查。
 - 新增 `test/composition.test.ts`：A/B 字节一致、内置能力经 installer 安装、`requiresDocument:false` 假命令未初始化文档可执行。
 
+### 6. 查询命令的目录端口（#18 前置补丁）
+
+- `QueryContext` 增加可选目录端口：构造参数 `(document: ReadonlyDocument | null, directories?: DirectoryReader)`，`directories()` 返回注入的 `DirectoryReader`；未注入时抛 `directory access is not available`。上下文仍不暴露 session、编辑或历史能力，文档仍为只读投影。
+- `CommandDispatcher` 构造参数增加 `DirectoryReader`，每次构造 `QueryContext` 时传入；因此 `requiresDocument:false` 的 query 命令在未初始化文档时可执行，且不会按命令名开特例。
+- A/B 组合根都用 `@svgframe/host` 的 `LocalDirectoryReader` 注入同一 dispatcher；`F`（`a21f758`）冻结后新增本补丁，后续 #18~#20 的 A/B 证据以补丁后提交为新基线。该补丁只增加端口注入，不改变 builtins/既有命令输出、doc/history/barrier 行为或插件契约。
+- 测试：core 覆盖 `QueryContext` 注入与缺失文案；cli 包测试用 `requiresDocument:false` 的假查询命令经端口列目录，断言未初始化可执行、文档/历史/屏障不变，并验证名为 P1 特例（`read`/`help`）的命令仍只按元数据路由。
+
 ## 备选与取舍
 
 - **保留 `src/` 作为兼容层**：会造成两套内核、双份契约与不可控漂移；选择删除。

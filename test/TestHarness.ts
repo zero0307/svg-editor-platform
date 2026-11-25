@@ -4,6 +4,7 @@ import {
   CommandRegistry,
   DomainError,
   EditorSession,
+  FakeDirectoryReader,
   ProviderShapeCreationService,
   ShapeProviderRegistry,
   TreeDecoratorRegistry,
@@ -29,6 +30,7 @@ export class TestHarness implements FileStore {
   readonly codec = new XmlSvgCodec(this.shapeProviders);
   readonly editor = new EditorSession(this, this.codec);
   readonly presenter = new TreePresenter(this.treeDecorators);
+  readonly directories = new FakeDirectoryReader();
   readonly router: CommandDispatcher;
   constructor() {
     registerDefaultShapes(this.shapeProviders);
@@ -39,7 +41,7 @@ export class TestHarness implements FileStore {
       treeDecorators: this.treeDecorators,
       attributeHandlers: this.attributeHandlers,
     });
-    this.router = new CommandDispatcher(this.commands, this.editor);
+    this.router = new CommandDispatcher(this.commands, this.editor, this.directories);
   }
   async read(path: string): Promise<string> {
     if (!this.files.has(path)) throw new DomainError(`cannot read file: ${path}`);
