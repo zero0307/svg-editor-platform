@@ -1,0 +1,9 @@
+session: stats-dir (stats + dir commands on the fixed directory fixture)
+transcript: doc/transcript/stats-dir.txt sha256=69fdf21a73f0e446102173ba31d7f2b80663d661fb91361d9a8769de8d9a6036
+seed: tree test/fixtures/dir/tree fe36e594caf73616c15093767d00d17def84b3dbbfd7ad1a27ca68cafa7398bd
+cwd: fresh copy of the seed under <work>/{a,b}/stats-dir/run; scripts and logs stay outside
+A: exit=0 stdout=304B stderr=0B
+B: exit=0 stdout=304B stderr=0B
+files: (none)
+result: identical (stdout/stderr/exit/produced bytes)
+

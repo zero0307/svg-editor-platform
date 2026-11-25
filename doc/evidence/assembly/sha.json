@@ -1,0 +1,29 @@
+{
+  "generatedBy": "node scripts/assembly/diff-evidence.mjs --framework a21f758 --code evidence/box-code --config evidence/box-config --integration d2b5e23",
+  "framework": {
+    "ref": "a21f758",
+    "commit": "a21f758bf072a7d8c0ff683bc579db124c6d209d",
+    "short": "a21f758"
+  },
+  "code": {
+    "ref": "evidence/box-code",
+    "commit": "d3465f73a5d5309bed04322c75504b9a953c8064",
+    "short": "d3465f7",
+    "parent": "a21f758bf072a7d8c0ff683bc579db124c6d209d"
+  },
+  "config": {
+    "ref": "evidence/box-config",
+    "commit": "043a2f763320f1066a6718febfb2779768052c88",
+    "short": "043a2f7",
+    "parent": "a21f758bf072a7d8c0ff683bc579db124c6d209d"
+  },
+  "integration": {
+    "ref": "d2b5e23",
+    "commit": "d2b5e236cd059c6e15ff9de6c46062620ab2da4e",
+    "short": "d2b5e23"
+  },
+  "entry": "apps/cli/dist/main.js",
+  "tags": {
+    "created": []
+  }
+}

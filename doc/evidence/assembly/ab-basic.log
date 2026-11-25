@@ -1,0 +1,9 @@
+session: basic (Phase 1 §6 base session (errors are part of the frozen input))
+transcript: doc/transcript/baseline-basic.txt sha256=ad85a886305c8804ba2d9ffc46962248404d73fee6adc020141fdd6467b540f5
+seed: files   1 files
+cwd: fresh copy of the seed under <work>/{a,b}/basic/run; scripts and logs stay outside
+A: exit=1 stdout=1189B stderr=0B
+B: exit=1 stdout=1189B stderr=0B
+files: demo.svg(413B, 7ce8f300aae3)
+result: identical (stdout/stderr/exit/produced bytes)
+

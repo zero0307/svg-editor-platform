@@ -1,0 +1,9 @@
+session: box (Phase 1 §6.1B box session)
+transcript: doc/transcript/box.txt sha256=bc81ef59124294623e538da7dfad43cedfb184dea2b0f5db92e196386b505c35
+seed: empty
+cwd: fresh copy of the seed under <work>/{a,b}/box/run; scripts and logs stay outside
+A: exit=0 stdout=824B stderr=0B
+B: exit=0 stdout=824B stderr=0B
+files: flowchart-box.svg(601B, 746e10d9af7e)
+result: identical (stdout/stderr/exit/produced bytes)
+

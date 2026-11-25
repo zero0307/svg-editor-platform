@@ -1,0 +1,9 @@
+node.exe : npm notice run svg-editor-cli@1.0.0 build:packages
+所在位置 行:1 字符: 1
++ & "D:\Program Files\nodejs/node.exe" "C:\Users\tianbaoZeng\AppData\Ro ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm notice run ... build:packages:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+npm notice run tsc -b tsconfig.build.json
+plugins/shape-box/BoxShape.ts(53,12): error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'Group'.

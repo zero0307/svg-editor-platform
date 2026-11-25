@@ -1,0 +1,1477 @@
+# C_A: evidence/box-code (d3465f73a5d5309bed04322c75504b9a953c8064) parent F a21f758bf072a7d8c0ff683bc579db124c6d209d
+# git diff --name-status a21f758 d3465f7
+# $ git diff --name-status a21f758bf072a7d8c0ff683bc579db124c6d209d d3465f73a5d5309bed04322c75504b9a953c8064
+M	apps/cli/package.json
+M	apps/cli/src/main.ts
+M	package-lock.json
+A	plugins/shape-box/BoxAttributeHandler.ts
+A	plugins/shape-box/BoxManifest.ts
+A	plugins/shape-box/BoxPlugin.ts
+A	plugins/shape-box/BoxProvider.ts
+A	plugins/shape-box/BoxShape.ts
+A	plugins/shape-box/BoxTypeLabelDecorator.ts
+A	plugins/shape-box/index.ts
+A	plugins/shape-box/package.json
+A	plugins/shape-box/test/BoxAttributeHandler.test.ts
+A	plugins/shape-box/test/BoxPlugin.test.ts
+A	plugins/shape-box/test/BoxProvider.test.ts
+A	plugins/shape-box/test/BoxSession.test.ts
+A	plugins/shape-box/test/BoxShape.test.ts
+A	plugins/shape-box/test/BoxTypeLabelDecorator.test.ts
+A	plugins/shape-box/test/TestLeafShape.ts
+A	plugins/shape-box/test/TestShapeService.ts
+A	plugins/shape-box/tsconfig.json
+M	tsconfig.build.json
+
+
+# git diff a21f758 d3465f7
+# $ git diff a21f758bf072a7d8c0ff683bc579db124c6d209d d3465f73a5d5309bed04322c75504b9a953c8064
+diff --git a/apps/cli/package.json b/apps/cli/package.json
+index d15ef25..06b905c 100644
+--- a/apps/cli/package.json
++++ b/apps/cli/package.json
+@@ -17,6 +17,7 @@
+     "@svgframe/builtins": "*",
+     "@svgframe/core": "*",
+     "@svgframe/host": "*",
++    "@svgframe/shape-box": "*",
+     "@svgframe/svg-xml": "*"
+   }
+ }
+diff --git a/apps/cli/src/main.ts b/apps/cli/src/main.ts
+index c1f544f..ab24a7f 100644
+--- a/apps/cli/src/main.ts
++++ b/apps/cli/src/main.ts
+@@ -1,9 +1,13 @@
+ import { createReadStream } from 'node:fs';
++import boxPlugin from '@svgframe/shape-box';
+ import { createApplication } from './Application.js';
+ import { Repl } from './Repl.js';
+ 
+ const USAGE = 'error: usage: npm run cli -- [--script <file> | --help]';
+ 
++/** A-mode explicit plugin assembly for this top-level composition root. */
++const embeddedPlugins = [{ module: boxPlugin, manifest: boxPlugin.manifest }];
++
+ interface ParsedArguments {
+   readonly script?: string;
+   readonly config?: string;
+@@ -40,7 +44,7 @@ const messageOf = (error: unknown): string =>
+ const main = async (): Promise<void> => {
+   const args = process.argv.slice(2);
+   if (args.length === 1 && args[0] === '--help') {
+-    const application = await createApplication();
++    const application = await createApplication({ embeddedPlugins });
+     console.log((await application.dispatcher.help()).join('\n'));
+     return;
+   }
+@@ -52,6 +56,7 @@ const main = async (): Promise<void> => {
+   }
+   const application = await createApplication({
+     configPath: parsed.config,
++    embeddedPlugins,
+     onPluginError: (message) => console.error(`error: ${message}`),
+   });
+   const input = parsed.script
+diff --git a/package-lock.json b/package-lock.json
+index c47570d..2124bb9 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -32,6 +32,7 @@
+         "@svgframe/builtins": "*",
+         "@svgframe/core": "*",
+         "@svgframe/host": "*",
++        "@svgframe/shape-box": "*",
+         "@svgframe/svg-xml": "*"
+       }
+     },
+@@ -1251,6 +1252,10 @@
+       "resolved": "packages/host",
+       "link": true
+     },
++    "node_modules/@svgframe/shape-box": {
++      "resolved": "plugins/shape-box",
++      "link": true
++    },
+     "node_modules/@svgframe/svg-xml": {
+       "resolved": "packages/svg-xml",
+       "link": true
+@@ -3110,6 +3115,13 @@
+         "@svgframe/core": "*",
+         "@xmldom/xmldom": "0.9.12"
+       }
++    },
++    "plugins/shape-box": {
++      "name": "@svgframe/shape-box",
++      "version": "0.0.0",
++      "dependencies": {
++        "@svgframe/core": "*"
++      }
+     }
+   }
+ }
+diff --git a/plugins/shape-box/BoxAttributeHandler.ts b/plugins/shape-box/BoxAttributeHandler.ts
+new file mode 100644
+index 0000000..208bf93
+--- /dev/null
++++ b/plugins/shape-box/BoxAttributeHandler.ts
+@@ -0,0 +1,41 @@
++import { DomainError } from '@svgframe/core';
++import { BoxShape } from './BoxShape.js';
++import type {
++  AttributeEditContext,
++  AttributeHandler,
++  AttributeRequest,
++  AttributeResult,
++  ReadonlyShape,
++} from '@svgframe/core';
++
++/**
++ * Domain attribute semantics for boxes: `fill` is propagated to the necessary
++ * rectangle and the plugin-only convenience attribute `label` rewrites the
++ * necessary text. Both run on the candidate document, so one `set` remains a single
++ * undo unit even though a part is modified. `handles` is a pure query and only
++ * claims boxes: a `label` on any other shape keeps falling through to the Phase 1
++ * attribute whitelist and therefore reports `unknown attribute: label`.
++ */
++export class BoxAttributeHandler implements AttributeHandler {
++  readonly name = 'box-attributes';
++
++  handles(target: ReadonlyShape, attribute: string): boolean {
++    return target instanceof BoxShape && (attribute === 'fill' || attribute === 'label');
++  }
++
++  apply(context: AttributeEditContext, request: AttributeRequest): AttributeResult {
++    const box = context.document.require(request.targetId);
++    if (!(box instanceof BoxShape)) throw new DomainError(`not a box: ${request.targetId}`);
++    if (request.attribute === 'fill') {
++      const rect = box.rect();
++      rect.setAttribute('fill', request.value);
++      return { message: `box#${box.id} fill propagated to ${rect.id}` };
++    }
++    if (request.attribute === 'label') {
++      const label = box.label();
++      label.setAttribute('text', request.value);
++      return { message: `box#${box.id} label updated: ${JSON.stringify(request.value)}` };
++    }
++    throw new DomainError(`unknown attribute: ${request.attribute}`);
++  }
++}
+diff --git a/plugins/shape-box/BoxManifest.ts b/plugins/shape-box/BoxManifest.ts
+new file mode 100644
+index 0000000..f292e19
+--- /dev/null
++++ b/plugins/shape-box/BoxManifest.ts
+@@ -0,0 +1,19 @@
++import type { PluginManifest } from '@svgframe/core';
++
++/**
++ * Declared contributions of `@svgframe/shape-box`.
++ *
++ * The A composition root passes this value to `PluginInstaller.install`; the B
++ * loader derives the same manifest from this package's `package.json`
++ * (`svgframe.contributes`). The three names are registered together by one
++ * `activate`, so the installer commits or rolls them back atomically.
++ */
++export const boxManifest: PluginManifest = {
++  name: '@svgframe/shape-box',
++  version: '0.0.0',
++  contributes: {
++    shapes: ['box'],
++    attributeHandlers: ['box-attributes'],
++    decorators: ['box-type-label'],
++  },
++};
+diff --git a/plugins/shape-box/BoxPlugin.ts b/plugins/shape-box/BoxPlugin.ts
+new file mode 100644
+index 0000000..c16b9e8
+--- /dev/null
++++ b/plugins/shape-box/BoxPlugin.ts
+@@ -0,0 +1,24 @@
++import { BoxAttributeHandler } from './BoxAttributeHandler.js';
++import { boxManifest } from './BoxManifest.js';
++import { BoxProvider } from './BoxProvider.js';
++import { BoxTypeLabelDecorator } from './BoxTypeLabelDecorator.js';
++import type { PluginContext, PluginManifest, PluginModule } from '@svgframe/core';
++
++/**
++ * Plugin module for `@svgframe/shape-box`.
++ *
++ * One activation registers the three contributions of the box feature through the
++ * staged context: the `box` shape provider, the `box-attributes` handler and the
++ * `box-type-label` decorator. Nothing is written to the live registries here; the
++ * installer compares the manifest with the staged names and commits all three or
++ * discards the staging area together with a failed activation.
++ */
++export class BoxPlugin implements PluginModule {
++  readonly manifest: PluginManifest = boxManifest;
++
++  activate(context: PluginContext): void {
++    context.shapeProviders.register(new BoxProvider());
++    context.attributeHandlers.register(new BoxAttributeHandler());
++    context.treeDecorators.register(new BoxTypeLabelDecorator());
++  }
++}
+diff --git a/plugins/shape-box/BoxProvider.ts b/plugins/shape-box/BoxProvider.ts
+new file mode 100644
+index 0000000..a317743
+--- /dev/null
++++ b/plugins/shape-box/BoxProvider.ts
+@@ -0,0 +1,102 @@
++import { DomainError, Numbers } from '@svgframe/core';
++import { BoxShape } from './BoxShape.js';
++import type {
++  Shape,
++  ShapeCreationRequest,
++  ShapeCreationService,
++  ShapeProvider,
++  ShapeRestoreService,
++  SvgElementView,
++} from '@svgframe/core';
++
++/** Role template fixed by Phase 1 §6.1B: rect at (x,y,w,h), label at (x+20, y+h/2+5). */
++const DEFAULT_FILL = '#4a90d9';
++const LABEL_OFFSET_X = 20;
++const LABEL_BASELINE_OFFSET = 5;
++
++/**
++ * Provider for the `box` composite type.
++ *
++ * `create` owns the Phase 1 parameter grammar and builds both role parts through
++ * the public `ShapeCreationService`, so the plugin never imports a concrete
++ * `Rect`/`Text` class. The parts belong to the same candidate-document edit as the
++ * container: a derived-id conflict or any part failure aborts the whole command and
++ * leaves no residue. `matches` claims only the explicit `g` + `data-kind="box"`
++ * marker; without this provider the codec falls back to the ordinary `g` provider
++ * and keeps the marker as imported metadata. `restore` rebuilds a complete subtree
++ * (children restored with their own world transforms and never re-transformed by
++ * the container) and rejects incomplete/wrongly typed boxes so a single read fails
++ * atomically instead of producing a partial domain object.
++ */
++export class BoxProvider implements ShapeProvider {
++  readonly type = 'box';
++  readonly usage = 'box <id> <x> <y> <w> <h> "label"';
++
++  matches(element: SvgElementView): boolean {
++    return element.tag === 'g' && element.attributes['data-kind'] === 'box';
++  }
++
++  create(request: ShapeCreationRequest, shapes: ShapeCreationService): Shape {
++    if (request.parameters.length !== 5)
++      throw new DomainError(`invalid parameters for ${this.type}`);
++    const x = this.number(request, 0);
++    const y = this.number(request, 1);
++    const width = this.number(request, 2);
++    const height = this.number(request, 3);
++    const label = request.parameters[4]!;
++    const box = new BoxShape(request.id);
++    box.insert(
++      shapes.create({
++        type: 'rect',
++        id: box.rectId(),
++        parameters: [
++          Numbers.format(x),
++          Numbers.format(y),
++          Numbers.format(width),
++          Numbers.format(height),
++          DEFAULT_FILL,
++        ],
++      }),
++    );
++    box.insert(
++      shapes.create({
++        type: 'text',
++        id: box.labelId(),
++        parameters: [
++          Numbers.format(x + LABEL_OFFSET_X),
++          Numbers.format(y + height / 2 + LABEL_BASELINE_OFFSET),
++          label,
++        ],
++      }),
++    );
++    return box;
++  }
++
++  restore(element: SvgElementView, shapes: ShapeRestoreService): Shape {
++    if (!element.id) throw new DomainError('invalid box structure: missing id');
++    const box = new BoxShape(element.id);
++    this.applyAttributes(box, element);
++    for (const child of element.children) box.insert(shapes.restore(child));
++    box.validateInvariant();
++    return box;
++  }
++
++  private number(request: ShapeCreationRequest, index: number): number {
++    return Numbers.parse(request.parameters[index]!, `parameter ${index + 1}`);
++  }
++
++  /**
++   * Applies already-normalized element attributes in Phase 1 order: presentation
++   * goes through the validated setters, everything else (including the domain
++   * marker and custom metadata) is preserved. The container never re-applies
++   * `element.transform`; children carry their own accumulated world transform.
++   */
++  private applyAttributes(box: BoxShape, element: SvgElementView): void {
++    for (const [name, value] of Object.entries(element.attributes)) {
++      if (name === 'id' || name.startsWith('xmlns')) continue;
++      if (name === 'fill' || name === 'stroke' || name === 'stroke-width')
++        box.setAttribute(name, value);
++      else box.preserveAttribute(name, value);
++    }
++  }
++}
+diff --git a/plugins/shape-box/BoxShape.ts b/plugins/shape-box/BoxShape.ts
+new file mode 100644
+index 0000000..025549d
+--- /dev/null
++++ b/plugins/shape-box/BoxShape.ts
+@@ -0,0 +1,79 @@
++import { DomainError, Group } from '@svgframe/core';
++import type { Shape } from '@svgframe/core';
++
++/**
++ * Composite `box` type: SVG tag `g`, domain kind `box`, serialized with
++ * `data-kind="box"`.
++ *
++ * A box is a container with two necessary role parts whose derived ids are
++ * `<id>-rect` and `<id>-label`; any extra children (including nested boxes) are
++ * ordinary members. Role parts are resolved by id on every access, so `clone()`
++ * (inherited from the public `Group` clone path plus the `newContainer()` hook)
++ * automatically rebinds the copied box to its copied parts without sharing mutable
++ * children with the source snapshot.
++ */
++export class BoxShape extends Group {
++  constructor(id: string) {
++    super(id);
++    this.preserveAttribute('data-kind', 'box');
++  }
++  override get kind(): string {
++    return 'box';
++  }
++  rectId(): string {
++    return `${this.id}-rect`;
++  }
++  labelId(): string {
++    return `${this.id}-label`;
++  }
++  /** The necessary rectangle; throws when the composition is incomplete. */
++  rect(): Shape {
++    return this.part(this.rectId(), 'rect');
++  }
++  /** The necessary label; throws when the composition is incomplete. */
++  label(): Shape {
++    return this.part(this.labelId(), 'text');
++  }
++  /**
++   * Structural policy: the two role parts cannot be deleted or moved out on their
++   * own; deleting the whole box stays allowed because that decision belongs to its
++   * parent container.
++   */
++  override canRemoveChild(child: Shape): boolean {
++    return child.id !== this.rectId() && child.id !== this.labelId();
++  }
++  /** A box owns its internal composition, so `ungroup` must refuse it. */
++  override canUngroup(): boolean {
++    return false;
++  }
++  /**
++   * Public feedback hook: a created box reports its container tag plus the role
++   * parts, without the kernel knowing the `box` domain type.
++   */
++  override creationParts(): readonly string[] {
++    return [
++      `${this.tag}#${this.id}`,
++      ...this.children().map((child) => `${child.tag}#${child.id}`),
++    ];
++  }
++  /**
++   * Every node invariant: the serialization marker stays and both role parts are
++   * present with the required element names.
++   */
++  override validateInvariant(): void {
++    if (this.attributes()['data-kind'] !== 'box')
++      throw new DomainError(`invalid box: ${this.id} must keep data-kind=box`);
++    this.rect();
++    this.label();
++  }
++  /** Retains the actual plugin type while `Group.clone` copies members. */
++  protected override newContainer(): BoxShape {
++    return new BoxShape(this.id);
++  }
++  private part(id: string, tag: 'rect' | 'text'): Shape {
++    const child = this.children().find((candidate) => candidate.id === id);
++    if (!child) throw new DomainError(`incomplete box: ${this.id} is missing ${id}`);
++    if (child.tag !== tag) throw new DomainError(`invalid box: ${id} must be a <${tag}> part`);
++    return child;
++  }
++}
+diff --git a/plugins/shape-box/BoxTypeLabelDecorator.ts b/plugins/shape-box/BoxTypeLabelDecorator.ts
+new file mode 100644
+index 0000000..791882a
+--- /dev/null
++++ b/plugins/shape-box/BoxTypeLabelDecorator.ts
+@@ -0,0 +1,17 @@
++import type { TreeDecorator, TreeRow } from '@svgframe/core';
++
++/**
++ * `(box)` type label for tree rows.
++ *
++ * The row context is read-only, no other plugin state is consulted and an empty
++ * string is never returned, so disabling the plugin restores the Phase 1 tree bytes
++ * exactly. The framework adds the separating space for each non-empty suffix and
++ * keeps registration order, so this label composes with `modified-star`.
++ */
++export class BoxTypeLabelDecorator implements TreeDecorator {
++  readonly name = 'box-type-label';
++
++  decorate(row: TreeRow): string | null {
++    return row.node.kind === 'box' ? '(box)' : null;
++  }
++}
+diff --git a/plugins/shape-box/index.ts b/plugins/shape-box/index.ts
+new file mode 100644
+index 0000000..56067a7
+--- /dev/null
++++ b/plugins/shape-box/index.ts
+@@ -0,0 +1,11 @@
++import { BoxPlugin } from './BoxPlugin.js';
++
++export { BoxAttributeHandler } from './BoxAttributeHandler.js';
++export { BoxPlugin } from './BoxPlugin.js';
++export { BoxProvider } from './BoxProvider.js';
++export { BoxShape } from './BoxShape.js';
++export { BoxTypeLabelDecorator } from './BoxTypeLabelDecorator.js';
++export { boxManifest } from './BoxManifest.js';
++
++/** Default export consumed by the host loader (B) and the A composition root. */
++export default new BoxPlugin();
+diff --git a/plugins/shape-box/package.json b/plugins/shape-box/package.json
+new file mode 100644
+index 0000000..c7f7061
+--- /dev/null
++++ b/plugins/shape-box/package.json
+@@ -0,0 +1,34 @@
++{
++  "name": "@svgframe/shape-box",
++  "version": "0.0.0",
++  "private": true,
++  "description": "Box composite shape, fill/label attribute handlers and (box) tree label",
++  "type": "module",
++  "exports": {
++    ".": {
++      "types": "./dist/index.d.ts",
++      "import": "./dist/index.js",
++      "default": "./dist/index.js"
++    }
++  },
++  "svgframe": {
++    "contributes": {
++      "shapes": [
++        "box"
++      ],
++      "attributes": [
++        "box-attributes"
++      ],
++      "decorators": [
++        "box-type-label"
++      ]
++    }
++  },
++  "scripts": {
++    "build": "tsc -b .",
++    "test": "npm run build --silent && node --test \"dist/test/*.test.js\""
++  },
++  "dependencies": {
++    "@svgframe/core": "*"
++  }
++}
+diff --git a/plugins/shape-box/test/BoxAttributeHandler.test.ts b/plugins/shape-box/test/BoxAttributeHandler.test.ts
+new file mode 100644
+index 0000000..3e4fb43
+--- /dev/null
++++ b/plugins/shape-box/test/BoxAttributeHandler.test.ts
+@@ -0,0 +1,133 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {
++  AttributeEditAction,
++  AttributeEditingService,
++  AttributeHandlerRegistry,
++  CreateAction,
++  EditorSession,
++  FakeFileStore,
++  FakeSvgCodec,
++  SvgDocument,
++} from '@svgframe/core';
++import { BoxAttributeHandler, BoxShape } from '../index.js';
++import { TestLeafShape } from './TestLeafShape.js';
++import { TestShapeService } from './TestShapeService.js';
++
++const PARAMETERS = ['120', '100', '160', '60', '开始'];
++
++function scene(): { document: SvgDocument; box: BoxShape } {
++  const service = new TestShapeService();
++  const document = new SvgDocument(800, 600);
++  const created = service.create({ type: 'box', id: 'n1', parameters: PARAMETERS });
++  assert.ok(created instanceof BoxShape);
++  document.add(created);
++  return { document, box: created };
++}
++
++test('handles is a pure query that claims only box fill and label', () => {
++  const { document, box } = scene();
++  const handler = new BoxAttributeHandler();
++  const before = JSON.stringify({
++    box: box.attributes(),
++    rect: box.rect().attributes(),
++    label: box.label().textContent(),
++  });
++  assert.equal(handler.handles(box, 'fill'), true);
++  assert.equal(handler.handles(box, 'label'), true);
++  assert.equal(handler.handles(box, 'stroke'), false);
++  assert.equal(handler.handles(box, 'x'), false);
++  assert.equal(
++    JSON.stringify({
++      box: box.attributes(),
++      rect: box.rect().attributes(),
++      label: box.label().textContent(),
++    }),
++    before,
++  );
++  const rect = document.require('n1-rect');
++  assert.equal(handler.handles(rect, 'fill'), false);
++  assert.equal(handler.handles(rect, 'label'), false);
++});
++
++test('apply propagates fill to the inner rect and label to the inner text', () => {
++  const { document, box } = scene();
++  const handler = new BoxAttributeHandler();
++  const fill = handler.apply({ document }, { targetId: 'n1', attribute: 'fill', value: '#f5a623' });
++  assert.deepEqual(fill, { message: 'box#n1 fill propagated to n1-rect' });
++  assert.equal(box.rect().attributes().fill, '#f5a623');
++  assert.equal(box.attributes().fill, undefined, 'the container itself stays unstyled');
++  assert.equal(box.label().textContent(), '开始');
++  const label = handler.apply(
++    { document },
++    { targetId: 'n1', attribute: 'label', value: '处理数据 v2' },
++  );
++  assert.deepEqual(label, { message: 'box#n1 label updated: "处理数据 v2"' });
++  assert.equal(box.label().textContent(), '处理数据 v2');
++  assert.equal(box.rect().attributes().fill, '#f5a623');
++});
++
++test('the handler refuses non-box targets and unknown attributes when called directly', () => {
++  const { document } = scene();
++  const handler = new BoxAttributeHandler();
++  assert.throws(
++    () => handler.apply({ document }, { targetId: 'n1', attribute: 'stroke', value: 'red' }),
++    /unknown attribute: stroke/,
++  );
++  const other = new SvgDocument();
++  other.add(new TestLeafShape('r', 'rect'));
++  assert.throws(
++    () => handler.apply({ document: other }, { targetId: 'r', attribute: 'fill', value: 'red' }),
++    /not a box: r/,
++  );
++});
++
++test('a label on a non-box shape falls back to the default whitelist error', () => {
++  const handlers = new AttributeHandlerRegistry();
++  handlers.register(new BoxAttributeHandler());
++  const service = new AttributeEditingService(handlers);
++  const document = new SvgDocument();
++  document.add(new TestLeafShape('r', 'rect'));
++  assert.throws(
++    () => service.apply(document, { targetId: 'r', attribute: 'label', value: 'x' }),
++    /unknown attribute: label/,
++  );
++  const message = service.apply(document, { targetId: 'r', attribute: 'fill', value: 'red' });
++  assert.equal(message, 'rect#r updated: fill="red"');
++});
++
++test('fill and label are each one undo unit and redo restores the change', () => {
++  const shapes = new TestShapeService();
++  const handlers = new AttributeHandlerRegistry();
++  handlers.register(new BoxAttributeHandler());
++  const editing = new AttributeEditingService(handlers);
++  const session = new EditorSession(new FakeFileStore(), new FakeSvgCodec());
++  session.init(800, 600);
++  session.edit(new CreateAction(shapes, 'box', 'n1', PARAMETERS));
++  const box = session.document().require('n1') as BoxShape;
++  assert.equal(box.rect().attributes().fill, '#4a90d9');
++
++  const fill = session.edit(
++    new AttributeEditAction(editing, { targetId: 'n1', attribute: 'fill', value: '#f5a623' }),
++  );
++  assert.equal(fill, 'box#n1 fill propagated to n1-rect');
++  assert.equal((session.document().require('n1') as BoxShape).rect().attributes().fill, '#f5a623');
++  assert.equal(session.undo(), 'undone: box#n1 fill propagated to n1-rect');
++  assert.equal((session.document().require('n1') as BoxShape).rect().attributes().fill, '#4a90d9');
++  assert.equal(session.redo(), 'redone: box#n1 fill propagated to n1-rect');
++  assert.equal((session.document().require('n1') as BoxShape).rect().attributes().fill, '#f5a623');
++
++  const label = session.edit(
++    new AttributeEditAction(editing, {
++      targetId: 'n1',
++      attribute: 'label',
++      value: '处理数据 v2',
++    }),
++  );
++  assert.equal(label, 'box#n1 label updated: "处理数据 v2"');
++  assert.equal((session.document().require('n1') as BoxShape).label().textContent(), '处理数据 v2');
++  assert.equal(session.undo(), 'undone: box#n1 label updated: "处理数据 v2"');
++  assert.equal((session.document().require('n1') as BoxShape).label().textContent(), '开始');
++  assert.equal(session.redo(), 'redone: box#n1 label updated: "处理数据 v2"');
++  assert.equal((session.document().require('n1') as BoxShape).label().textContent(), '处理数据 v2');
++});
+diff --git a/plugins/shape-box/test/BoxPlugin.test.ts b/plugins/shape-box/test/BoxPlugin.test.ts
+new file mode 100644
+index 0000000..cc5abff
+--- /dev/null
++++ b/plugins/shape-box/test/BoxPlugin.test.ts
+@@ -0,0 +1,77 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFile } from 'node:fs/promises';
++import { FakePluginContext } from '@svgframe/core';
++import plugin, {
++  BoxAttributeHandler,
++  BoxPlugin,
++  BoxProvider,
++  BoxTypeLabelDecorator,
++  boxManifest,
++} from '../index.js';
++
++interface PackageManifest {
++  name: string;
++  version: string;
++  svgframe?: {
++    contributes?: {
++      shapes?: readonly string[];
++      attributes?: readonly string[];
++      decorators?: readonly string[];
++    };
++  };
++}
++
++async function packageManifest(): Promise<PackageManifest> {
++  const source = await readFile(new URL('../../package.json', import.meta.url), 'utf8');
++  return JSON.parse(source) as PackageManifest;
++}
++
++test('activate registers the three box contributions through the staged context', () => {
++  const context = new FakePluginContext();
++  plugin.activate(context);
++  assert.deepEqual(context.shapeProviders.names(), ['box']);
++  assert.deepEqual(context.attributeHandlers.names(), ['box-attributes']);
++  assert.deepEqual(context.treeDecorators.names(), ['box-type-label']);
++  assert.deepEqual(context.commands.names(), [], 'box contributes no command');
++  assert.ok(context.shapeProviders.require('box') instanceof BoxProvider);
++  assert.equal(context.shapeProviders.require('box').type, 'box');
++  assert.ok(context.attributeHandlers.require('box-attributes') instanceof BoxAttributeHandler);
++  assert.ok(context.treeDecorators.require('box-type-label') instanceof BoxTypeLabelDecorator);
++});
++
++test('default export is the plugin module with the shared manifest', () => {
++  assert.ok(plugin instanceof BoxPlugin);
++  assert.equal(plugin.manifest, boxManifest);
++  assert.equal(plugin.manifest.name, '@svgframe/shape-box');
++  assert.equal(plugin.manifest.version, '0.0.0');
++  assert.deepEqual(plugin.manifest.contributes?.shapes, ['box']);
++  assert.deepEqual(plugin.manifest.contributes?.attributeHandlers, ['box-attributes']);
++  assert.deepEqual(plugin.manifest.contributes?.decorators, ['box-type-label']);
++  assert.equal(typeof plugin.activate, 'function');
++});
++
++test('package.json svgframe.contributes matches the manifest and the staged names', async () => {
++  const manifest = await packageManifest();
++  assert.equal(manifest.name, boxManifest.name);
++  assert.equal(manifest.version, boxManifest.version);
++  const contributes = manifest.svgframe?.contributes ?? {};
++  assert.deepEqual(contributes.shapes ?? [], ['box']);
++  assert.deepEqual(contributes.attributes ?? [], ['box-attributes']);
++  assert.deepEqual(contributes.decorators ?? [], ['box-type-label']);
++  const context = new FakePluginContext();
++  plugin.activate(context);
++  assert.deepEqual(context.shapeProviders.names(), contributes.shapes ?? []);
++  assert.deepEqual(context.attributeHandlers.names(), contributes.attributes ?? []);
++  assert.deepEqual(context.treeDecorators.names(), contributes.decorators ?? []);
++});
++
++test('two activations stay independent and register no extra capability', () => {
++  const first = new FakePluginContext();
++  const second = new FakePluginContext();
++  plugin.activate(first);
++  plugin.activate(second);
++  assert.notEqual(first.shapeProviders.require('box'), second.shapeProviders.require('box'));
++  assert.equal(first.attributeHandlers.names().length, 1);
++  assert.equal(first.treeDecorators.names().length, 1);
++});
+diff --git a/plugins/shape-box/test/BoxProvider.test.ts b/plugins/shape-box/test/BoxProvider.test.ts
+new file mode 100644
+index 0000000..6468550
+--- /dev/null
++++ b/plugins/shape-box/test/BoxProvider.test.ts
+@@ -0,0 +1,140 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { BoxProvider, BoxShape } from '../index.js';
++import { TestShapeService, testRestorer, view } from './TestShapeService.js';
++
++test('create builds both role parts through the public creation service', () => {
++  const service = new TestShapeService();
++  const created = service.create({
++    type: 'box',
++    id: 'n1',
++    parameters: ['120', '100', '160', '60', '开始'],
++  });
++  assert.ok(created instanceof BoxShape);
++  assert.deepEqual(
++    created.children().map((child) => child.id),
++    ['n1-rect', 'n1-label'],
++  );
++  assert.deepEqual(created.rect().geometry(), {
++    x: '120',
++    y: '100',
++    width: '160',
++    height: '60',
++  });
++  assert.equal(created.rect().attributes().fill, '#4a90d9');
++  assert.deepEqual(created.label().geometry(), { x: '140', y: '135' });
++  assert.equal(created.label().textContent(), '开始');
++  assert.deepEqual(
++    service.parts.requests.map((request) => `${request.type}:${request.id}`),
++    ['rect:n1-rect', 'text:n1-label'],
++  );
++  assert.deepEqual(service.parts.requests[0]?.parameters, ['120', '100', '160', '60', '#4a90d9']);
++  assert.deepEqual(service.parts.requests[1]?.parameters, ['140', '135', '开始']);
++});
++
++test('create validates its own parameter grammar', () => {
++  const provider = new BoxProvider();
++  const service = new TestShapeService();
++  assert.throws(
++    () => provider.create({ type: 'box', id: 'n1', parameters: ['1', '2', '3', '4'] }, service),
++    /invalid parameters for box/,
++  );
++  assert.throws(
++    () =>
++      provider.create(
++        { type: 'box', id: 'n1', parameters: ['1', '2', '3', '4', 'x', 'y'] },
++        service,
++      ),
++    /invalid parameters for box/,
++  );
++  assert.throws(
++    () =>
++      provider.create({ type: 'box', id: 'n1', parameters: ['1', 'nope', '3', '4', 'x'] }, service),
++    /invalid number for parameter 2: nope/,
++  );
++});
++
++test('matches only the explicit g data-kind=box marker', () => {
++  const provider = new BoxProvider();
++  assert.equal(provider.matches(view('g', 'n1', { 'data-kind': 'box' })), true);
++  assert.equal(provider.matches(view('g', 'g1')), false);
++  assert.equal(provider.matches(view('g', 'n1', { 'data-kind': 'other' })), false);
++  assert.equal(provider.matches(view('rect', 'n1', { 'data-kind': 'box' })), false);
++});
++
++test('restore rebuilds the complete subtree including extra children and nested boxes', () => {
++  const provider = new BoxProvider();
++  const restorer = testRestorer(provider);
++  const element = view('g', 'n1', { 'data-kind': 'box', fill: '#eeeeee' }, [
++    view('rect', 'n1-rect', { x: '10', y: '20', width: '100', height: '40' }),
++    view('text', 'n1-label', { x: '30', y: '45' }, [], '开始'),
++    view('rect', 'n1-extra', { x: '1', y: '2', width: '3', height: '4' }),
++    view('g', 'n2', { 'data-kind': 'box' }, [
++      view('rect', 'n2-rect', { x: '0', y: '0', width: '10', height: '10' }),
++      view('text', 'n2-label', { x: '2', y: '5' }, [], '内层'),
++    ]),
++  ]);
++  const restored = provider.restore(element, restorer);
++  assert.ok(restored instanceof BoxShape);
++  assert.equal(restored.attributes()['data-kind'], 'box');
++  assert.equal(restored.attributes().fill, '#eeeeee');
++  assert.deepEqual(
++    restored.children().map((child) => child.id),
++    ['n1-rect', 'n1-label', 'n1-extra', 'n2'],
++  );
++  assert.deepEqual(restored.rect().geometry(), { x: '10', y: '20', width: '100', height: '40' });
++  assert.equal(restored.label().textContent(), '开始');
++  const nested = restored.children().find((child) => child.id === 'n2');
++  assert.ok(nested instanceof BoxShape);
++  assert.equal(nested.label().textContent(), '内层');
++});
++
++test('restore never re-applies the container world transform to its subtree', () => {
++  const provider = new BoxProvider();
++  const restorer = testRestorer(provider);
++  const element = view(
++    'g',
++    'n1',
++    { 'data-kind': 'box' },
++    [
++      view('rect', 'n1-rect', { x: '10', y: '20', width: '100', height: '40' }),
++      view('text', 'n1-label', { x: '30', y: '45' }, [], '开始'),
++    ],
++    null,
++    { scale: 2, translateX: 5, translateY: 7 },
++  );
++  const restored = provider.restore(element, restorer);
++  assert.ok(restored instanceof BoxShape);
++  assert.deepEqual(restored.rect().geometry(), { x: '10', y: '20', width: '100', height: '40' });
++  assert.deepEqual(restored.label().geometry(), { x: '30', y: '45' });
++});
++
++test('restore rejects incomplete or wrongly typed boxes and a missing id', () => {
++  const provider = new BoxProvider();
++  const restorer = testRestorer(provider);
++  assert.throws(
++    () =>
++      provider.restore(
++        view('g', 'n1', { 'data-kind': 'box' }, [
++          view('rect', 'n1-rect', { x: '0', y: '0', width: '1', height: '1' }),
++        ]),
++        restorer,
++      ),
++    /incomplete box: n1 is missing n1-label/,
++  );
++  assert.throws(
++    () =>
++      provider.restore(
++        view('g', 'n1', { 'data-kind': 'box' }, [
++          view('rect', 'n1-rect', { x: '0', y: '0', width: '1', height: '1' }),
++          view('rect', 'n1-label', { x: '0', y: '0', width: '1', height: '1' }),
++        ]),
++        restorer,
++      ),
++    /invalid box: n1-label must be a <text> part/,
++  );
++  assert.throws(
++    () => provider.restore(view('g', null, { 'data-kind': 'box' }), restorer),
++    /invalid box structure: missing id/,
++  );
++});
+diff --git a/plugins/shape-box/test/BoxSession.test.ts b/plugins/shape-box/test/BoxSession.test.ts
+new file mode 100644
+index 0000000..9c7883e
+--- /dev/null
++++ b/plugins/shape-box/test/BoxSession.test.ts
+@@ -0,0 +1,237 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {
++  AddToAction,
++  AttributeEditAction,
++  AttributeEditingService,
++  AttributeHandlerRegistry,
++  CreateAction,
++  DeleteAction,
++  EditAction,
++  EditorSession,
++  FakeFileStore,
++  FakeSvgCodec,
++  GroupAction,
++  StructureService,
++  TreeDecoratorRegistry,
++  TreePresenter,
++  UngroupAction,
++} from '@svgframe/core';
++import { BoxAttributeHandler, BoxShape, BoxTypeLabelDecorator } from '../index.js';
++import { TestShapeService } from './TestShapeService.js';
++import type { ReadonlyDocument, ReadonlyShape, SvgDocument } from '@svgframe/core';
++
++class MoveAction extends EditAction {
++  constructor(
++    private readonly id: string,
++    private readonly dx: number,
++    private readonly dy: number,
++  ) {
++    super();
++  }
++  override apply(candidate: SvgDocument): string {
++    candidate.require(this.id).move(this.dx, this.dy);
++    return `${this.id} moved`;
++  }
++}
++
++class ScaleAction extends EditAction {
++  constructor(
++    private readonly id: string,
++    private readonly factor: number,
++  ) {
++    super();
++  }
++  override apply(candidate: SvgDocument): string {
++    candidate.require(this.id).scale(this.factor);
++    return `${this.id} scaled`;
++  }
++}
++
++function snapshot(document: ReadonlyDocument): string {
++  const rows: string[] = [];
++  const visit = (shape: ReadonlyShape, depth: number): void => {
++    const attributes = Object.entries(shape.attributes())
++      .map(([name, value]) => `${name}=${value}`)
++      .join(',');
++    rows.push(`${'  '.repeat(depth)}${shape.tag}#${shape.id}[${shape.kind}] ${attributes}`);
++    shape.children().forEach((child) => visit(child, depth + 1));
++  };
++  document.root.children().forEach((child) => visit(child, 0));
++  rows.push(`canvas ${document.width}x${document.height}`);
++  return rows.join('\n');
++}
++
++function scene(): {
++  session: EditorSession;
++  shapes: TestShapeService;
++  structure: StructureService;
++  attributes: AttributeEditingService;
++} {
++  const shapes = new TestShapeService();
++  const handlers = new AttributeHandlerRegistry();
++  handlers.register(new BoxAttributeHandler());
++  const session = new EditorSession(new FakeFileStore(), new FakeSvgCodec());
++  session.init(800, 600);
++  session.edit(new CreateAction(shapes, 'box', 'n1', ['120', '100', '160', '60', '开始']));
++  session.edit(new CreateAction(shapes, 'box', 'n2', ['130', '110', '80', '30', '内层'], 'n1'));
++  return {
++    session,
++    shapes,
++    structure: new StructureService(),
++    attributes: new AttributeEditingService(handlers),
++  };
++}
++
++function box(document: ReadonlyDocument, id: string): BoxShape {
++  const shape = document.require(id);
++  assert.ok(shape instanceof BoxShape);
++  return shape;
++}
++
++test('create, in-clause nesting and the tree label reproduce the box shape', () => {
++  const { session } = scene();
++  const n1 = box(session.document(), 'n1');
++  assert.deepEqual(
++    n1.children().map((child) => child.id),
++    ['n1-rect', 'n1-label', 'n2'],
++  );
++  const n2 = box(session.document(), 'n2');
++  assert.equal(n2.parent, n1);
++  assert.equal(n2.label().textContent(), '内层');
++  const decorators = new TreeDecoratorRegistry();
++  decorators.register(new BoxTypeLabelDecorator());
++  assert.deepEqual(new TreePresenter(decorators).tree(session.document()), [
++    'svg (800x600)',
++    '└── g#n1 (box)',
++    '    ├── rect#n1-rect',
++    '    ├── text#n1-label',
++    '    └── g#n2 (box)',
++    '        ├── rect#n2-rect',
++    '        └── text#n2-label',
++  ]);
++});
++
++test('move and scale operate on the whole box and stay single undo units', () => {
++  const { session } = scene();
++  const before = snapshot(session.document());
++  session.edit(new MoveAction('n2', 10, 20));
++  assert.deepEqual(box(session.document(), 'n2').rect().geometry(), {
++    x: '140',
++    y: '130',
++    width: '80',
++    height: '30',
++  });
++  session.undo();
++  assert.equal(snapshot(session.document()), before);
++  session.redo();
++  assert.equal(box(session.document(), 'n2').rect().geometry().x, '140');
++
++  session.edit(new ScaleAction('n1', 2));
++  assert.deepEqual(box(session.document(), 'n1').rect().geometry(), {
++    x: '240',
++    y: '200',
++    width: '320',
++    height: '120',
++  });
++  session.undo();
++  assert.equal(box(session.document(), 'n1').rect().geometry().x, '120');
++});
++
++test('fill and label edits are one undo unit each and keep nested structure', () => {
++  const { session, attributes } = scene();
++  session.edit(
++    new AttributeEditAction(attributes, { targetId: 'n2', attribute: 'fill', value: '#f5a623' }),
++  );
++  assert.equal(box(session.document(), 'n2').rect().attributes().fill, '#f5a623');
++  session.undo();
++  assert.equal(box(session.document(), 'n2').rect().attributes().fill, '#4a90d9');
++  session.redo();
++  assert.equal(box(session.document(), 'n2').rect().attributes().fill, '#f5a623');
++
++  session.edit(
++    new AttributeEditAction(attributes, {
++      targetId: 'n1',
++      attribute: 'label',
++      value: '处理数据 v2',
++    }),
++  );
++  assert.equal(box(session.document(), 'n1').label().textContent(), '处理数据 v2');
++  session.undo();
++  assert.equal(box(session.document(), 'n1').label().textContent(), '开始');
++  session.redo();
++  assert.equal(box(session.document(), 'n1').label().textContent(), '处理数据 v2');
++  assert.equal(box(session.document(), 'n2').parent?.id, 'n1');
++});
++
++test('boxes can be grouped while their necessary parts cannot be split off', () => {
++  const { session, structure } = scene();
++  assert.equal(
++    session.edit(new GroupAction(structure, 'flow', ['n1'])),
++    'g#flow created with 1 children',
++  );
++  assert.equal(box(session.document(), 'n1').parent?.id, 'flow');
++  const grouped = snapshot(session.document());
++  session.undo();
++  assert.equal(box(session.document(), 'n1').parent?.id, 'canvas');
++  session.redo();
++  assert.equal(snapshot(session.document()), grouped);
++
++  for (const action of [
++    new GroupAction(structure, 'bad', ['n1-rect']),
++    new AddToAction(structure, 'n1', 'n1-rect'),
++    new DeleteAction(structure, 'n1-rect'),
++    new UngroupAction(structure, 'n1'),
++  ]) {
++    assert.throws(() => session.edit(action));
++    assert.equal(snapshot(session.document()), grouped, 'a rejected action keeps the document');
++  }
++  assert.throws(
++    () => session.edit(new UngroupAction(structure, 'n1')),
++    /cannot ungroup composite shape: n1/,
++  );
++  assert.throws(
++    () => session.edit(new DeleteAction(structure, 'n1-rect')),
++    /cannot remove necessary part: n1-rect/,
++  );
++  assert.throws(
++    () => session.edit(new AddToAction(structure, 'n1', 'n1-rect')),
++    /cannot move necessary part: n1-rect/,
++  );
++  assert.equal(session.undo(), 'undone: g#flow created with 1 children');
++});
++
++test('deleting the whole box is allowed, including nested boxes, and undo restores it', () => {
++  const { session, shapes, structure } = scene();
++  session.edit(new CreateAction(shapes, 'rect', 'extra', ['0', '0', '5', '5'], 'n1'));
++  assert.equal(session.edit(new DeleteAction(structure, 'n1')), 'box#n1 deleted');
++  assert.equal(session.document().find('n1'), undefined);
++  assert.equal(session.document().find('n2'), undefined);
++  assert.equal(session.document().find('extra'), undefined);
++  session.undo();
++  const restored = box(session.document(), 'n1');
++  assert.deepEqual(
++    restored.children().map((child) => child.id),
++    ['n1-rect', 'n1-label', 'n2', 'extra'],
++  );
++  assert.equal(box(session.document(), 'n2').label().textContent(), '内层');
++});
++
++test('extra children can be removed while the necessary parts stay protected', () => {
++  const { session, shapes, structure } = scene();
++  session.edit(new CreateAction(shapes, 'rect', 'extra', ['0', '0', '5', '5'], 'n1'));
++  assert.equal(session.edit(new DeleteAction(structure, 'extra')), 'rect#extra deleted');
++  assert.equal(
++    box(session.document(), 'n1')
++      .children()
++      .some((child) => child.id === 'extra'),
++    false,
++  );
++  session.undo();
++  assert.equal(
++    box(session.document(), 'n1')
++      .children()
++      .some((child) => child.id === 'extra'),
++    true,
++  );
++});
+diff --git a/plugins/shape-box/test/BoxShape.test.ts b/plugins/shape-box/test/BoxShape.test.ts
+new file mode 100644
+index 0000000..99baafb
+--- /dev/null
++++ b/plugins/shape-box/test/BoxShape.test.ts
+@@ -0,0 +1,101 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { BoxShape } from '../index.js';
++import { TestLeafShape } from './TestLeafShape.js';
++import { TestShapeService } from './TestShapeService.js';
++
++function box(id = 'n1', x = 120, y = 100, w = 160, h = 60, label = '开始'): BoxShape {
++  const created = new TestShapeService().create({
++    type: 'box',
++    id,
++    parameters: [String(x), String(y), String(w), String(h), label],
++  });
++  assert.ok(created instanceof BoxShape);
++  return created;
++}
++
++test('a box is a g container with kind box and a data-kind marker', () => {
++  const shape = box();
++  assert.equal(shape.tag, 'g');
++  assert.equal(shape.kind, 'box');
++  assert.equal(shape.attributes()['data-kind'], 'box');
++  assert.deepEqual(
++    shape.children().map((child) => child.id),
++    ['n1-rect', 'n1-label'],
++  );
++  assert.equal(shape.rect().tag, 'rect');
++  assert.equal(shape.label().tag, 'text');
++  assert.equal(shape.label().textContent(), '开始');
++});
++
++test('clone keeps the plugin type and rebinds copied parts without sharing children', () => {
++  const original = box();
++  const copy = original.clone();
++  assert.ok(copy instanceof BoxShape, 'newContainer() must retain the box type');
++  assert.equal(copy.kind, 'box');
++  assert.equal(copy.attributes()['data-kind'], 'box');
++  assert.equal(copy.rect().id, 'n1-rect');
++  assert.equal(copy.label().id, 'n1-label');
++  assert.equal(copy.rect().parent, copy);
++  assert.notEqual(copy.rect(), original.rect());
++  copy.rect().setAttribute('fill', '#000000');
++  assert.equal(original.rect().attributes().fill, '#4a90d9');
++});
++
++test('a cloned box keeps nested boxes and extra children as ordinary members', () => {
++  const outer = box('n1');
++  const inner = box('n2', 200, 40, 80, 30, '内层');
++  outer.insert(inner);
++  outer.insert(new TestLeafShape('note', 'rect', { x: 0, y: 0, width: 5, height: 5 }));
++  outer.validateInvariant();
++  const copy = outer.clone();
++  assert.ok(copy instanceof BoxShape);
++  const nested = copy.children().find((child) => child.id === 'n2');
++  assert.ok(nested instanceof BoxShape);
++  assert.equal(nested.kind, 'box');
++  assert.equal(copy.children().find((child) => child.id === 'note')?.tag, 'rect');
++  copy.remove(copy.children().find((child) => child.id === 'note')!);
++  assert.equal(
++    outer.children().some((child) => child.id === 'note'),
++    true,
++  );
++});
++
++test('move and scale use the container semantics of all members', () => {
++  const shape = box();
++  shape.move(10, 20);
++  assert.deepEqual(shape.rect().geometry(), { x: '130', y: '120', width: '160', height: '60' });
++  assert.deepEqual(shape.label().geometry(), { x: '150', y: '155' });
++  shape.scale(2);
++  assert.deepEqual(shape.rect().geometry(), {
++    x: '260',
++    y: '240',
++    width: '320',
++    height: '120',
++  });
++  assert.deepEqual(shape.label().geometry(), { x: '300', y: '310' });
++});
++
++test('structure policy protects only the necessary parts and refuses ungroup', () => {
++  const shape = box();
++  assert.equal(shape.canRemoveChild(shape.rect()), false);
++  assert.equal(shape.canRemoveChild(shape.label()), false);
++  const extra = new TestLeafShape('extra', 'rect');
++  shape.insert(extra);
++  assert.equal(shape.canRemoveChild(extra), true);
++  assert.equal(shape.canUngroup(), false);
++});
++
++test('the invariant rejects a missing or wrongly typed necessary part', () => {
++  const missing = box();
++  missing.remove(missing.rect());
++  assert.throws(() => missing.validateInvariant(), /incomplete box: n1 is missing n1-rect/);
++
++  const wrong = new BoxShape('n1');
++  wrong.insert(new TestLeafShape('n1-rect', 'rect'));
++  wrong.insert(new TestLeafShape('n1-label', 'rect'));
++  assert.throws(() => wrong.validateInvariant(), /invalid box: n1-label must be a <text> part/);
++
++  const complete = box();
++  complete.validateInvariant();
++});
+diff --git a/plugins/shape-box/test/BoxTypeLabelDecorator.test.ts b/plugins/shape-box/test/BoxTypeLabelDecorator.test.ts
+new file mode 100644
+index 0000000..967f25f
+--- /dev/null
++++ b/plugins/shape-box/test/BoxTypeLabelDecorator.test.ts
+@@ -0,0 +1,58 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { SvgDocument, TreeDecoratorRegistry, TreePresenter } from '@svgframe/core';
++import { BoxShape, BoxTypeLabelDecorator } from '../index.js';
++import { TestShapeService } from './TestShapeService.js';
++
++function scene(): { document: SvgDocument; box: BoxShape } {
++  const document = new SvgDocument(800, 600);
++  const created = new TestShapeService().create({
++    type: 'box',
++    id: 'n1',
++    parameters: ['120', '100', '160', '60', '开始'],
++  });
++  assert.ok(created instanceof BoxShape);
++  document.add(created);
++  return { document, box: created };
++}
++
++test('the decorator labels only box rows with (box)', () => {
++  const { document, box } = scene();
++  const decorator = new BoxTypeLabelDecorator();
++  assert.equal(decorator.name, 'box-type-label');
++  assert.equal(
++    decorator.decorate({ document, node: box, parent: document.root, depth: 1 }),
++    '(box)',
++  );
++  assert.equal(decorator.decorate({ document, node: box.rect(), parent: box, depth: 2 }), null);
++  assert.equal(decorator.decorate({ document, node: document.root, parent: null, depth: 0 }), null);
++});
++
++test('the tree presenter appends exactly one (box) suffix and keeps other rows bare', () => {
++  const { document } = scene();
++  const decorators = new TreeDecoratorRegistry();
++  decorators.register(new BoxTypeLabelDecorator());
++  const lines = new TreePresenter(decorators).tree(document);
++  assert.deepEqual(lines, [
++    'svg (800x600)',
++    '└── g#n1 (box)',
++    '    ├── rect#n1-rect',
++    '    └── text#n1-label',
++  ]);
++  const plain = new TreePresenter(new TreeDecoratorRegistry()).tree(document);
++  assert.deepEqual(plain, [
++    'svg (800x600)',
++    '└── g#n1',
++    '    ├── rect#n1-rect',
++    '    └── text#n1-label',
++  ]);
++});
++
++test('two decorator instances share no state', () => {
++  const first = new BoxTypeLabelDecorator();
++  const second = new BoxTypeLabelDecorator();
++  const { document, box } = scene();
++  const row = { document, node: box, parent: document.root, depth: 1 };
++  assert.equal(first.decorate(row), '(box)');
++  assert.equal(second.decorate(row), '(box)');
++});
+diff --git a/plugins/shape-box/test/TestLeafShape.ts b/plugins/shape-box/test/TestLeafShape.ts
+new file mode 100644
+index 0000000..85406af
+--- /dev/null
++++ b/plugins/shape-box/test/TestLeafShape.ts
+@@ -0,0 +1,71 @@
++import { Numbers, Shape } from '@svgframe/core';
++
++const X_KEYS = new Set(['x', 'cx', 'x1', 'x2']);
++const Y_KEYS = new Set(['y', 'cy', 'y1', 'y2']);
++
++/**
++ * Core-only leaf double for box plugin tests: it mimics the observable geometry,
++ * text and presentation behavior of the builtins leaves without importing them.
++ */
++export class TestLeafShape extends Shape {
++  readonly tag: string;
++  private readonly kindName: string;
++  private readonly values = new Map<string, number>();
++  private content: string | null;
++  constructor(
++    id: string,
++    tag: string,
++    values: Readonly<Record<string, number>> = {},
++    content: string | null = null,
++    kind: string = tag,
++  ) {
++    super(id);
++    this.tag = tag;
++    this.kindName = kind;
++    this.content = content;
++    for (const [name, value] of Object.entries(values)) this.values.set(name, value);
++  }
++  override get kind(): string {
++    return this.kindName;
++  }
++  override move(dx: number, dy: number): void {
++    Numbers.finite(dx, 'dx');
++    Numbers.finite(dy, 'dy');
++    for (const name of this.values.keys()) {
++      if (X_KEYS.has(name)) this.values.set(name, this.values.get(name)! + dx);
++      if (Y_KEYS.has(name)) this.values.set(name, this.values.get(name)! + dy);
++    }
++  }
++  override scale(factor: number): void {
++    Numbers.positive(factor, 'scale factor');
++    for (const [name, value] of this.values)
++      this.values.set(name, Numbers.finite(value * factor, name));
++  }
++  override clone(): TestLeafShape {
++    return new TestLeafShape(
++      this.id,
++      this.tag,
++      Object.fromEntries(this.values),
++      this.content,
++      this.kindName,
++    );
++  }
++  override geometry(): Readonly<Record<string, string>> {
++    return Object.freeze(
++      Object.fromEntries([...this.values].map(([name, value]) => [name, Numbers.format(value)])),
++    );
++  }
++  override textContent(): string | null {
++    return this.content;
++  }
++  override summary(): string {
++    return '';
++  }
++  protected override setSpecificAttribute(name: string, value: string): void {
++    if (name === 'text') {
++      this.content = value;
++      return;
++    }
++    super.setSpecificAttribute(name, value);
++  }
++}
+diff --git a/plugins/shape-box/test/TestShapeService.ts b/plugins/shape-box/test/TestShapeService.ts
+new file mode 100644
+index 0000000..8637f09
+--- /dev/null
++++ b/plugins/shape-box/test/TestShapeService.ts
+@@ -0,0 +1,93 @@
++import { FakeShapeCreationService, FakeShapeRestoreService, Numbers } from '@svgframe/core';
++import { BoxProvider } from '../BoxProvider.js';
++import { TestLeafShape } from './TestLeafShape.js';
++import type {
++  Shape,
++  ShapeCreationRequest,
++  ShapeCreationService,
++  SvgElementView,
++} from '@svgframe/core';
++
++const num = (value: string | undefined): number => Numbers.parse(value ?? '', 'parameter');
++
++function leafFromParameters(request: ShapeCreationRequest): TestLeafShape {
++  if (request.type === 'rect') {
++    const shape = new TestLeafShape(request.id, 'rect', {
++      x: num(request.parameters[0]),
++      y: num(request.parameters[1]),
++      width: num(request.parameters[2]),
++      height: num(request.parameters[3]),
++    });
++    const fill = request.parameters[4];
++    if (fill !== undefined) shape.setAttribute('fill', fill);
++    return shape;
++  }
++  return new TestLeafShape(
++    request.id,
++    'text',
++    { x: num(request.parameters[0]), y: num(request.parameters[1]) },
++    request.parameters[2] ?? '',
++  );
++}
++
++/**
++ * Public-port-only composition used by box unit tests: `box` goes through the real
++ * provider, and `rect`/`text` are core-only doubles, so builtins are never loaded.
++ */
++export class TestShapeService implements ShapeCreationService {
++  readonly parts = new FakeShapeCreationService({
++    rect: leafFromParameters,
++    text: leafFromParameters,
++  });
++  private readonly provider = new BoxProvider();
++  create(request: ShapeCreationRequest): Shape {
++    return request.type === 'box'
++      ? this.provider.create(request, this)
++      : this.parts.create(request);
++  }
++}
++
++/** Leaf recipe for provider restore tests: geometry/text come from the view only. */
++export function leafFromView(view: SvgElementView): TestLeafShape {
++  const values: Record<string, number> = {};
++  for (const name of [
++    'x',
++    'y',
++    'width',
++    'height',
++    'cx',
++    'cy',
++    'r',
++    'rx',
++    'ry',
++    'x1',
++    'y1',
++    'x2',
++    'y2',
++  ]) {
++    const value = view.attributes[name];
++    if (value !== undefined) values[name] = Numbers.parse(value, name);
++  }
++  return new TestLeafShape(view.id ?? view.tag, view.tag, values, view.text);
++}
++
++/** Restore service that recursively dispatches explicit `data-kind="box"` views. */
++export function testRestorer(provider: BoxProvider): FakeShapeRestoreService {
++  let service: FakeShapeRestoreService;
++  service = new FakeShapeRestoreService((view) =>
++    provider.matches(view) ? provider.restore(view, service) : leafFromView(view),
++  );
++  return service;
++}
++
++/** Builds one `SvgElementView` node; transforms default to identity. */
++export function view(
++  tag: string,
++  id: string | null,
++  attributes: Readonly<Record<string, string>> = {},
++  children: readonly SvgElementView[] = [],
++  text: string | null = null,
++  transform: SvgElementView['transform'] = { scale: 1, translateX: 0, translateY: 0 },
++): SvgElementView {
++  return { tag, id, attributes, children, text, transform };
++}
+diff --git a/plugins/shape-box/tsconfig.json b/plugins/shape-box/tsconfig.json
+new file mode 100644
+index 0000000..9d5607c
+--- /dev/null
++++ b/plugins/shape-box/tsconfig.json
+@@ -0,0 +1,13 @@
++{
++  "extends": "../../tsconfig.json",
++  "compilerOptions": {
++    "rootDir": ".",
++    "outDir": "dist",
++    "declaration": true,
++    "composite": true,
++    "tsBuildInfoFile": "dist/.tsbuildinfo"
++  },
++  "include": ["index.ts", "Box*.ts", "test/**/*.ts"],
++  "exclude": ["dist", "node_modules"],
++  "references": [{ "path": "../../packages/core" }]
++}
+diff --git a/tsconfig.build.json b/tsconfig.build.json
+index fdf8500..491ff20 100644
+--- a/tsconfig.build.json
++++ b/tsconfig.build.json
+@@ -5,6 +5,7 @@
+     { "path": "./packages/svg-xml" },
+     { "path": "./packages/host" },
+     { "path": "./packages/builtins" },
++    { "path": "./plugins/shape-box" },
+     { "path": "./apps/cli" }
+   ]
+ }
+

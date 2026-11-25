@@ -1,0 +1,98 @@
+# 零改动检查（TASK-QA-02 / Issue #21）
+# F=a21f758bf072a7d8c0ff683bc579db124c6d209d  C_A=d3465f73a5d5309bed04322c75504b9a953c8064  C_B=043a2f763320f1066a6718febfb2779768052c88  I=d2b5e236cd059c6e15ff9de6c46062620ab2da4e
+
+## 1. 受保护路径存在性（git cat-file -e <commit>:<path>）
+exists packages/core (kernel) object=43148a29665dc69b5c322741240280d419a83403
+PASS packages/core exists at C_A for kernel
+exists packages/host (loader/host) object=3d6b5f7a711ec486567d5ec8fc5cfa1b52920193
+PASS packages/host exists at C_A for loader/host
+exists packages/svg-xml (xml adapter) object=b05368a8fd8029caeec89ab95ccf55616477f2e8
+PASS packages/svg-xml exists at C_A for xml adapter
+exists packages/builtins (default capability (existing provider/command set)) object=8d782abb600bb73fea054bc8cb574d71d301ec1d
+PASS packages/builtins exists at C_A for default capability (existing provider/command set)
+exists apps/cli/src/main.ts (A composition root) object=ab24a7fbedbd86854bc644c0de7c7451b5dae765
+PASS apps/cli/src/main.ts exists at C_A for A composition root
+exists plugins.config.json (B configuration) object=a5b818f5302550e970d915e1e4d465c656172c34
+PASS plugins.config.json exists at C_A for B configuration
+absent plugins/ at F (a21f758): F 是框架冻结提交，尚无正式业务插件包
+
+## 2. 内核/loader/既有能力零改动
+$ git diff --name-status d3465f7^ d3465f7 -- packages ':(exclude)plugins/shape-box'
+(empty)
+PASS d3465f7: packages/* 零改动（内核、loader、既有默认能力）
+$ git diff --name-status d3465f7^ d3465f7 -- plugins ':(exclude)plugins/shape-box'
+(empty)
+PASS d3465f7: 既有插件零改动（F 无既有插件，路径缺失时以本条为准）
+
+$ git diff --name-status 043a2f7^ 043a2f7 -- packages ':(exclude)plugins/shape-box'
+(empty)
+PASS 043a2f7: packages/* 零改动（内核、loader、既有默认能力）
+$ git diff --name-status 043a2f7^ 043a2f7 -- plugins ':(exclude)plugins/shape-box'
+(empty)
+PASS 043a2f7: 既有插件零改动（F 无既有插件，路径缺失时以本条为准）
+
+## 3. 运行源码与元数据白名单
+## C_A: git diff --name-status d3465f7^ d3465f7
+M	apps/cli/package.json
+M	apps/cli/src/main.ts
+M	package-lock.json
+A	plugins/shape-box/BoxAttributeHandler.ts
+A	plugins/shape-box/BoxManifest.ts
+A	plugins/shape-box/BoxPlugin.ts
+A	plugins/shape-box/BoxProvider.ts
+A	plugins/shape-box/BoxShape.ts
+A	plugins/shape-box/BoxTypeLabelDecorator.ts
+A	plugins/shape-box/index.ts
+A	plugins/shape-box/package.json
+A	plugins/shape-box/test/BoxAttributeHandler.test.ts
+A	plugins/shape-box/test/BoxPlugin.test.ts
+A	plugins/shape-box/test/BoxProvider.test.ts
+A	plugins/shape-box/test/BoxSession.test.ts
+A	plugins/shape-box/test/BoxShape.test.ts
+A	plugins/shape-box/test/BoxTypeLabelDecorator.test.ts
+A	plugins/shape-box/test/TestLeafShape.ts
+A	plugins/shape-box/test/TestShapeService.ts
+A	plugins/shape-box/tsconfig.json
+M	tsconfig.build.json
+
+new plugin files: 17 under plugins/shape-box/
+non-plugin changes: apps/cli/package.json (allowed), apps/cli/src/main.ts (allowed), package-lock.json (allowed), tsconfig.build.json (allowed)
+unexpected changes: none
+
+PASS C_A 只含新插件 + 一个组合根 + 已声明元数据
+## C_B: git diff --name-status 043a2f7^ 043a2f7
+M	package-lock.json
+M	plugins.config.json
+A	plugins/shape-box/BoxAttributeHandler.ts
+A	plugins/shape-box/BoxManifest.ts
+A	plugins/shape-box/BoxPlugin.ts
+A	plugins/shape-box/BoxProvider.ts
+A	plugins/shape-box/BoxShape.ts
+A	plugins/shape-box/BoxTypeLabelDecorator.ts
+A	plugins/shape-box/index.ts
+A	plugins/shape-box/package.json
+A	plugins/shape-box/test/BoxAttributeHandler.test.ts
+A	plugins/shape-box/test/BoxPlugin.test.ts
+A	plugins/shape-box/test/BoxProvider.test.ts
+A	plugins/shape-box/test/BoxSession.test.ts
+A	plugins/shape-box/test/BoxShape.test.ts
+A	plugins/shape-box/test/BoxTypeLabelDecorator.test.ts
+A	plugins/shape-box/test/TestLeafShape.ts
+A	plugins/shape-box/test/TestShapeService.ts
+A	plugins/shape-box/tsconfig.json
+M	tsconfig.build.json
+
+new plugin files: 17 under plugins/shape-box/
+non-plugin changes: package-lock.json (allowed), plugins.config.json (allowed), tsconfig.build.json (allowed)
+unexpected changes: none
+
+PASS C_B 只含新插件 + 配置文件 + 已声明元数据
+$ git diff --name-status C_B^ C_B -- apps/cli
+(empty)
+PASS C_B: apps/cli 运行源码零改动
+
+## 汇总
+PASS 所有零改动与白名单检查通过
+
+说明：C_A 只允许修改一个顶层组合根 apps/cli/src/main.ts；apps/cli/package.json、tsconfig.build.json、package-lock.json 是新增 workspace 所需的元数据变化。
+说明：F 上 plugins/ 不存在，因此“既有插件零改动”以 packages/builtins 与 plugins 路径不存在的事实为准，不伪造空 diff。
