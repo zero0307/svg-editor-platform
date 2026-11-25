@@ -7,3 +7,6 @@ phase_cli_1.md
 examples/*.svg
 phase_cli_2-研-1.md
 doc/phase1-report.md
+# 由 scripts/metrics/metrics.mjs 确定性生成，重跑必须逐字节一致
+docs/metrics/*.json
+docs/metrics/summary.md

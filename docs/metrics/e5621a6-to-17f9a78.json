@@ -1,0 +1,2334 @@
+{
+  "rulesVersion": 1,
+  "rules": [
+    "lines: physical lines; empty file is 0; a trailing newline does not add a line; blank and comment lines count",
+    "complexity unit: function declaration, method, constructor, getter, setter, function expression, arrow function",
+    "complexity base: 1 per unit; +1 for if, for, for-in, for-of, while, do, catch, conditional (?:), non-default case, &&, ||, ??",
+    "complexity nested units: a nested function is its own unit and does not add its increments to the outer unit",
+    "complexity report: sum over units (total), unit count (functions), largest unit (max); files without units report 0"
+  ],
+  "tool": {
+    "script": "scripts/metrics/metrics.mjs",
+    "parser": "typescript/unstable/sync (syntax-only AST)",
+    "typescript": "7.0.2",
+    "node": "v26.13.0"
+  },
+  "inputs": {
+    "from": {
+      "rev": "final^{commit}",
+      "ref": "e5621a68afd4731626d54566f17ba55885d1bc0f",
+      "tagObject": null,
+      "commit": "e5621a68afd4731626d54566f17ba55885d1bc0f"
+    },
+    "to": {
+      "rev": "17f9a78",
+      "ref": "17f9a7850d685750dd8c6ea684c23530219a6b9d",
+      "tagObject": null,
+      "commit": "17f9a7850d685750dd8c6ea684c23530219a6b9d"
+    }
+  },
+  "command": "node scripts/metrics/metrics.mjs --from final^{commit} --to 17f9a78 --out docs/metrics",
+  "classification": {
+    "file": "scripts/metrics/classification.json",
+    "version": 1,
+    "digest": "3e63d328d281132ed7d9ff6a89c698ee7f80cf81b69f4afa42dfc8a0d43c351f",
+    "excludePatterns": [
+      {
+        "match": "test/**",
+        "reason": "根测试与夹具"
+      },
+      {
+        "match": "**/test/**",
+        "reason": "包内独立测试"
+      },
+      {
+        "match": "**/*.test.ts",
+        "reason": "测试文件"
+      },
+      {
+        "match": "**/dist/**",
+        "reason": "构建产物"
+      },
+      {
+        "match": "**/node_modules/**",
+        "reason": "依赖"
+      },
+      {
+        "match": "package-lock.json",
+        "reason": "锁文件"
+      },
+      {
+        "match": "**/package.json",
+        "reason": "包元数据"
+      },
+      {
+        "match": "**/tsconfig*.json",
+        "reason": "构建配置"
+      },
+      {
+        "match": "tsconfig*.json",
+        "reason": "构建配置"
+      },
+      {
+        "match": "doc/**",
+        "reason": "报告与证据"
+      },
+      {
+        "match": "docs/**",
+        "reason": "指标产物与课程 docs"
+      },
+      {
+        "match": ".github/**",
+        "reason": "CI 与仓库配置"
+      },
+      {
+        "match": "ci/**",
+        "reason": "CI 操作说明"
+      },
+      {
+        "match": "examples/**",
+        "reason": "课程示例"
+      },
+      {
+        "match": "**/examples/**",
+        "reason": "包内示例"
+      },
+      {
+        "match": "scripts/**",
+        "reason": "检查与指标脚本自身"
+      },
+      {
+        "match": "**/*.md",
+        "reason": "Markdown 文档"
+      },
+      {
+        "match": "*.md",
+        "reason": "根目录规格与说明"
+      },
+      {
+        "match": "**/*.d.ts",
+        "reason": "环境/类型声明，不属运行源码"
+      },
+      {
+        "match": "**/*.yml",
+        "reason": "配置"
+      },
+      {
+        "match": "**/*.yaml",
+        "reason": "配置"
+      },
+      {
+        "match": "**/.vscode/**",
+        "reason": "编辑器配置"
+      },
+      {
+        "match": "**/.vscodeignore",
+        "reason": "打包配置"
+      },
+      {
+        "match": ".*",
+        "reason": "根目录点文件"
+      }
+    ]
+  },
+  "migration": {
+    "file": "scripts/metrics/migration.json",
+    "digest": "fa9c65bcd3507eb481aaabf6cee93b417efa088b50d5bf5661162b656bfbbc2d",
+    "entries": [
+      {
+        "from": "src/application/CommandHistory.ts",
+        "to": "packages/core/services/EditHistory.ts",
+        "kind": "file",
+        "fromCategory": "kernel",
+        "toCategory": "kernel",
+        "note": "历史栈语义保留，新增只读状态与事件",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/application/ShapeFactory.ts",
+        "to": "packages/builtins",
+        "kind": "file",
+        "fromCategory": "kernel",
+        "toCategory": "plugin",
+        "note": "集中式工厂改为 provider 注册表；具体图形算插件能力",
+        "presentAtFrom": true,
+        "presentAtTo": false,
+        "status": "pending"
+      },
+      {
+        "from": "src/application/SvgEditor.ts",
+        "to": "packages/core/services/EditorSession.ts",
+        "kind": "file",
+        "fromCategory": "kernel",
+        "toCategory": "kernel",
+        "note": "编辑会话公开化，供 CLI 与适配器复用",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/application/commands",
+        "to": "packages/builtins",
+        "kind": "directory",
+        "fromCategory": "kernel",
+        "toCategory": "plugin",
+        "note": "Phase 1 默认命令成为内置插件",
+        "presentAtFrom": true,
+        "presentAtTo": false,
+        "status": "pending"
+      },
+      {
+        "from": "src/application/ports",
+        "to": "packages/core/ports",
+        "kind": "directory",
+        "fromCategory": "kernel",
+        "toCategory": "kernel",
+        "note": "端口改为 core 公开契约",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/bootstrap",
+        "to": "apps/cli",
+        "kind": "directory",
+        "fromCategory": "assembly",
+        "toCategory": "assembly",
+        "note": "组合根迁移，A/B 两个入口共用安装事务",
+        "presentAtFrom": true,
+        "presentAtTo": false,
+        "status": "pending"
+      },
+      {
+        "from": "src/cli",
+        "to": "apps/cli",
+        "kind": "directory",
+        "fromCategory": "assembly",
+        "toCategory": "assembly",
+        "note": "REPL、分词与参数入口作为 CLI 应用",
+        "presentAtFrom": true,
+        "presentAtTo": false,
+        "status": "pending"
+      },
+      {
+        "from": "src/cli/CommandRouter.ts",
+        "to": "packages/core/extensions/CommandRegistry.ts",
+        "kind": "file",
+        "fromCategory": "assembly",
+        "toCategory": "kernel",
+        "note": "命令分发拆为注册表；router 具体命令移到 builtins/装配处",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/cli/ShapePresenter.ts",
+        "to": "packages/core/presentation/TreePresenter.ts",
+        "kind": "file",
+        "fromCategory": "assembly",
+        "toCategory": "kernel",
+        "note": "树展示进入内核，行尾装饰由插件提供",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/domain/SvgDocument.ts",
+        "to": "packages/core/domain/SvgDocument.ts",
+        "kind": "file",
+        "fromCategory": "kernel",
+        "toCategory": "kernel",
+        "note": "文档校验与克隆能力保留，校验改为多态不变量",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/domain/shapes",
+        "to": "packages/builtins",
+        "kind": "directory",
+        "fromCategory": "kernel",
+        "toCategory": "plugin",
+        "note": "六种具体图形及其几何校验迁入 builtins；Shape/Group 留在 core",
+        "presentAtFrom": true,
+        "presentAtTo": false,
+        "status": "pending"
+      },
+      {
+        "from": "src/domain/shapes/Group.ts",
+        "to": "packages/core/domain/ContainerShape.ts",
+        "kind": "file",
+        "fromCategory": "kernel",
+        "toCategory": "kernel",
+        "note": "容器能力抽为公开抽象",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/domain/shapes/Shape.ts",
+        "to": "packages/core/domain/Shape.ts",
+        "kind": "file",
+        "fromCategory": "kernel",
+        "toCategory": "kernel",
+        "note": "基础形状多态仍属内核",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/infrastructure/LocalFileStore.ts",
+        "to": "packages/host/adapters/LocalFileStore.ts",
+        "kind": "file",
+        "fromCategory": "assembly",
+        "toCategory": "assembly",
+        "note": "文件适配器保留在宿主",
+        "presentAtFrom": true,
+        "presentAtTo": true,
+        "status": "both"
+      },
+      {
+        "from": "src/infrastructure/SvgTransform.ts",
+        "to": "packages/svg-xml",
+        "kind": "file",
+        "fromCategory": "assembly",
+        "toCategory": "assembly",
+        "note": "坐标规范化随 codec 迁移",
+        "presentAtFrom": true,
+        "presentAtTo": false,
+        "status": "pending"
+      },
+      {
+        "from": "src/infrastructure/XmlSvgCodec.ts",
+        "to": "packages/svg-xml",
+        "kind": "file",
+        "fromCategory": "assembly",
+        "toCategory": "assembly",
+        "note": "严格 SVG 语义层移到 svg-xml",
+        "presentAtFrom": true,
+        "presentAtTo": false,
+        "status": "pending"
+      }
+    ]
+  },
+  "measured": {
+    "from": {
+      "commit": "e5621a68afd4731626d54566f17ba55885d1bc0f",
+      "trackedFiles": 80,
+      "measuredFiles": 38,
+      "summary": {
+        "totals": {
+          "files": 38,
+          "lines": 1607,
+          "complexity": {
+            "total": 458,
+            "functions": 225,
+            "max": 20
+          }
+        },
+        "byCategory": {
+          "kernel": {
+            "files": 28,
+            "lines": 921,
+            "complexity": {
+              "total": 246,
+              "functions": 147,
+              "max": 12
+            }
+          },
+          "assembly": {
+            "files": 10,
+            "lines": 686,
+            "complexity": {
+              "total": 212,
+              "functions": 78,
+              "max": 20
+            }
+          },
+          "plugin": {
+            "files": 0,
+            "lines": 0,
+            "complexity": {
+              "total": 0,
+              "functions": 0,
+              "max": 0
+            }
+          },
+          "vscode": {
+            "files": 0,
+            "lines": 0,
+            "complexity": {
+              "total": 0,
+              "functions": 0,
+              "max": 0
+            }
+          },
+          "dsh": {
+            "files": 0,
+            "lines": 0,
+            "complexity": {
+              "total": 0,
+              "functions": 0,
+              "max": 0
+            }
+          }
+        }
+      },
+      "exclusions": [
+        {
+          "match": "**/*.md",
+          "count": 2
+        },
+        {
+          "match": "**/package.json",
+          "count": 1
+        },
+        {
+          "match": "**/tsconfig*.json",
+          "count": 1
+        },
+        {
+          "match": ".*",
+          "count": 6
+        },
+        {
+          "match": "ci/**",
+          "count": 2
+        },
+        {
+          "match": "doc/**",
+          "count": 11
+        },
+        {
+          "match": "examples/**",
+          "count": 8
+        },
+        {
+          "match": "package-lock.json",
+          "count": 1
+        },
+        {
+          "match": "scripts/**",
+          "count": 2
+        },
+        {
+          "match": "test/**",
+          "count": 8
+        }
+      ],
+      "files": [
+        {
+          "path": "src/application/CommandHistory.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 42,
+          "complexity": {
+            "total": 8,
+            "functions": 5,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/application/ShapeFactory.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 100,
+          "complexity": {
+            "total": 27,
+            "functions": 11,
+            "max": 9
+          }
+        },
+        {
+          "path": "src/application/SvgEditor.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 73,
+          "complexity": {
+            "total": 14,
+            "functions": 9,
+            "max": 3
+          }
+        },
+        {
+          "path": "src/application/commands/AddToCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 17,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/BackCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 13,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/CreateCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 23,
+          "complexity": {
+            "total": 4,
+            "functions": 2,
+            "max": 3
+          }
+        },
+        {
+          "path": "src/application/commands/DeleteCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 13,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/EditCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 26,
+          "complexity": {
+            "total": 6,
+            "functions": 4,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/application/commands/FrontCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 13,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/GroupCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 39,
+          "complexity": {
+            "total": 14,
+            "functions": 6,
+            "max": 9
+          }
+        },
+        {
+          "path": "src/application/commands/MoveCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 18,
+          "complexity": {
+            "total": 3,
+            "functions": 2,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/application/commands/ScaleCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 18,
+          "complexity": {
+            "total": 3,
+            "functions": 2,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/application/commands/SetCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 17,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/UngroupCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 59,
+          "complexity": {
+            "total": 17,
+            "functions": 3,
+            "max": 12
+          }
+        },
+        {
+          "path": "src/application/ports/FileStore.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 4,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "src/application/ports/SvgCodec.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 6,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "src/bootstrap/main.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 组合根（待迁移到 apps/cli）",
+          "lines": 31,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "src/cli/CommandArguments.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 34,
+          "complexity": {
+            "total": 14,
+            "functions": 8,
+            "max": 4
+          }
+        },
+        {
+          "path": "src/cli/CommandRouter.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 148,
+          "complexity": {
+            "total": 38,
+            "functions": 24,
+            "max": 9
+          }
+        },
+        {
+          "path": "src/cli/Repl.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 20,
+          "complexity": {
+            "total": 9,
+            "functions": 3,
+            "max": 7
+          }
+        },
+        {
+          "path": "src/cli/ShapePresenter.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 47,
+          "complexity": {
+            "total": 16,
+            "functions": 6,
+            "max": 5
+          }
+        },
+        {
+          "path": "src/cli/Tokenizer.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 46,
+          "complexity": {
+            "total": 17,
+            "functions": 1,
+            "max": 17
+          }
+        },
+        {
+          "path": "src/domain/DomainError.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 6,
+          "complexity": {
+            "total": 1,
+            "functions": 1,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/Numbers.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 27,
+          "complexity": {
+            "total": 12,
+            "functions": 5,
+            "max": 3
+          }
+        },
+        {
+          "path": "src/domain/SvgDocument.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 87,
+          "complexity": {
+            "total": 29,
+            "functions": 19,
+            "max": 6
+          }
+        },
+        {
+          "path": "src/domain/SvgString.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 21,
+          "complexity": {
+            "total": 11,
+            "functions": 1,
+            "max": 11
+          }
+        },
+        {
+          "path": "src/domain/shapes/Circle.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 19,
+          "complexity": {
+            "total": 4,
+            "functions": 4,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/shapes/Ellipse.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 25,
+          "complexity": {
+            "total": 4,
+            "functions": 4,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/shapes/GeometryShape.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 57,
+          "complexity": {
+            "total": 17,
+            "functions": 14,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/domain/shapes/Group.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 55,
+          "complexity": {
+            "total": 23,
+            "functions": 14,
+            "max": 7
+          }
+        },
+        {
+          "path": "src/domain/shapes/Line.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 19,
+          "complexity": {
+            "total": 4,
+            "functions": 4,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/shapes/Rect.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 25,
+          "complexity": {
+            "total": 4,
+            "functions": 4,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/shapes/Shape.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 66,
+          "complexity": {
+            "total": 24,
+            "functions": 17,
+            "max": 4
+          }
+        },
+        {
+          "path": "src/domain/shapes/Text.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 33,
+          "complexity": {
+            "total": 7,
+            "functions": 6,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/infrastructure/LocalFileStore.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）",
+          "lines": 24,
+          "complexity": {
+            "total": 5,
+            "functions": 3,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/infrastructure/SvgImportContext.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）",
+          "lines": 102,
+          "complexity": {
+            "total": 25,
+            "functions": 8,
+            "max": 10
+          }
+        },
+        {
+          "path": "src/infrastructure/SvgTransform.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）",
+          "lines": 49,
+          "complexity": {
+            "total": 18,
+            "functions": 4,
+            "max": 15
+          }
+        },
+        {
+          "path": "src/infrastructure/XmlSvgCodec.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）",
+          "lines": 185,
+          "complexity": {
+            "total": 70,
+            "functions": 21,
+            "max": 20
+          }
+        }
+      ]
+    },
+    "to": {
+      "commit": "17f9a7850d685750dd8c6ea684c23530219a6b9d",
+      "trackedFiles": 344,
+      "measuredFiles": 118,
+      "summary": {
+        "totals": {
+          "files": 118,
+          "lines": 5075,
+          "complexity": {
+            "total": 1111,
+            "functions": 527,
+            "max": 20
+          }
+        },
+        "byCategory": {
+          "kernel": {
+            "files": 86,
+            "lines": 3027,
+            "complexity": {
+              "total": 589,
+              "functions": 341,
+              "max": 16
+            }
+          },
+          "assembly": {
+            "files": 25,
+            "lines": 1744,
+            "complexity": {
+              "total": 473,
+              "functions": 162,
+              "max": 20
+            }
+          },
+          "plugin": {
+            "files": 0,
+            "lines": 0,
+            "complexity": {
+              "total": 0,
+              "functions": 0,
+              "max": 0
+            }
+          },
+          "vscode": {
+            "files": 5,
+            "lines": 141,
+            "complexity": {
+              "total": 22,
+              "functions": 11,
+              "max": 4
+            }
+          },
+          "dsh": {
+            "files": 2,
+            "lines": 163,
+            "complexity": {
+              "total": 27,
+              "functions": 13,
+              "max": 6
+            }
+          }
+        }
+      },
+      "exclusions": [
+        {
+          "match": "**/*.d.ts",
+          "count": 2
+        },
+        {
+          "match": "**/*.md",
+          "count": 5
+        },
+        {
+          "match": "**/*.yml",
+          "count": 1
+        },
+        {
+          "match": "**/.vscode/**",
+          "count": 1
+        },
+        {
+          "match": "**/.vscodeignore",
+          "count": 1
+        },
+        {
+          "match": "**/examples/**",
+          "count": 8
+        },
+        {
+          "match": "**/package.json",
+          "count": 6
+        },
+        {
+          "match": "**/test/**",
+          "count": 41
+        },
+        {
+          "match": "**/tsconfig*.json",
+          "count": 6
+        },
+        {
+          "match": ".*",
+          "count": 7
+        },
+        {
+          "match": ".github/**",
+          "count": 7
+        },
+        {
+          "match": "ci/**",
+          "count": 1
+        },
+        {
+          "match": "doc/**",
+          "count": 82
+        },
+        {
+          "match": "examples/**",
+          "count": 8
+        },
+        {
+          "match": "package-lock.json",
+          "count": 1
+        },
+        {
+          "match": "scripts/**",
+          "count": 9
+        },
+        {
+          "match": "test/**",
+          "count": 40
+        }
+      ],
+      "files": [
+        {
+          "path": "apps/dsh-plugin/editor-session-port.js",
+          "category": "dsh",
+          "responsibility": "DSH 工具插件与编辑服务适配",
+          "lines": 47,
+          "complexity": {
+            "total": 8,
+            "functions": 4,
+            "max": 4
+          }
+        },
+        {
+          "path": "apps/dsh-plugin/index.js",
+          "category": "dsh",
+          "responsibility": "DSH 工具插件与编辑服务适配",
+          "lines": 116,
+          "complexity": {
+            "total": 19,
+            "functions": 9,
+            "max": 6
+          }
+        },
+        {
+          "path": "apps/vscode-svg/src/DecoratedFile.ts",
+          "category": "vscode",
+          "responsibility": "VSCode 文件标记、扩展入口与装饰器",
+          "lines": 23,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "apps/vscode-svg/src/SvgExtension.ts",
+          "category": "vscode",
+          "responsibility": "VSCode 文件标记、扩展入口与装饰器",
+          "lines": 28,
+          "complexity": {
+            "total": 4,
+            "functions": 3,
+            "max": 2
+          }
+        },
+        {
+          "path": "apps/vscode-svg/src/SvgFileDecorationProvider.ts",
+          "category": "vscode",
+          "responsibility": "VSCode 文件标记、扩展入口与装饰器",
+          "lines": 44,
+          "complexity": {
+            "total": 10,
+            "functions": 4,
+            "max": 4
+          }
+        },
+        {
+          "path": "apps/vscode-svg/src/SvgFileDecorator.ts",
+          "category": "vscode",
+          "responsibility": "VSCode 文件标记、扩展入口与装饰器",
+          "lines": 31,
+          "complexity": {
+            "total": 6,
+            "functions": 2,
+            "max": 4
+          }
+        },
+        {
+          "path": "apps/vscode-svg/src/extension.ts",
+          "category": "vscode",
+          "responsibility": "VSCode 文件标记、扩展入口与装饰器",
+          "lines": 15,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/domain/ContainerShape.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 24,
+          "complexity": {
+            "total": 6,
+            "functions": 6,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/domain/DomainError.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 7,
+          "complexity": {
+            "total": 1,
+            "functions": 1,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/domain/EditableDocument.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 18,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/domain/Group.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 68,
+          "complexity": {
+            "total": 25,
+            "functions": 16,
+            "max": 7
+          }
+        },
+        {
+          "path": "packages/core/domain/Numbers.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 28,
+          "complexity": {
+            "total": 12,
+            "functions": 5,
+            "max": 3
+          }
+        },
+        {
+          "path": "packages/core/domain/ReadonlyDocument.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 12,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/domain/ReadonlyShape.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 19,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/domain/Shape.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 88,
+          "complexity": {
+            "total": 27,
+            "functions": 20,
+            "max": 4
+          }
+        },
+        {
+          "path": "packages/core/domain/SvgDocument.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 99,
+          "complexity": {
+            "total": 29,
+            "functions": 19,
+            "max": 6
+          }
+        },
+        {
+          "path": "packages/core/domain/SvgElementView.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 24,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/domain/SvgString.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 21,
+          "complexity": {
+            "total": 11,
+            "functions": 1,
+            "max": 11
+          }
+        },
+        {
+          "path": "packages/core/domain/TreeRow.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 13,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/events/EditorEvent.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 62,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/events/EditorEventBus.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 37,
+          "complexity": {
+            "total": 10,
+            "functions": 6,
+            "max": 3
+          }
+        },
+        {
+          "path": "packages/core/events/EditorEvents.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 7,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/extensions/AttributeHandler.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 39,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/extensions/AttributeHandlerConflictError.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 18,
+          "complexity": {
+            "total": 1,
+            "functions": 1,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/extensions/AttributeHandlerRegistry.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 12,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/extensions/Command.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 74,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/extensions/CommandRegistry.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 12,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/extensions/DuplicateRegistrationError.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 13,
+          "complexity": {
+            "total": 1,
+            "functions": 1,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/extensions/EditAction.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 13,
+          "complexity": {
+            "total": 1,
+            "functions": 1,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/extensions/PluginContext.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 28,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/extensions/PluginManifest.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 17,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/extensions/PluginModule.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 13,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/extensions/QueryContext.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 21,
+          "complexity": {
+            "total": 4,
+            "functions": 3,
+            "max": 2
+          }
+        },
+        {
+          "path": "packages/core/extensions/Registry.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 47,
+          "complexity": {
+            "total": 15,
+            "functions": 10,
+            "max": 5
+          }
+        },
+        {
+          "path": "packages/core/extensions/ShapeProvider.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 30,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/extensions/ShapeProviderRegistry.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 16,
+          "complexity": {
+            "total": 3,
+            "functions": 3,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/extensions/TreeDecorator.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 20,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/extensions/TreeDecoratorRegistry.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 12,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/index.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 112,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/ports/DirectoryReader.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 18,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/ports/EditorSessionPort.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 27,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/ports/FileStore.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 11,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/ports/ShapeCreationRequest.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 8,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/ports/ShapeCreationService.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 10,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/ports/ShapeRestoreService.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 12,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/ports/SvgCodec.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 12,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/core/presentation/TreePresenter.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 162,
+          "complexity": {
+            "total": 41,
+            "functions": 17,
+            "max": 7
+          }
+        },
+        {
+          "path": "packages/core/services/AddToAction.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 17,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/services/AttributeEditAction.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 20,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/services/AttributeEditingService.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 40,
+          "complexity": {
+            "total": 8,
+            "functions": 5,
+            "max": 4
+          }
+        },
+        {
+          "path": "packages/core/services/DeleteAction.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 16,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/services/EditHistory.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 48,
+          "complexity": {
+            "total": 8,
+            "functions": 5,
+            "max": 2
+          }
+        },
+        {
+          "path": "packages/core/services/EditorSession.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 136,
+          "complexity": {
+            "total": 18,
+            "functions": 12,
+            "max": 4
+          }
+        },
+        {
+          "path": "packages/core/services/GroupAction.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 17,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/services/StructureService.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 135,
+          "complexity": {
+            "total": 43,
+            "functions": 9,
+            "max": 16
+          }
+        },
+        {
+          "path": "packages/core/services/UngroupAction.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 16,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/testing/FakeDirectoryReader.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 29,
+          "complexity": {
+            "total": 6,
+            "functions": 4,
+            "max": 2
+          }
+        },
+        {
+          "path": "packages/core/testing/FakeEditorSession.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 154,
+          "complexity": {
+            "total": 25,
+            "functions": 14,
+            "max": 4
+          }
+        },
+        {
+          "path": "packages/core/testing/FakeFileStore.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 22,
+          "complexity": {
+            "total": 5,
+            "functions": 2,
+            "max": 3
+          }
+        },
+        {
+          "path": "packages/core/testing/FakePluginContext.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 38,
+          "complexity": {
+            "total": 3,
+            "functions": 3,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/testing/FakeShapeCreationService.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 31,
+          "complexity": {
+            "total": 6,
+            "functions": 3,
+            "max": 2
+          }
+        },
+        {
+          "path": "packages/core/testing/FakeShapeRestoreService.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 17,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/core/testing/FakeSvgCodec.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 35,
+          "complexity": {
+            "total": 7,
+            "functions": 3,
+            "max": 4
+          }
+        },
+        {
+          "path": "packages/core/testing/FaultyAttributeHandler.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 27,
+          "complexity": {
+            "total": 4,
+            "functions": 3,
+            "max": 2
+          }
+        },
+        {
+          "path": "packages/core/testing/FaultyTreeDecorator.ts",
+          "category": "kernel",
+          "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口",
+          "lines": 24,
+          "complexity": {
+            "total": 5,
+            "functions": 3,
+            "max": 2
+          }
+        },
+        {
+          "path": "packages/host/adapters/LocalDirectoryReader.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 44,
+          "complexity": {
+            "total": 12,
+            "functions": 7,
+            "max": 4
+          }
+        },
+        {
+          "path": "packages/host/adapters/LocalFileStore.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 56,
+          "complexity": {
+            "total": 12,
+            "functions": 5,
+            "max": 5
+          }
+        },
+        {
+          "path": "packages/host/index.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 9,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/host/loader/PluginConfig.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 50,
+          "complexity": {
+            "total": 17,
+            "functions": 3,
+            "max": 10
+          }
+        },
+        {
+          "path": "packages/host/loader/PluginInstallResult.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 9,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/host/loader/PluginInstaller.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 257,
+          "complexity": {
+            "total": 55,
+            "functions": 26,
+            "max": 16
+          }
+        },
+        {
+          "path": "packages/host/loader/PluginLoadError.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 24,
+          "complexity": {
+            "total": 1,
+            "functions": 1,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/host/loader/PluginLoader.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 159,
+          "complexity": {
+            "total": 53,
+            "functions": 14,
+            "max": 16
+          }
+        },
+        {
+          "path": "packages/host/loader/PluginManifest.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 56,
+          "complexity": {
+            "total": 18,
+            "functions": 5,
+            "max": 5
+          }
+        },
+        {
+          "path": "packages/host/loader/StagedPluginContext.ts",
+          "category": "assembly",
+          "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器",
+          "lines": 71,
+          "complexity": {
+            "total": 9,
+            "functions": 5,
+            "max": 3
+          }
+        },
+        {
+          "path": "packages/svg-xml/index.ts",
+          "category": "assembly",
+          "responsibility": "中立 XML 语法入口（严格 SVG codec 待迁移）",
+          "lines": 18,
+          "complexity": {
+            "total": 1,
+            "functions": 1,
+            "max": 1
+          }
+        },
+        {
+          "path": "packages/svg-xml/syntax/SvgSyntaxElement.ts",
+          "category": "assembly",
+          "responsibility": "中立 XML 语法入口（严格 SVG codec 待迁移）",
+          "lines": 24,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/svg-xml/syntax/SvgSyntaxParser.ts",
+          "category": "assembly",
+          "responsibility": "中立 XML 语法入口（严格 SVG codec 待迁移）",
+          "lines": 258,
+          "complexity": {
+            "total": 83,
+            "functions": 17,
+            "max": 12
+          }
+        },
+        {
+          "path": "packages/svg-xml/syntax/SvgSyntaxResult.ts",
+          "category": "assembly",
+          "responsibility": "中立 XML 语法入口（严格 SVG codec 待迁移）",
+          "lines": 10,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "packages/svg-xml/syntax/SvgSyntaxSpan.ts",
+          "category": "assembly",
+          "responsibility": "中立 XML 语法入口（严格 SVG codec 待迁移）",
+          "lines": 13,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "src/application/CommandHistory.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 42,
+          "complexity": {
+            "total": 8,
+            "functions": 5,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/application/ShapeFactory.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 100,
+          "complexity": {
+            "total": 27,
+            "functions": 11,
+            "max": 9
+          }
+        },
+        {
+          "path": "src/application/SvgEditor.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 73,
+          "complexity": {
+            "total": 14,
+            "functions": 9,
+            "max": 3
+          }
+        },
+        {
+          "path": "src/application/commands/AddToCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 17,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/BackCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 13,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/CreateCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 23,
+          "complexity": {
+            "total": 4,
+            "functions": 2,
+            "max": 3
+          }
+        },
+        {
+          "path": "src/application/commands/DeleteCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 13,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/EditCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 26,
+          "complexity": {
+            "total": 6,
+            "functions": 4,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/application/commands/FrontCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 13,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/GroupCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 39,
+          "complexity": {
+            "total": 14,
+            "functions": 6,
+            "max": 9
+          }
+        },
+        {
+          "path": "src/application/commands/MoveCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 18,
+          "complexity": {
+            "total": 3,
+            "functions": 2,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/application/commands/ScaleCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 18,
+          "complexity": {
+            "total": 3,
+            "functions": 2,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/application/commands/SetCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 17,
+          "complexity": {
+            "total": 2,
+            "functions": 2,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/application/commands/UngroupCommand.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 59,
+          "complexity": {
+            "total": 17,
+            "functions": 3,
+            "max": 12
+          }
+        },
+        {
+          "path": "src/application/ports/FileStore.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 4,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "src/application/ports/SvgCodec.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）",
+          "lines": 6,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "src/bootstrap/main.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 组合根（待迁移到 apps/cli）",
+          "lines": 31,
+          "complexity": {
+            "total": 0,
+            "functions": 0,
+            "max": 0
+          }
+        },
+        {
+          "path": "src/cli/CommandArguments.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 34,
+          "complexity": {
+            "total": 14,
+            "functions": 8,
+            "max": 4
+          }
+        },
+        {
+          "path": "src/cli/CommandRouter.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 148,
+          "complexity": {
+            "total": 38,
+            "functions": 24,
+            "max": 9
+          }
+        },
+        {
+          "path": "src/cli/Repl.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 20,
+          "complexity": {
+            "total": 9,
+            "functions": 3,
+            "max": 7
+          }
+        },
+        {
+          "path": "src/cli/ShapePresenter.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 47,
+          "complexity": {
+            "total": 16,
+            "functions": 6,
+            "max": 5
+          }
+        },
+        {
+          "path": "src/cli/Tokenizer.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）",
+          "lines": 46,
+          "complexity": {
+            "total": 17,
+            "functions": 1,
+            "max": 17
+          }
+        },
+        {
+          "path": "src/domain/DomainError.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 6,
+          "complexity": {
+            "total": 1,
+            "functions": 1,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/Numbers.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 27,
+          "complexity": {
+            "total": 12,
+            "functions": 5,
+            "max": 3
+          }
+        },
+        {
+          "path": "src/domain/SvgDocument.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 87,
+          "complexity": {
+            "total": 29,
+            "functions": 19,
+            "max": 6
+          }
+        },
+        {
+          "path": "src/domain/SvgString.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 21,
+          "complexity": {
+            "total": 11,
+            "functions": 1,
+            "max": 11
+          }
+        },
+        {
+          "path": "src/domain/shapes/Circle.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 19,
+          "complexity": {
+            "total": 4,
+            "functions": 4,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/shapes/Ellipse.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 25,
+          "complexity": {
+            "total": 4,
+            "functions": 4,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/shapes/GeometryShape.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 57,
+          "complexity": {
+            "total": 17,
+            "functions": 14,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/domain/shapes/Group.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 55,
+          "complexity": {
+            "total": 23,
+            "functions": 14,
+            "max": 7
+          }
+        },
+        {
+          "path": "src/domain/shapes/Line.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 19,
+          "complexity": {
+            "total": 4,
+            "functions": 4,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/shapes/Rect.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 25,
+          "complexity": {
+            "total": 4,
+            "functions": 4,
+            "max": 1
+          }
+        },
+        {
+          "path": "src/domain/shapes/Shape.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 66,
+          "complexity": {
+            "total": 24,
+            "functions": 17,
+            "max": 4
+          }
+        },
+        {
+          "path": "src/domain/shapes/Text.ts",
+          "category": "kernel",
+          "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）",
+          "lines": 33,
+          "complexity": {
+            "total": 7,
+            "functions": 6,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/infrastructure/LocalFileStore.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）",
+          "lines": 24,
+          "complexity": {
+            "total": 5,
+            "functions": 3,
+            "max": 2
+          }
+        },
+        {
+          "path": "src/infrastructure/SvgImportContext.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）",
+          "lines": 102,
+          "complexity": {
+            "total": 25,
+            "functions": 8,
+            "max": 10
+          }
+        },
+        {
+          "path": "src/infrastructure/SvgTransform.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）",
+          "lines": 49,
+          "complexity": {
+            "total": 18,
+            "functions": 4,
+            "max": 15
+          }
+        },
+        {
+          "path": "src/infrastructure/XmlSvgCodec.ts",
+          "category": "assembly",
+          "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）",
+          "lines": 185,
+          "complexity": {
+            "total": 70,
+            "functions": 21,
+            "max": 20
+          }
+        }
+      ]
+    }
+  },
+  "delta": {
+    "totals": {
+      "files": 80,
+      "lines": 3468,
+      "complexity": {
+        "total": 653,
+        "functions": 302,
+        "max": 0
+      }
+    },
+    "byCategory": {
+      "kernel": {
+        "files": 58,
+        "lines": 2106,
+        "complexity": {
+          "total": 343,
+          "functions": 194,
+          "max": 4
+        }
+      },
+      "assembly": {
+        "files": 15,
+        "lines": 1058,
+        "complexity": {
+          "total": 261,
+          "functions": 84,
+          "max": 0
+        }
+      },
+      "plugin": {
+        "files": 0,
+        "lines": 0,
+        "complexity": {
+          "total": 0,
+          "functions": 0,
+          "max": 0
+        }
+      },
+      "vscode": {
+        "files": 5,
+        "lines": 141,
+        "complexity": {
+          "total": 22,
+          "functions": 11,
+          "max": 4
+        }
+      },
+      "dsh": {
+        "files": 2,
+        "lines": 163,
+        "complexity": {
+          "total": 27,
+          "functions": 13,
+          "max": 6
+        }
+      }
+    }
+  }
+}

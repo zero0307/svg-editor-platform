@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "description": "路径/模式 → 分类 → 职责映射。脚本先用 excludes 排除，再要求每个剩余文件恰好命中一条 rules；遗漏或重复都失败，新增目录必须在此登记。",
+  "categories": {
+    "kernel": "CLI 内核：领域抽象、四扩展点、注册表、编辑会话、事务与公开端口",
+    "assembly": "装配/宿主支撑：加载器、配置、文件与目录适配器、XML 适配、REPL 与组合根",
+    "plugin": "插件：Phase 1 默认命令与图形、可选命令/图形/标签插件",
+    "vscode": "VSCode 扩展，单列，不混入 CLI 三类",
+    "dsh": "DSH 工具插件与编辑服务适配，单列，不混入 CLI 三类"
+  },
+  "excludes": [
+    { "match": "test/**", "reason": "根测试与夹具" },
+    { "match": "**/test/**", "reason": "包内独立测试" },
+    { "match": "**/*.test.ts", "reason": "测试文件" },
+    { "match": "**/dist/**", "reason": "构建产物" },
+    { "match": "**/node_modules/**", "reason": "依赖" },
+    { "match": "package-lock.json", "reason": "锁文件" },
+    { "match": "**/package.json", "reason": "包元数据" },
+    { "match": "**/tsconfig*.json", "reason": "构建配置" },
+    { "match": "tsconfig*.json", "reason": "构建配置" },
+    { "match": "doc/**", "reason": "报告与证据" },
+    { "match": "docs/**", "reason": "指标产物与课程 docs" },
+    { "match": ".github/**", "reason": "CI 与仓库配置" },
+    { "match": "ci/**", "reason": "CI 操作说明" },
+    { "match": "examples/**", "reason": "课程示例" },
+    { "match": "**/examples/**", "reason": "包内示例" },
+    { "match": "scripts/**", "reason": "检查与指标脚本自身" },
+    { "match": "**/*.md", "reason": "Markdown 文档" },
+    { "match": "*.md", "reason": "根目录规格与说明" },
+    { "match": "**/*.d.ts", "reason": "环境/类型声明，不属运行源码" },
+    { "match": "**/*.yml", "reason": "配置" },
+    { "match": "**/*.yaml", "reason": "配置" },
+    { "match": "**/.vscode/**", "reason": "编辑器配置" },
+    { "match": "**/.vscodeignore", "reason": "打包配置" },
+    { "match": ".*", "reason": "根目录点文件" }
+  ],
+  "rules": [
+    {
+      "match": "packages/core/**",
+      "category": "kernel",
+      "responsibility": "四扩展点、注册表、候选事务、编辑会话、领域抽象与公开端口"
+    },
+    {
+      "match": "src/domain/**",
+      "category": "kernel",
+      "responsibility": "Phase 1 领域层（待迁移：Shape/Group/Document 进 core，具体图形进 builtins）"
+    },
+    {
+      "match": "src/application/**",
+      "category": "kernel",
+      "responsibility": "Phase 1 应用层：事务、历史、会话、命令对象（待迁移）"
+    },
+    {
+      "match": "packages/host/**",
+      "category": "assembly",
+      "responsibility": "插件加载事务与回滚、配置解析、文件与目录适配器"
+    },
+    {
+      "match": "packages/svg-xml/**",
+      "category": "assembly",
+      "responsibility": "中立 XML 语法入口（严格 SVG codec 待迁移）"
+    },
+    {
+      "match": "apps/cli/**",
+      "category": "assembly",
+      "responsibility": "REPL、参数入口、A/B 组合根"
+    },
+    {
+      "match": "src/cli/**",
+      "category": "assembly",
+      "responsibility": "Phase 1 命令分发、分词与树展示（待迁移）"
+    },
+    {
+      "match": "src/infrastructure/**",
+      "category": "assembly",
+      "responsibility": "Phase 1 XML 编解码与 IO 适配（待迁移）"
+    },
+    {
+      "match": "src/bootstrap/**",
+      "category": "assembly",
+      "responsibility": "Phase 1 组合根（待迁移到 apps/cli）"
+    },
+    {
+      "match": "packages/builtins/**",
+      "category": "plugin",
+      "responsibility": "Phase 1 默认命令与六种图形提供者"
+    },
+    {
+      "match": "plugins/**",
+      "category": "plugin",
+      "responsibility": "可选插件包（stats、dir、box、modified-star 等）"
+    },
+    {
+      "match": "apps/vscode-svg/**",
+      "category": "vscode",
+      "responsibility": "VSCode 文件标记、扩展入口与装饰器"
+    },
+    {
+      "match": "apps/dsh-plugin/**",
+      "category": "dsh",
+      "responsibility": "DSH 工具插件与编辑服务适配"
+    }
+  ]
+}

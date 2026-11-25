@@ -290,4 +290,21 @@ dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期�
 - 清单验证在 activate 暂存后、正式提交前执行；A/B 共用事务。
 - 中立 XML 语法层与严格 SVG 语义层分离、完整子树恢复及变换只执行一次。
 
-以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)。
+以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。
+
+## 13. 指标口径与路径分类
+
+课程要求的 `docs/metrics/` 由 [scripts/metrics](../scripts/metrics/README.md) 从 Git 历史生成：脚本解析两端提交（`final^{commit}` 与目标 rev）、只读 `git ls-tree`/`git show`，不读工作区混合状态、构建产物或旧依赖。规则版本、解析器与路径分类记录在 [ADR-0016](adr/0016-metrics-rules-and-classification.md)。
+
+分类表 `scripts/metrics/classification.json` 受版本控制，脚本先排除测试、夹具、`dist`、依赖、锁文件、文档、`scripts`、示例与包元数据，再要求每个剩余文件恰好命中一条规则；遗漏或重复都失败。三类 CLI 范围：
+
+| 分类   | 新路径                                             | 旧路径（基线）                                      |
+| ------ | -------------------------------------------------- | --------------------------------------------------- |
+| 内核   | `packages/core/`                                   | `src/domain/`、`src/application/`                   |
+| 装配处 | `packages/host/`、`packages/svg-xml/`、`apps/cli/` | `src/cli/`、`src/infrastructure/`、`src/bootstrap/` |
+| 插件   | `packages/builtins/`、`plugins/*`                  | 无（Phase 1 插件类为 0）                            |
+
+`apps/vscode-svg/` 与 `apps/dsh-plugin/` 单列，不混入 CLI 三类。`scripts/metrics/migration.json` 维护旧路径 → 新路径与分类变化，并按两端实际文件检测 `moved`/`pending`/`both`/`neither`；旧路径与新路径并存时两边都计入，避免把搬目录当成复杂度消除。
+
+产物为 `docs/metrics/<from7>-to-<to7>.json` 与 `docs/metrics/summary.md`，含输入 SHA、工具与规则版本、排除清单、生成命令、每文件指标、三类汇总与迁移表。生成物确定性（无墙钟时间与绝对路径，同参数两次运行逐字节一致），并已加入 `.prettierignore` 以免格式化破坏可比性。
+公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)。
