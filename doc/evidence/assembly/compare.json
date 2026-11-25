@@ -1,0 +1,233 @@
+{
+  "generatedBy": "node scripts/assembly/replay.mjs --entry apps/cli/dist/main.js --config plugins.config.json --integration d2b5e23",
+  "mode": {
+    "a": "default entry (embedded plugins in apps/cli/src/main.ts)",
+    "b": "same entry with --config plugins.config.json"
+  },
+  "pluginSet": {
+    "config": "plugins.config.json",
+    "modules": [
+      "@svgframe/command-stats",
+      "@svgframe/command-dir",
+      "@svgframe/shape-box",
+      "@svgframe/tree-modified"
+    ],
+    "options": [null, null, null, null],
+    "enabled": [true, true, true, true],
+    "note": "A registers the same modules in the same order in apps/cli/src/main.ts; ab-help.log compares the resulting help bytes"
+  },
+  "commits": {
+    "measured": "d2b5e236cd059c6e15ff9de6c46062620ab2da4e",
+    "measuredRef": "d2b5e23",
+    "atRun": "d2b5e236cd059c6e15ff9de6c46062620ab2da4e",
+    "note": "measured commit is the integration commit under test; the node commit on top only adds scripts/docs/evidence"
+  },
+  "environment": {
+    "node": "v26.13.0",
+    "platform": "win32",
+    "arch": "x64"
+  },
+  "configSha256": "b31c3020d061dabc917f37b43fc5be3ba7da4f9f0bd251d1d8fefc5ec3804079",
+  "sessions": [
+    {
+      "name": "basic",
+      "note": "Phase 1 §6 base session (errors are part of the frozen input)",
+      "transcript": "doc/transcript/baseline-basic.txt",
+      "transcriptSha256": "ad85a886305c8804ba2d9ffc46962248404d73fee6adc020141fdd6467b540f5",
+      "seed": {
+        "kind": "files",
+        "files": [
+          {
+            "path": "test/fixtures/svg/other.svg",
+            "sha256": "93f1d325c18c3a4d4743aa771c4d86ac06b5ce277d6c15f7761434191a767f69"
+          }
+        ]
+      },
+      "cwd": "fresh copy of the seed under <work>/{a,b}/basic/run; scripts and logs stay outside",
+      "a": {
+        "exitCode": 1,
+        "stdoutBytes": 1189,
+        "stderrBytes": 0,
+        "stdoutSha256": "dd48dcd6d10ac2e756522953f0c50b1da9b930b79e802f6429ed88ca0e6be59f",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "files": [
+          {
+            "path": "demo.svg",
+            "bytes": 413,
+            "sha256": "7ce8f300aae3599973f3650febaabdc48901160c9b1d5734522c45dfab7868be"
+          }
+        ]
+      },
+      "b": {
+        "exitCode": 1,
+        "stdoutBytes": 1189,
+        "stderrBytes": 0,
+        "stdoutSha256": "dd48dcd6d10ac2e756522953f0c50b1da9b930b79e802f6429ed88ca0e6be59f",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "files": [
+          {
+            "path": "demo.svg",
+            "bytes": 413,
+            "sha256": "7ce8f300aae3599973f3650febaabdc48901160c9b1d5734522c45dfab7868be"
+          }
+        ]
+      },
+      "identical": true,
+      "differences": []
+    },
+    {
+      "name": "box",
+      "note": "Phase 1 §6.1B box session",
+      "transcript": "doc/transcript/box.txt",
+      "transcriptSha256": "bc81ef59124294623e538da7dfad43cedfb184dea2b0f5db92e196386b505c35",
+      "seed": {
+        "kind": "empty",
+        "files": []
+      },
+      "cwd": "fresh copy of the seed under <work>/{a,b}/box/run; scripts and logs stay outside",
+      "a": {
+        "exitCode": 0,
+        "stdoutBytes": 824,
+        "stderrBytes": 0,
+        "stdoutSha256": "03c0c4d365522c58e8617925e360562af550a75c3aeeeb3fcc84916f0a7ae7c4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "files": [
+          {
+            "path": "flowchart-box.svg",
+            "bytes": 601,
+            "sha256": "746e10d9af7eb5c483d98e51dc5a325f40d933c3e9e91f567ef0a33b18cd9b56"
+          }
+        ]
+      },
+      "b": {
+        "exitCode": 0,
+        "stdoutBytes": 824,
+        "stderrBytes": 0,
+        "stdoutSha256": "03c0c4d365522c58e8617925e360562af550a75c3aeeeb3fcc84916f0a7ae7c4",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "files": [
+          {
+            "path": "flowchart-box.svg",
+            "bytes": 601,
+            "sha256": "746e10d9af7eb5c483d98e51dc5a325f40d933c3e9e91f567ef0a33b18cd9b56"
+          }
+        ]
+      },
+      "identical": true,
+      "differences": []
+    },
+    {
+      "name": "stats-dir",
+      "note": "stats + dir commands on the fixed directory fixture",
+      "transcript": "doc/transcript/stats-dir.txt",
+      "transcriptSha256": "69fdf21a73f0e446102173ba31d7f2b80663d661fb91361d9a8769de8d9a6036",
+      "seed": {
+        "kind": "tree",
+        "path": "test/fixtures/dir/tree",
+        "files": 7,
+        "sha256": "fe36e594caf73616c15093767d00d17def84b3dbbfd7ad1a27ca68cafa7398bd"
+      },
+      "cwd": "fresh copy of the seed under <work>/{a,b}/stats-dir/run; scripts and logs stay outside",
+      "a": {
+        "exitCode": 0,
+        "stdoutBytes": 304,
+        "stderrBytes": 0,
+        "stdoutSha256": "3393a041ae21d2ce16512dd9fea961a22311ad8b8b44997e8b2a7203a98ac293",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "files": []
+      },
+      "b": {
+        "exitCode": 0,
+        "stdoutBytes": 304,
+        "stderrBytes": 0,
+        "stdoutSha256": "3393a041ae21d2ce16512dd9fea961a22311ad8b8b44997e8b2a7203a98ac293",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "files": []
+      },
+      "identical": true,
+      "differences": []
+    }
+  ],
+  "helpParity": {
+    "input": ["init 200 100", "help", "tree"],
+    "a": {
+      "exitCode": 0,
+      "stdoutBytes": 715,
+      "stdoutSha256": "7d228bd053c4c848419fb8b7cffc4d458903a2105f41931e2998e3f1e733ba9f"
+    },
+    "b": {
+      "exitCode": 0,
+      "stdoutBytes": 715,
+      "stdoutSha256": "7d228bd053c4c848419fb8b7cffc4d458903a2105f41931e2998e3f1e733ba9f"
+    },
+    "identical": true
+  },
+  "noPlugins": {
+    "config": "test/fixtures/plugins/no-optional-plugins.json",
+    "checks": [
+      {
+        "name": "help contains no optional commands",
+        "ok": true
+      },
+      {
+        "name": "help contains no box shape type",
+        "ok": true
+      },
+      {
+        "name": "unknown stats command",
+        "ok": true
+      },
+      {
+        "name": "unknown dir command",
+        "ok": true
+      },
+      {
+        "name": "unknown box shape",
+        "ok": true
+      },
+      {
+        "name": "error exit code",
+        "ok": true
+      }
+    ],
+    "baseline": [
+      {
+        "name": "basic",
+        "exitCode": 1,
+        "stdoutBytes": 1177,
+        "matched": true,
+        "differences": []
+      },
+      {
+        "name": "flowchart",
+        "exitCode": 0,
+        "stdoutBytes": 824,
+        "matched": true,
+        "differences": []
+      },
+      {
+        "name": "io",
+        "exitCode": 1,
+        "stdoutBytes": 643,
+        "matched": true,
+        "differences": []
+      },
+      {
+        "name": "dir",
+        "exitCode": 1,
+        "stdoutBytes": 65,
+        "matched": true,
+        "differences": []
+      }
+    ],
+    "baselineMatched": 4,
+    "baselineTotal": 4
+  },
+  "totals": {
+    "sessions": 3,
+    "identical": 3,
+    "baselineMatched": 4,
+    "baselineTotal": 4,
+    "helpParity": true
+  }
+}

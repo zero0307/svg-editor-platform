@@ -1,0 +1,5 @@
+help parity: init/help/tree through both roots
+A: exit=0 stdout=715B sha256=7d228bd053c4c848419fb8b7cffc4d458903a2105f41931e2998e3f1e733ba9f
+B: exit=0 stdout=715B sha256=7d228bd053c4c848419fb8b7cffc4d458903a2105f41931e2998e3f1e733ba9f
+result: identical (registration set/order/options)
+

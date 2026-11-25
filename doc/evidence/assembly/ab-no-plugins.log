@@ -1,0 +1,16 @@
+config: test/fixtures/plugins/no-optional-plugins.json
+## defaults
+PASS help contains no optional commands
+PASS help contains no box shape type
+PASS unknown stats command
+PASS unknown dir command
+PASS unknown box shape
+PASS error exit code
+stdout bytes: 783, exit: 1
+## Phase 1 golden with every optional plugin disabled
+ok   basic exit=1 stdout=1177B
+ok   flowchart exit=0 stdout=824B
+ok   io exit=1 stdout=643B
+ok   dir exit=1 stdout=65B
+baseline: 4/4 matched
+
