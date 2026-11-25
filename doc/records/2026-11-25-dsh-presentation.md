@@ -48,7 +48,9 @@ Transformer 总图由作者按参考图指定双塔坐标，插件绘制并读�
 
 `npm run check` 覆盖原有课程基线、前端选区和 SVG 插件。并行路径回归在 36 种有固定种子的图形中打乱节点声明，覆盖横向、纵向、2 至 5 条路径与 2 至 4 层。另检验层间标签行数不等的情况，以及多来源 Q/K/V 在两种方向、正反节点顺序下的生成和读回。
 
-`npm run verify:visual` 从序列化 SVG 重新测量箭头、端点、节点边界、路径交叉与重合。在 1× 和 2× 下检查 Transformer 的 17 个标题、说明和端口标签，交叉注意力的 4 个标题与端口标签，以及审稿图标题。`npm run demo:dsh` 在独立官方宿主打包、安装、生成、从磁盘读回并卸载。
+`npm run verify:visual` 从序列化 SVG 重新测量箭头、端点、节点边界、路径交叉与重合。第一轮远程验证发现横向 Q 在 Linux 1×、Windows 2× 下分别有 2 和 6 个像素进入预留间距，Mac 没有触发。自动布局的水平端口标签现在离支线 9 个 SVG 单位，仍沿用原先的留白标准。Linux 验证环境也会确认存在中文字体。
+
+在 1× 和 2× 下检查 Transformer 的 17 个标题、说明和端口标签，交叉注意力的 4 个标题与端口标签，以及审稿图标题。`npm run demo:dsh` 在独立官方宿主打包、安装、生成、从磁盘读回并卸载。
 
 ```sh
 npm run demo:dsh -- --input apps/dsh-plugin/demo/cross-attention-auto.json --theme presentation
