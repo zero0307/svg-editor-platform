@@ -5,127 +5,150 @@
 
 ## 1. 进度总览
 
-- 已完成并合并到集成分支：**13 / 22** 个节点。
-- 已完成节点：`#2`、`#1`、`#3`、`#4`、`#5`、`#6`、`#9`、`#7`、`#10`、`#8`、`#12`、`#13`、`#11`。
-- 待做（9 个）：`#14`、`#15`、`#16`、`#17`、`#18`、`#19`、`#20`、`#21`、`#22`。
-- 集成分支 `integration/phase2` 当前 HEAD：`0125d7f`（`merge #11 TASK-VSC-02`），已推送；本地与 `origin/integration/phase2` 一致。
-- `main` 未合并、未推送新内容；`final` 标签未移动；未创建 `p2` 标签。
+- 已完成并合并到集成分支：**21 / 22** 个节点。
+- 已完成节点：`#2`、`#1`、`#3`、`#4`、`#5`、`#6`、`#9`、`#7`、`#10`、`#8`、`#12`、`#13`、`#11`、`#14`、`#15`、`#17`、`#18`、`#19`、`#20`、`#16`、`#21`。
+- **仅剩 `#22`（QA-03 收口报告、指标与发布 p2）**。
+- 集成分支 `integration/phase2` 当前 HEAD：`308bb47`（`merge #21 TASK-QA-02`），已推送，本地与 `origin` 一致。
+- `main` 未合并、未推送新内容；`final` 未移动；未创建 `p2` 标签（发布需经用户确认与主线合并）。
 
 ## 2. 分支与提交
 
-| 成员 | 分支                        | 分支最新提交 | 状态                                        |
-| ---- | --------------------------- | ------------ | ------------------------------------------- |
-| 甲   | `team/jia-core`             | `0773e43`    | 已推送；#2/#7/#10 已合并；下一节点 #14      |
-| 乙   | `team/yi-eng`               | `b8a463b`    | 已推送；#5/#6/#9/#8/#13 已合并；无待做节点  |
-| 丙   | `team/bing-quality`         | `a7a34a0`    | 已推送；#1/#12 已合并；下一节点 #15/#21/#22 |
-| 丁   | `team/ding-vscode`          | `872185d`    | 已推送；#3、#11 已合并；VSCode 节点完成     |
-| 戊   | `team/wu-dsh`               | `63e6c89`    | 已推送；#4 已合并；下一节点 #16             |
-| 己   | `team/ji-plugins`（未创建） | —            | #15 冻结后从集成分支创建                    |
+| 成员 | 分支                | 分支最新提交 | 状态                                       |
+| ---- | ------------------- | ------------ | ------------------------------------------ |
+| 甲   | `team/jia-core`     | `df4fd1d`    | 已推送；#2/#7/#10/#14 与两处框架补丁已合并 |
+| 乙   | `team/yi-eng`       | `b8a463b`    | 已推送；#5/#6/#9/#8/#13 已合并；无待做     |
+| 丙   | `team/bing-quality` | `f07993a`    | 已推送；#1/#12/#15/#21 已合并；下一步 #22  |
+| 丁   | `team/ding-vscode`  | `872185d`    | 已推送；#3/#11 已合并；VSCode 完成         |
+| 戊   | `team/wu-dsh`       | `8c7ea05`    | 已推送；#4/#16 已合并；DSH 完成            |
+| 己   | `team/ji-plugins`   | `1334319`    | 已推送；#17/#18/#19/#20 已合并；插件完成   |
 
-节点提交 → 合并提交：
+节点提交 → 合并提交（#15 起为本轮新增）：
 
-| 节点          | 节点提交  | 合并提交  |
-| ------------- | --------- | --------- |
-| #2            | `4ae88aa` | `78c2e87` |
-| #1            | `20ee5ac` | `24fe0d2` |
-| #2 复核（丁） | `75a3911` | `612a548` |
-| #3            | `ca80c0b` | `9b2cc65` |
-| #4            | `63e6c89` | `124b329` |
-| #5            | `4052720` | `bcfc6d9` |
-| #6            | `4ee1330` | `63f6709` |
-| #9            | `0e97a66` | `98ec3f5` |
-| #7            | `23f85a5` | `bc54931` |
-| #10           | `0773e43` | `ed6183e` |
-| #8            | `11baca4` | `17f9a78` |
-| #12           | `a7a34a0` | `6eeb64f` |
-| #13           | `b8a463b` | `894b3d1` |
-| #11           | `872185d` | `0125d7f` |
+| 节点 | 节点提交  | 合并提交  |
+| ---- | --------- | --------- |
+| #14  | `2d16341` | `a21f758` |
+| #15  | `29f51c4` | `b7cd7ee` |
+| #17  | `39d503f` | `915d398` |
+| #18  | `4073ab7` | `af1e057` |
+| #19  | `0df080b` | `d68e42f` |
+| #20  | `1334319` | `6318f34` |
+| #16  | `8c7ea05` | `d2b5e23` |
+| #21  | `f07993a` | `308bb47` |
 
-远程：`origin` = <https://github.com/zero0307/svg-editor-platform.git>；`integration/phase2` 与五个 `team/*` 分支均已推送，未推送 `main` 的本地提交。
+框架补丁（独立于节点）：
+
+| 补丁     | 提交      | 合并提交  | 内容                                               |
+| -------- | --------- | --------- | -------------------------------------------------- |
+| #18 前置 | `4f41183` | `7e0fa01` | `QueryContext.directories()` 目录端口 + 组合根注入 |
+| #19 后续 | `df4fd1d` | `99b6a9a` | `Shape.creationParts()` 多态反馈 + ungroup 文案    |
+
+证据分支（已推送）：
+
+| 分支                         | 指向      | 说明                   |
+| ---------------------------- | --------- | ---------------------- |
+| `evidence/p2-framework-base` | `a21f758` | 框架冻结基线 F         |
+| `evidence/box-code`          | `d3465f7` | A 接入提交 C_A（父 F） |
+| `evidence/box-config`        | `043a2f7` | B 接入提交 C_B（父 F） |
 
 ## 3. 测试与检查（最后一次真实执行）
 
-- `npm test`（Phase 1 旧回归）：**89 / 89 通过**。
-- `npm run test:packages`：**203 项通过** = core 96 + svg-xml 36（语法 16 + 严格层 20）+ host 39 + dsh-plugin 7 + vscode-svg 25。
-- `npm run check`：通过（Prettier、`check:docs`、旧回归、`build:packages`、`test:packages`、架构检查）。
-- 架构检查：38 个旧文件 / 115 条旧 import / 5 个 workspace 包 / 143 个 workspace 源文件 / 19 条跨包 import。
-- 指标脚本：`node scripts/metrics/metrics.mjs --from 'final^{commit}' --to <rev> --out docs/metrics`；首版候选 `docs/metrics/e5621a6-to-17f9a78.json`（rules v1，确定性已验证）。
+- `npm test`（根）：**128 / 128 通过**（Phase 1 回归 89 + 基线 6 + 组合根/插件集成等）。
+- `npm run test:packages`：**310 项通过** = core 102 + host 39 + svg-xml 36 + cli 2 + dsh 19 + vscode 25 + command-stats 14 + command-dir 17 + shape-box 30 + tree-modified 26。
+- `npm run check`：通过（Prettier、`check:docs`（93 MD/387 链接）、根测试、`build:packages`、`test:packages`、架构检查）。
+- 架构检查：0 legacy files、11 workspace 包、257 workspace 源文件、119 条跨包 import。
+- 指标脚本：`node scripts/metrics/metrics.mjs --from 'final^{commit}' --to <rev> --out docs/metrics`；已有 `e5621a6-to-17f9a78.json` 与 `e5621a6-to-a21f758.json`，**最终 p2 指标由 #22 重跑**。
 - 环境：Windows 10 x64、Node `v26.13.0`、npm `12.2.1`、VS Code `1.143.1`、DSH `0.2.2-rc.5`。
 
 ## 4. 节点验收文档
 
-均位于 `doc/evidence/acceptance/`：`001-qa-01.md`、`002-core-01.md`、`003-vsc-01.md`、`004-dsh-01.md`、`005-eng-01.md`、`006-xml-01.md`、`007-core-02.md`、`008-host-01.md`、`009-host-02.md`、`010-core-03.md`、`011-vsc-02.md`、`012-met-01.md`、`013-xml-02.md`。
+均位于 `doc/evidence/acceptance/`：
+`001`、`002`、`003`、`004`、`005`、`006`、`007`、`008`、`009`、`010`、`011`、`012`、`013`、`014`、`015`、`016`、`017`、`018`、`019`、`020`、`021`。
 
-其中 #2 由丁跨板块复核（2 通过 / 2 部分通过）；#12 第 4 条部分通过（p2 终版未生成）；#13 的真实 builtins 全量对照留待 #14。
+部分通过的条目（已写入对应文档）：
+
+- #2：运行期只读保护、消费方评审记录（2 条部分通过）。
+- #12：p2 终版指标未生成（第 4 条部分通过，留给 #22）。
+- #16：真实会话中执行两个工具未验证（无 API key；第 3/4 条部分满足）。
+- #21：C_A/C_B 在 F 上无法构建（`creationParts()` 是 F 之后的补丁），仅作 diff 证据（第 1 条部分通过）；A/B 运行回放与零改动检查通过。
 
 ## 5. 包与关键接口（下次开发前必读）
 
-| 目录                | 包名                   | 已实现                                                                                                                                            |
-| ------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/core`     | `@svgframe/core`       | 领域、四扩展点、注册表、事件、`EditorSession`、`StructureService`、`AttributeEditingService`、`TreePresenter`、`SvgCodec`/`FileStore` 端口、fakes |
-| `packages/svg-xml`  | `@svgframe/svg-xml`    | 中立语法 `parseSvgSyntax`；严格层 `XmlSvgCodec`（变换规范化、provider 恢复、P1 格式 encode）                                                      |
-| `packages/host`     | `@svgframe/host`       | `LocalFileStore`、`LocalDirectoryReader`、`PluginInstaller`/`PluginLoader`/`StagedPluginContext`                                                  |
-| `apps/vscode-svg`   | `vscode-svg`           | 文件标记 + 原生 Outline（真实宿主截图）；`@types/vscode@1.140.0`；`build.mjs` 用 esbuild 打包，VSIX 可干净安装                                    |
-| `apps/dsh-plugin`   | `@svgframe/dsh-plugin` | 最小插件；本地结构性 `EditorSessionPort`（#16 换真实端口）                                                                                        |
-| `packages/builtins` | `@svgframe/builtins`   | **未建立**（#14）                                                                                                                                 |
-| `apps/cli`          | `@svgframe/cli`        | **未建立**（#14）                                                                                                                                 |
-| `plugins/*`         | 四个插件包             | **未建立**（#17–#20）                                                                                                                             |
+| 目录                    | 包名                      | 已实现                                                                                                                         |
+| ----------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/core`         | `@svgframe/core`          | 领域、四扩展点、注册表、事件、`EditorSession`、结构/属性事务、`TreePresenter`、`creationParts()`、`QueryContext.directories()` |
+| `packages/svg-xml`      | `@svgframe/svg-xml`       | 中立语法 `parseSvgSyntax`；严格 `XmlSvgCodec`（变换规范化、provider 恢复、P1 格式 encode）                                     |
+| `packages/host`         | `@svgframe/host`          | 文件/目录适配器、`PluginInstaller`/`PluginLoader`/`StagedPluginContext`                                                        |
+| `packages/builtins`     | `@svgframe/builtins`      | 六种图形 provider + 19 个 P1 命令 + `BuiltinsPlugin`                                                                           |
+| `apps/cli`              | `@svgframe/cli`           | `main`/`Application`/`CommandDispatcher`/`Repl`/`Tokenizer`，A/B 组合根                                                        |
+| `plugins/command-stats` | `@svgframe/command-stats` | stats（query，只读）                                                                                                           |
+| `plugins/command-dir`   | `@svgframe/command-dir`   | dir（query，`QueryContext.directories()`）                                                                                     |
+| `plugins/shape-box`     | `@svgframe/shape-box`     | box provider + `box-attributes` + `box-type-label`                                                                             |
+| `plugins/tree-modified` | `@svgframe/tree-modified` | `modified-star` 内容脏状态                                                                                                     |
+| `apps/vscode-svg`       | `vscode-svg`              | 文件标记 + Outline + esbuild/VSIX                                                                                              |
+| `apps/dsh-plugin`       | `@svgframe/dsh-plugin`    | `svg_inspect` + `svg_create_flowchart`，`ctx.fs` 网关，单文件打包                                                              |
 
-接口约定补充（本轮新增）：
+接口/行为约定：
 
-- **#14 codec**：`new XmlSvgCodec(providerRegistry)`；六类 builtins provider 的 `defaultTag` 为 rect/circle/ellipse/line/text/g，box 用 `matches` 看 `data-kind`。叶 provider 读 `SvgElementView.attributes`（已去 transform/id/xmlns、完成继承缩放与实体解码），按 `view.transform` 先 scale 后 translate **一次**；容器不得重复应用。provider 必须按 P1 属性顺序（imported→geometry→styles）写属性，否则 encode 字节变化。
-- **#14 loader**：构造注册表/创建服务/`EditorEvents` 后 `new PluginInstaller(services)`；A 用 `installAll([...])`，B 用 `new PluginLoader(installer).loadFromConfig(configPath)`；host 消息不带 `error:` 前缀；全部安装成功后再 `TreePresenter.connect`。
-- **命令监听**：`PluginContext.subscribe` 只收已提交编辑事件；暂存订阅在失败/禁用时释放。
-- **manifest**：插件包 `package.json` 顶层 `svgframe.contributes`（shapes/commands/decorators/attributes 名称数组）。
-- **指标**：分类规则在 `scripts/metrics/classification.json`；`plugin` 类当前为 0，`packages/builtins`/`apps/cli`/`plugins` 落地后自动纳入，无需改脚本。
-- **#11 Outline**：`selectionRange` 取 `startTagSpan`（整个开始标签），而 ADR-0008 建议 `nameSpan`；两者都在开始标签内，若要改只需改 `SvgOutlineModel.selectionOf` 一处（ADR-0009 已记录）。VSIX 二进制不入库，`doc/evidence/vscode/install/` 存清单/哈希/安装日志/截图。
+- 命令反馈：`<kind>#<id>` + 复合图形 `creationParts()` 摘要；ungroup 复合图形文案 `cannot ungroup composite shape: <id>`；undo 统一 `undone: <消息>`（§6.1B 的 `moved back by` 未实现，ADR-0017 记录）。
+- 插件 manifest：包 `package.json` 顶层 `svgframe.contributes`；`PluginContext.subscribe` 只收已提交事件；加载失败整插件回滚。
+- 默认插件顺序：`command-stats → command-dir → shape-box → tree-modified`（`plugins.config.json`）。
+- 关闭全部可选插件：`test/fixtures/plugins/no-optional-plugins.json` 下 4/4 baseline golden 匹配。
+- 指标分类：`scripts/metrics/classification.json`；`plugin` 类已包含 builtins 与四个插件。
 
 ## 6. ADR 编号
 
-已用：`0003`、`0004`、`0005`、`0007`、`0008`、`0009`（Accepted）、`0010`、`0011`、`0012`、`0016`。预留：`0006`（CLI 迁移）、`0014`（box）、`0015`（dirty）。新建前先查 `doc/adr/README.md`。
+已用：`0003`–`0017`（其中 `0006` CLI 组合根、`0014` box、`0015` dirty、`0016` metrics、`0017` 多态反馈）、`0009`（Accepted）。新建前先查 `doc/adr/README.md`。
 
-## 7. 下次继续的顺序与依赖
+## 7. 下一步（#22）与依赖
 
 ```text
-#14 甲  CLI-01 迁移（需 #7/#13/#8/#9/#10/#1 全部 ✓）        ← 下一步，最大节点
-#15 丙  FRAME-01 冻结（需 #14、#12 ✓）
-#17 己  stats（需 #15）→ #18 dir → #19 box → #20 modified-star
-#16 戊  DSH-02 两个工具（需 #4 ✓、#14）
-#21 丙  QA-02 A/B 回放（需 #15、#17–#20）
-#22 丙  QA-03 收口（需 #21、#11 ✓、#16、#12 ✓）
+#22 丙  QA-03 收口（需 #21 ✓、#11 ✓、#16 ✓、#12 ✓）
 ```
+
+#22 要做的：
+
+1. 最终全量检查（`npm ci` + `npm run check`）并记录真实输出；
+2. `doc/README.md` 汇总扩展点清单、前后 PlantUML（实际渲染）、ADR、会话、证据、指标、交付步骤；
+3. 在最终候选提交上重跑 metrics（`final^{commit}` → 候选），把 p2 指标写入 `docs/metrics/`，写清输入 SHA/规则/排除项；报告与指标分离提交避免 SHA 循环；
+4. `doc/release-checklist.md`：最终 SHA、命令、未完成项、访问验证；
+5. **p2 不创建**（用户约束：不合并 `main`、不打 tag），REL-01 记为“待用户确认后发布”，并给出候选 SHA 与发布步骤；
+6. 复核 VSCode/DSH 真实证据、loader 故障矩阵、A/B 证据索引与所有验收文档，写 `doc/records/2026-11-25-quality-closeout.md`。
+
+建议 #22 的提交拆成两个（指标/报告各一），仍是同一节点；若必须单提交，则把指标生成与报告一起提交并在证据里说明。
 
 ## 8. 恢复操作手册
 
 1. 结束状态：工作树在 `integration/phase2`、干净；`node_modules` 已安装。
-2. 继续某成员节点：`git switch team/<成员>`，再 `git merge --no-edit integration/phase2` 同步依赖。
+2. 继续成员节点：`git switch team/<成员>`，再 `git merge --no-edit integration/phase2` 同步。
 3. 子智能体纪律：只在自己的 `team/*` 分支提交；不 checkout/merge/rebase/push/tag/reset；只 `git add` 本节点文件；每节点一个提交 + 一份 `doc/evidence/acceptance/NNN-<key>.md`。
-4. 负责人：`git switch integration/phase2 && git merge --no-ff <节点提交>`，跑 `npm run check`，再 `git push origin team/<成员> integration/phase2`（每节点推送）。
+4. 负责人：`git switch integration/phase2 && git merge --no-ff <节点提交>`，跑 `npm run check`，再 `git push origin team/<成员> integration/phase2`；证据分支单独推送。
 5. 复跑命令：
    ```text
    npm ci --prefer-offline
-   npm test                    # 89 项旧回归
+   npm test                    # 128 项根测试
    npm run build:packages
-   npm run test:packages       # 203 项工作区测试
+   npm run test:packages       # 310 项工作区测试
    npm run check
-   npm run cli                 # 旧 CLI（#14 后改入口）
+   npm run cli
    node scripts/metrics/metrics.mjs --from 'final^{commit}' --to integration/phase2 --out docs/metrics
+   node scripts/assembly/replay.mjs
+   npm run verify:visual
    ```
-6. 单包测试：`npm test -w @svgframe/core`（同理 `@svgframe/svg-xml`、`@svgframe/host`、`vscode-svg`、`@svgframe/dsh-plugin`）。
+6. 单包测试：`npm test -w @svgframe/core`（同理 svg-xml、host、builtins、vscode-svg、dsh-plugin、四个插件）。
 
-## 9. 已知差距与风险
+## 9. 已知差距与风险（#22 需处理/记录）
 
-- **#14 是最大风险点**：必须删除 `src/`、迁移 83 项测试到新包、切换根 `test`/`cli` 入口，并保证与 `final` 逐字节一致；不能保留两套运行内核。
-- **#13 的真实对照**：builtins provider 尚未存在，六种图形与 P1 的逐字节 encode/decode 对照要在 #14 完成；当前仅 fake provider 证明通用能力。
-- **#12 首版指标**：`plugin` 类为 0；p2 终版与“在 p2 上重跑核对源码散列”留给 #22。
-- **#2 部分通过**：只读是类型/API 边界而非运行时冻结；ADR-0003 仍 Proposed。
-- **真实宿主**：VSCode 标记与 Outline 已在 1.143.1 实测（仅 Windows），VSIX 干净安装/卸载已记录；DSH 模型侧工具调用因无 API key 未执行。#11 的编辑后 `Ctrl+Z` 撤销刷新未判定通过（焦点/撤销分组差异），待复核。
-- **平台**：仅 Windows + Node 26 实测；`.nvmrc` 24.22.1、CI 22/24 未本机复跑。
+- **p2 未创建**：用户要求不合并 `main`，因此 `p2` 标签与“同一仓库发布”留待用户确认；#22 只能准备发布清单与候选 SHA。
+- **#21 C_A/C_B 不可构建**：F 缺少 `creationParts()` 钩子；若需要“可构建的证据分支”，可从 `0df080b`（#19 接入时的插件实现）重做 C_A/C_B，或把框架补丁纳入新 F' 后重建。当前仅 diff 证据。
+- **#16 模型侧工具调用未执行**：无 `DEEPSEEK_API_KEY`；真实宿主只验证装载/注册/卸载。
+- **#12 指标**：需要 #22 在最终候选上重跑，避免报告 SHA 循环。
+- **跨平台/Node 版本**：仅 Windows + Node 26 实测；`.nvmrc` 24.22.1、CI 22/24 未本机复跑。
+- **VSCode**：编辑后 `Ctrl+Z` 撤销刷新未判定通过；其余截图/VSIX 已验。
 - **编码坑**：中文文件不要用 PowerShell `Get-Content/Set-Content`（会乱码），用编辑器工具或 Node 写 UTF-8。
 - **用户约束**：每节点提交后推送；不合并 `main`；不打 `p2` 标签。
 
 ## 10. 会话结束状态
 
-- 六个子智能体全部空闲；负责人最后合并 #11 并推送（`0125d7f`）。
-- 本日志提交为 `docs(records): update development log after node #11` 后推送 `integration/phase2`。
-- 恢复时先读本文件第 7、8 节；下一步是 `#14`（甲）。
+- 六个子智能体全部空闲；负责人最后合并 #21 并推送 `integration/phase2`、三个证据分支。
+- 本日志提交为 `docs(records): update development log after node #21` 后推送。
+- 恢复时先读本文件第 7、8 节；下一步是 `#22`（丙）。
