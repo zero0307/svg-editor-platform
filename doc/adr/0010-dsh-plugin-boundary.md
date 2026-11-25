@@ -23,8 +23,23 @@ DSH 板块需要提供 `svg_inspect` 与 `svg_create_flowchart` 两个工具。D
 
 ## 验证
 
-- 待 #4/#16 落地后补充：最小插件加载/卸载无残留、fake `EditorSessionPort` 的业务测试、真实 DSH 会话的工具调用与 SVG 结果核对、干净目录安装记录。
-- 真实 DSH 版本与 API 差异必须以实际安装为准；未实际执行的项目明确标注“未执行”，不以计划代替证据。
+- 最小插件加载/卸载：#4 与本次均在真实 DSH 0.2.2-rc.5 宿主验证，
+  `registered svg_inspect, svg_create_flowchart` / `disposed; registry-residue=none`。
+- 业务测试：`apps/dsh-plugin` 19 项 fake gateway 测试（真实 codec/builtins），
+  不启动 CLI 子进程、不解析终端文本。
+- 独立安装：干净目录仅复制 `dist/plugin.js` + 清单 + patch，仓库外 Node 可直接
+  `import()`；产物 sha256 与命令退出码见 `doc/evidence/dsh/install/`。
+- 真实 DSH 会话中的**模型侧工具调用未执行**：本机无 `DEEPSEEK_API_KEY`，
+  `headless` 在模型调用前以 `MISSING_CREDENTIAL` 退出。该差距记入
+  `doc/evidence/acceptance/016-dsh-02.md`，不作为已完成证据。
+- 真实 DSH 版本与 API 差异以实际安装为准：本次实测 `output.schema` 必须是线级
+  JSON Schema（对象级 `required` 数组），属性级 `required: true` 会被宿主拒绝并
+  导致插件不激活；差异记录于 `doc/dsh.md`。
+
+## 状态
+
+Proposed。真实宿主加载/卸载、独立安装与业务测试已验证；模型侧真实调用与
+`ctx.fs` 沙箱拒绝路径待补，故不改为 Accepted。
 
 ## 后续
 

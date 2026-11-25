@@ -1,52 +1,28 @@
-# DSH 生命周期证据（TASK-DSH-01，0.2.2-rc.5）
+# DSH 证据索引（TASK-DSH-01 / TASK-DSH-02）
 
-所有命令在 **临时 DSH_HOME**（`%TEMP%\dsh-wu-test`）执行；用户
-`%USERPROFILE%\.dsh` 未被修改。CLI 由 Desktop 内置 Electron 以
-`ELECTRON_RUN_AS_NODE=1` 运行 `resources/app.asar/dsh/node_modules/@deepseek-ai/dsh/lib/bin.js`。
+DSH 版本：**0.2.2-rc.5**（Desktop 打包）。所有命令在临时 `DSH_HOME`
+（`%TEMP%\dsh-wu-*`）执行，用户 `%USERPROFILE%\.dsh` 未被读改。
 
-## 1. 组合加载（`--dump-config`）
+| 证据         | 路径                                                   | 内容                                                                               |
+| ------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| 干净目录安装 | [install/README.md](install/README.md)                 | 命令、版本、退出码、sha256、dump-config 与加载日志                                 |
+| 组合结果     | [install/dump-config.log](install/dump-config.log)     | 真实 `--dump-config` 全文，含 `# == @svgframe/dsh-plugin`                          |
+| 加载/卸载    | [install/boot.log](install/boot.log)                   | `registered svg_inspect, svg_create_flowchart` / `disposed; registry-residue=none` |
+| 加载失败原因 | [install/boot.err](install/boot.err)                   | `MISSING_CREDENTIAL`（本机无 `DEEPSEEK_API_KEY`）                                  |
+| 产物哈希     | [install/plugin-sha256.txt](install/plugin-sha256.txt) | `dist/plugin.js` 大小与 sha256                                                     |
+| 生成样例     | [flowchart-example.svg](flowchart-example.svg)         | 3 节点 2 连线的真实产物                                                            |
 
-退出码 0，输出中出现新增 bundle 层与行：
+## TASK-DSH-01（#4）补充
 
-```
-# == @svgframe/dsh-plugin
-- id: svgframe-dsh-plugin
-  name: '@svgframe/dsh-plugin'
-  config:
-    log: true
-    dshVersion: 0.2.2-rc.5
-```
+生命周期最小插件已在 #4 验证（同一打包路径）。当前 `apps/dsh-plugin` 已演进为两个
+正式工具，注册/卸载路径未变，本次重新记录于 `install/`。
 
-## 2. 真实启动 / 注册 / 卸载
+## TASK-DSH-02（#16）未执行项
 
-命令：`dsh --profile wu-test headless ping`，**退出码 1**。
+- 模型侧真实调用两个工具：无 `DEEPSEEK_API_KEY`，`headless` 在模型调用前以
+  `MISSING_CREDENTIAL` 退出（退出码 1），未执行。
+- `plugin add` / `remove` 的 pnpm 流程：临时环境无 pnpm，未执行。
+- `ctx.fs` 沙箱拒绝与审批升级路径未触发。
 
-stdout（原文）：
-
-```
-[svgframe-dsh] apply start (defineTool=defineTool)
-[svgframe-dsh] registered svgframe_probe; registry=hit
-
-[svgframe-dsh] disposed svgframe_probe; registry-free=true
-```
-
-stderr（原文）：
-
-```
-dsh: MISSING_CREDENTIAL: llm-deepseek: no API key for provider route "deepseek-official"; store DEEPSEEK_API_KEY through the credentials service (the web Models page writes it), or export DEEPSEEK_API_KEY in the launching environment
-```
-
-结论：真实 DSH 宿主完成了 bundle 加载、`svgframe_probe` 注册（registry=hit）、
-进程退出时的 effect 释放，且释放后注册表已无该工具（registry-free=true）。
-退出码 1 的原因是本机没有模型凭据，与本插件无关。
-
-## 3. 未执行 / 未验证
-
-- 模型侧真实工具调用：无 `DEEPSEEK_API_KEY`，未执行。
-- `plugin add` / `remove` 的 pnpm 安装流程：临时环境无 `pnpm`，未执行；
-  改用"复制进临时 profile node_modules + 修改临时 profile 清单"完成装配。
-- 未在本机用户 Desktop profile 中做任何安装或卸载。
-
-## 4. 复现
-
-见 [doc/dsh.md](../../dsh.md)。
+工具的 SVG 生成与检查逻辑由 `apps/dsh-plugin` 的单元测试用 fake gateway +
+真实 codec/builtins 覆盖（19 项），样例产物见 `flowchart-example.svg`。

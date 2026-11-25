@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect id="start" x="80" y="80" width="120" height="48" fill="#eef2ff" stroke="#334155" stroke-width="1"/>
+  <text id="start-label" x="90" y="109" fill="#0f172a">Start</text>
+  <rect id="check" x="320" y="80" width="120" height="48" fill="#eef2ff" stroke="#334155" stroke-width="1"/>
+  <text id="check-label" x="330" y="109" fill="#0f172a">Valid?</text>
+  <rect id="done" x="560" y="200" width="120" height="48" fill="#eef2ff" stroke="#334155" stroke-width="1"/>
+  <text id="done-label" x="570" y="229" fill="#0f172a">Save</text>
+  <line id="connector-1" x1="140" y1="104" x2="380" y2="104" stroke="#475569"/>
+  <line id="connector-2" x1="380" y1="104" x2="620" y2="224" stroke="#475569"/>
+</svg>
