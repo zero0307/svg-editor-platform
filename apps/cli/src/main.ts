@@ -1,8 +1,17 @@
 import { createReadStream } from 'node:fs';
+import statsPlugin from '@svgframe/command-stats';
 import { createApplication } from './Application.js';
 import { Repl } from './Repl.js';
 
 const USAGE = 'error: usage: npm run cli -- [--script <file> | --help]';
+
+/**
+ * A-mode (explicit code assembly) contributions for this top-level composition
+ * root. B-mode reads the same plugin from `plugins.config.json`; both enter the
+ * shared `PluginInstaller` path. This is the only file the stats integration
+ * changes outside the plugin package, its config entry and test metadata.
+ */
+const embeddedPlugins = [{ module: statsPlugin, manifest: statsPlugin.manifest }];
 
 interface ParsedArguments {
   readonly script?: string;
@@ -40,7 +49,7 @@ const messageOf = (error: unknown): string =>
 const main = async (): Promise<void> => {
   const args = process.argv.slice(2);
   if (args.length === 1 && args[0] === '--help') {
-    const application = await createApplication();
+    const application = await createApplication({ embeddedPlugins });
     console.log((await application.dispatcher.help()).join('\n'));
     return;
   }
@@ -52,6 +61,7 @@ const main = async (): Promise<void> => {
   }
   const application = await createApplication({
     configPath: parsed.config,
+    embeddedPlugins,
     onPluginError: (message) => console.error(`error: ${message}`),
   });
   const input = parsed.script
