@@ -170,7 +170,7 @@ export interface AttributeHandler {
 
 `handles` 只能读取，不能拿到活文档引用。`apply` 的 context 仅能访问本次候选文档，通过公开 `require`、属性设置、容器与形状方法完成修改；返回结果可提供本次领域操作的反馈。优先选择“同时命中两个以上处理器即拒绝”，避免无需求的优先级与组合机制。冲突检测在真正修改前完成。
 
-命令的“命令对象”与“可撤销编辑对象”是不同抽象：`Command` 处理参数和调度请求；`EditCommand`/`EditAction` 描述一次领域编辑。命令准备阶段提供 `requiresDocument` 与 `effect`，分发器依效果路由到只读、编辑、文档、历史上下文，不能按命令名猜测。`canvas` 无参数是只读调用，带参数才是文档屏障；`dir` 无需文档且只获得目录读取端口；`stats` 需要文档只读视图。
+命令的“命令对象”与“可撤销编辑对象”是不同抽象：`Command` 处理参数和调度请求；`EditCommand`/`EditAction` 描述一次领域编辑。命令准备阶段提供 `requiresDocument` 与 `effect`，分发器依效果路由到只读、编辑、文档、历史上下文，不能按命令名猜测。`canvas` 无参数是只读调用，带参数才是文档屏障；`dir` 无需文档且只获得目录读取端口；`stats` 需要文档只读视图。`QueryContext` 同时注入只读文档与 `DirectoryReader`（缺失时 `directories()` 报 `directory access is not available`），因此 `dir` 一类 `requiresDocument:false` 的查询在未初始化文档时也能执行，但仍拿不到 session/编辑/历史能力。
 
 `help` 按稳定注册顺序枚举命令，图形参数说明来自 provider。内置顺序固定为 Phase 1 顺序，新插件按装配顺序追加。参数是否允许、参数错误的反馈都由对应命令类负责。
 
@@ -289,6 +289,8 @@ VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转
 实现落点（#9）：core 公开 `DirectoryReader`/`DirectoryEntryKind`（`'directory' | 'file' | 'link' | 'other'`）与框架节点补充的 `FileStore`（`packages/core/ports/FileStore.ts`）；host 包（`packages/host`）提供 `LocalDirectoryReader` 与 `LocalFileStore`。`LocalDirectoryReader.cwd()` 默认 `process.cwd()`、可注入 provider 以便测试且不调用 `process.chdir`；`list()` 只返回直接子项、按 dirent 分类、不递归、不跟随链接、不排序，失败统一 `cannot read directory: <path>`。`LocalFileStore` 保留 Phase 1 的原子保存：同目录临时文件 + rename，失败时清理临时文件并保持 `cannot read file: <path>`/`cannot write file: <path>` 文案；Windows 上对 `EPERM`/`EACCES`/`EBUSY` 做有上限退避重试。注意 core 端口用 `'link'`（不是 `'symlink'`），dir 插件按该值渲染 `[LINK]`，排序与标记仍归插件而不在 host 实现。
 
 实际 cwd 不因 read/save 或插件配置改变。测试通过端口替身控制失败和条目，通过临时目录验证真实组合；日志在该目录外生成。
+
+查询命令的目录端口（#18 前置补丁）：`QueryContext` 构造为 `(document: ReadonlyDocument | null, directories?: DirectoryReader)`，`directories()` 返回注入端口，缺失时报 `directory access is not available`；`CommandDispatcher` 构造参数包含同一 `DirectoryReader` 并在构造 context 时注入，A/B 组合根都使用 host 的 `LocalDirectoryReader`。查询上下文仍只有只读文档与目录端口，不暴露 session、编辑或历史；dir 插件不 import Node fs/process.cwd，也不依赖已初始化文档。
 
 dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期对 `EditorSessionPort` 使用替身独立开发。接口采用结构化请求/结果，引用公开编辑会话和 codec，不启动 CLI 子进程后解析终端文字。dsh 注册工具与生命周期跟随其官方 API；它不是 CLI PluginModule，不能套用本项目的 contributes 或 activate 形状。外部 API 未验证前不把集成完成写入报告。
 

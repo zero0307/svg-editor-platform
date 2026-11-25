@@ -4,6 +4,7 @@ import type {
   CommandOutput,
   CommandRegistry,
   CommandToken,
+  DirectoryReader,
   EditorSessionPort,
 } from '@svgframe/core';
 
@@ -19,6 +20,7 @@ export class CommandDispatcher {
   constructor(
     private readonly commands: CommandRegistry,
     private readonly session: EditorSessionPort,
+    private readonly directories: DirectoryReader,
   ) {}
   async execute(line: string): Promise<readonly string[]> {
     try {
@@ -43,7 +45,10 @@ export class CommandDispatcher {
       case 'query':
         return CommandDispatcher.normalize(
           await preparation.operation.execute(
-            new QueryContext(this.session.hasDocument() ? this.session.document() : null),
+            new QueryContext(
+              this.session.hasDocument() ? this.session.document() : null,
+              this.directories,
+            ),
           ),
         );
       case 'edit':

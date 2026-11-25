@@ -85,7 +85,7 @@ export async function createApplication(options: ApplicationOptions = {}): Promi
   return {
     session,
     commands,
-    dispatcher: new CommandDispatcher(commands, session),
+    dispatcher: new CommandDispatcher(commands, session, directories),
     installer,
     results,
   };
