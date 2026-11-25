@@ -253,7 +253,9 @@ VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转
         ↘ 任意失败：丢弃当前暂存区 → 输出对应错误 → 下一插件
 ```
 
-`activate` 的 context 仅提供注册能力、已校验 options 和公开服务端口；不提供文件系统、活文档或任意持久订阅接口。装饰器事件由成功注册的实例生命周期统一接入，避免激活失败后遗留监听器。若未来引入必须释放的资源，须先把 cleanup 纳入暂存事务，不能只回滚四张注册表就宣称完全回滚。模块顶层要求无外部副作用；此注册事务不承诺撤销第三方模块自行执行的系统操作。
+`activate` 的 context 提供四类注册能力、已校验的只读 options、公开服务端口与**已提交编辑事件订阅**：`subscribe(listener)` 返回 disposer，订阅先进入暂存区，只有插件成功发布后才接入真实 `EditorEventBus`，失败插件不留下监听器。context 不提供文件系统、活文档或任意事件总线。装饰器事件仍由成功注册的实例生命周期统一接入，避免激活失败后遗留监听器。若未来引入必须释放的资源，须先把 cleanup 纳入暂存事务，不能只回滚四张注册表就宣称完全回滚。模块顶层要求无外部副作用；此注册事务不承诺撤销第三方模块自行执行的系统操作。
+
+实现落点（#8）：`packages/host/loader` 提供 `PluginInstaller`（`install`/`installAll`）、`PluginLoader`（`loadFromConfig`）、`PluginLoadError`、`PluginInstallResult`、`StagedPluginContext`。A 由组合根显式传入模块对象、package manifest 与 options；B 读取 `plugins.config.json`，按配置目录解析相对模块、读取模块旁最近的 `package.json` 后调用同一个 installer。插件贡献的权威来源是包 `package.json` 顶层 `svgframe.contributes`（`shapes`/`commands`/`decorators`/`attributes`），host 将其映射到 core `PluginManifest` 的 `attributeHandlers`；A 可直接传该原始 manifest 对象，也可传 core 形状，规范化只做一次并产出同一值。失败结果以 `PluginLoadError.code` 区分，错误文案不带 `error:` 前缀（打印由组合根决定）：`plugin not found: <request>`、`plugin has no default export: <package name>`、`plugin manifest mismatch: <name> (declared: …; registered: …)`、`plugin failed to activate: <name> (<reason>)`、`duplicate registration: <category>/<name>`、`invalid plugin config`。清单比较按类别与排序后的名称做多重集比较，重复名不会被集合去重吞掉；全局重复在发布前检查并按固定类别顺序报告。配置语法/结构非法时整体回退默认能力；`enabled:false` 在解析、求值前跳过；顶层模块解析失败与已定位模块的求值/内部依赖失败分开报告。全部插件安装成功后，组合根才可调用 `TreePresenter.connect` 接入统一事件源；每个插件的 context 订阅由 installer 在其注册发布后接入，失败时随暂存区丢弃。
 
 配置插件顺序即加载顺序，`enabled:false` 不解析、不求值、不激活。相对路径以配置文件所在目录为基准，包名按该目录对应运行环境的 Node 解析规则处理，不能改成基于 CLI 当前 SVG 路径。options 作为只读值传入插件工厂/activate，A/B 使用同一传递方式，不通过全局变量读取。
 
