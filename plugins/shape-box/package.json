@@ -1,0 +1,34 @@
+{
+  "name": "@svgframe/shape-box",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Box composite shape, fill/label attribute handlers and (box) tree label",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "svgframe": {
+    "contributes": {
+      "shapes": [
+        "box"
+      ],
+      "attributes": [
+        "box-attributes"
+      ],
+      "decorators": [
+        "box-type-label"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsc -b .",
+    "test": "npm run build --silent && node --test \"dist/test/*.test.js\""
+  },
+  "dependencies": {
+    "@svgframe/core": "*"
+  }
+}

@@ -17,6 +17,7 @@
     "@svgframe/builtins": "*",
     "@svgframe/core": "*",
     "@svgframe/host": "*",
+    "@svgframe/shape-box": "*",
     "@svgframe/svg-xml": "*"
   }
 }
