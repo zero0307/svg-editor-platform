@@ -1,0 +1,13 @@
+# Phase 2 组合会话输入：stats + dir
+# 本文件只存命令与注释，不含提示符或期望输出；期望输出由 #21 在固定夹具上生成。
+# dir 列出的是 CLI 进程的工作目录：回放时须在固定目录夹具（例如
+# test/fixtures/dir/tree 的副本）内运行，输出日志写在被列目录之外。
+
+init 800 600
+create rect bg 0 0 800 600 #ffffff
+create text title 20 40 "My Diagram"
+create circle c1 100 100 20 red
+create g g1
+create line arrow1 0 0 10 10 black in g1
+stats
+dir

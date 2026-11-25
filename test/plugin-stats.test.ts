@@ -96,25 +96,43 @@ test('stats requires a document and reports the standard error without one', asy
 });
 
 test('A and B install the same command registry and report the same stats line', async () => {
-  const a = await createApplication({
-    files: new FakeFileStore(),
-    embeddedPlugins: [{ module: statsPlugin, manifest: statsPlugin.manifest }],
-  });
-  const b = await createApplication({ files: new FakeFileStore(), configPath: config });
-  assert.deepEqual(a.commands.names(), b.commands.names());
-  assert.equal(a.commands.names().at(-1), 'stats', 'stats appends after the Phase 1 commands');
-  assert.deepEqual(await a.dispatcher.help(), await b.dispatcher.help());
-  const run = async (application: typeof a): Promise<readonly string[]> => {
-    await application.dispatcher.execute('init 400 300');
-    const rejected = await application.dispatcher.execute('create box b 0 0 1 1 "title"');
-    await application.dispatcher.execute('create circle c 1 2 3');
-    return [...rejected, ...(await application.dispatcher.execute('stats'))];
-  };
-  const aOutput = await run(a);
-  assert.deepEqual(aOutput, await run(b));
-  assert.deepEqual(aOutput, [
-    'error: unknown shape type: box (is the plugin loaded?)',
-    'circle: 1  (total 1, containers 0)',
-  ]);
-  for (const result of [...a.results, ...b.results]) assert.equal(result.ok, true);
+  const configDirectory = resolve('artifacts/plugin-stats-tests');
+  try {
+    await mkdir(configDirectory, { recursive: true });
+    const statsOnlyConfig = join(configDirectory, 'stats-only.json');
+    await writeFile(
+      statsOnlyConfig,
+      `${JSON.stringify({ plugins: [{ module: '@svgframe/command-stats' }] })}\n`,
+    );
+    const a = await createApplication({
+      files: new FakeFileStore(),
+      embeddedPlugins: [{ module: statsPlugin, manifest: statsPlugin.manifest }],
+    });
+    const b = await createApplication({
+      files: new FakeFileStore(),
+      configPath: statsOnlyConfig,
+    });
+    assert.deepEqual(a.commands.names(), b.commands.names());
+    assert.equal(
+      a.commands.names().indexOf('stats'),
+      19,
+      'stats appends after the 19 Phase 1 commands',
+    );
+    assert.deepEqual(await a.dispatcher.help(), await b.dispatcher.help());
+    const run = async (application: typeof a): Promise<readonly string[]> => {
+      await application.dispatcher.execute('init 400 300');
+      const rejected = await application.dispatcher.execute('create box b 0 0 1 1 "title"');
+      await application.dispatcher.execute('create circle c 1 2 3');
+      return [...rejected, ...(await application.dispatcher.execute('stats'))];
+    };
+    const aOutput = await run(a);
+    assert.deepEqual(aOutput, await run(b));
+    assert.deepEqual(aOutput, [
+      'error: unknown shape type: box (is the plugin loaded?)',
+      'circle: 1  (total 1, containers 0)',
+    ]);
+    for (const result of [...a.results, ...b.results]) assert.equal(result.ok, true);
+  } finally {
+    await rm(configDirectory, { recursive: true, force: true });
+  }
 });

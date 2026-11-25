@@ -1,6 +1,6 @@
 # SVG Editor Platform 架构与接口方案
 
-状态：框架内核、默认命令、严格 codec、宿主加载器与 CLI 已按本方案落地（`packages/core`、`host`、`svg-xml`、`builtins`、`apps/cli`）；旧 `src/` 已在 #14 删除。剩余工作集中在可选插件（stats/dir/box/修改标签）、VSCode/dsh 深入集成与验收指标；方案面向 `zero0307/svg-editor-platform`，采用 npm workspaces，保留 TypeScript、面向对象、Node 内置测试运行器与现有 Prettier。
+状态：框架内核、默认命令、严格 codec、宿主加载器与 CLI 已按本方案落地（`packages/core`、`host`、`svg-xml`、`builtins`、`apps/cli`）；旧 `src/` 已在 #14 删除。可选插件中 `stats`（#17）与 `dir`（#18）已接入，剩余工作集中在 `box`、修改标签、VSCode/dsh 深入集成与验收指标；方案面向 `zero0307/svg-editor-platform`，采用 npm workspaces，保留 TypeScript、面向对象、Node 内置测试运行器与现有 Prettier。
 
 本方案从 Phase 1 的 `final^{commit}` 开始渐进重构。已核对的基线提交为 `e5621a68afd4731626d54566f17ba55885d1bc0f`。先冻结基线并建立回归，再完成框架通用能力，最后用独立提交接入插件。新增 `box` 或标签时，内核、加载器与既有插件均不再修改。
 
@@ -43,7 +43,7 @@ plugins/
   tree-modified/          # modified-star 标签与实例级 dirty 状态
 ```
 
-包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin` 与 `plugins/command-stats`（#17），其余 `plugins/*` 随各插件节点建立。
+包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin` 与 `plugins/command-stats`（#17）、`plugins/command-dir`（#18），其余 `plugins/*` 随各插件节点建立。
 
 | 模块                    | 可依赖                                                                | 不可依赖                                                        |
 | ----------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
@@ -136,18 +136,20 @@ CORE ..> PLUGIN : 调用已注册接口
 
 契约文件均位于 `packages/core`，公共入口只有包根的 `index.ts`（`exports` → `dist/index.js`）。注册名是稳定字符串：命令用命令名，图形用领域类型名，装饰器与属性处理器用标签/处理器名；注册表拒绝重复名并保持注册顺序。测试位于 `packages/core/test/`。
 
-| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                                   |
-| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | -------------------------------------------- |
-| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | box 等可选 provider（#19）                   |
-| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | `dir` 命令插件（#18）；`stats` 已由 #17 接入 |
-| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | box/modified-star 插件（#19/TREE）           |
-| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）                        |
+| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                          |
+| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | ----------------------------------- |
+| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | box 等可选 provider（#19）          |
+| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 无（`stats` #17、`dir` #18 已接入） |
+| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | box/modified-star 插件（#19/TREE）  |
+| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）               |
 
 #7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。#10 已把树展示与行尾装饰管线落为 `TreePresenter`（见 [ADR-0005](adr/0005-tree-display-and-decoration.md)）。#14 已把六种图形和 19 条默认命令迁入 `packages/builtins`，并由 `apps/cli` 经同一 `PluginInstaller` 装配（见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)）。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
 M2 框架冻结（F = `a21f758`）时的**实际**文件/函数、每个实现、无可选实现时的缺省行为与违约错误测试记录在 [扩展点清单](evidence/framework/extension-points.md)。#17–#20 的插件接入以该清单为契约入口；清单没有补齐的通用能力，不在接入提交里改内核。
 
 #17 已接入 `stats`（`plugins/command-stats`）：命令以 `requiresDocument:true` + `effect:'query'` 声明前置条件与只读效果，DFS 用 `kind` 计叶子、用公开 `ContainerShape` 计容器，A 在 `apps/cli/src/main.ts` 显式装入、B 在 `plugins.config.json` 声明，两条路径都经同一 `PluginInstaller`；`core`/`host`/`builtins`/`svg-xml` 零差异。逐条验收与实测输出见 [017-cmd-01](evidence/acceptance/017-cmd-01.md)。
+
+#18 已接入 `dir`（`plugins/command-dir`）：`requiresDocument:false` + `effect:'query'`，只通过 `QueryContext.directories()` 读取 `cwd()` 与直接子项，排序、`[DIR]/[FILE]/[LINK]/[OTHER]` 标记、空目录与失败文案全在插件内，适配器角色与策略见 [dir.md](dir.md)；Phase 1 兼容性回放通过空配置禁用可选插件（`test/fixtures/plugins/no-optional-plugins.json`），golden 未改。逐条验收见 [018-cmd-02](evidence/acceptance/018-cmd-02.md)。
 
 调用约定：
 
@@ -275,10 +277,10 @@ VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转
 
 `apps/cli` 是唯一 CLI 入口：`src/main.ts` 编译到 `apps/cli/dist/main.js`，保持 `--script`、`--help`、未知参数与脚本缺失的文案和退出码；无 `--script` 且 stdin 非 TTY 时无 banner/提示符，TTY 时保留提示符。`Tokenizer`、`CommandDispatcher`、`Repl` 位于 app 内，分发器只按 `requiresDocument`/`effect` 路由且不列命令名白名单。
 
-- A 组合根：显式 import core/host/svg-xml/builtins 装配，`embeddedPlugins` 为空时不装可选插件；默认入口即 A。
+- A 组合根：显式 import core/host/svg-xml/builtins 装配，默认入口即 A 并显式装入 `stats`、`dir`；`createApplication` 的 `embeddedPlugins` 为空时不装可选插件。
 - B 组合根：同一装配后再用 `PluginLoader.loadFromConfig` 读取 `plugins.config.json`；`--config <path>` 选择 B，省略值时默认根 `plugins.config.json`。
 - 两条路径都先通过同一个 `PluginInstaller` 安装 `BuiltinsPlugin`（manifest 声明六种图形与 19 条命令），再安装可选插件；失败插件按 host 规则输出并继续。
-- 默认能力注册顺序固定为 Phase 1 顺序（rect/circle/ellipse/line/text/g、19 条命令），`help` 从注册对象读取 usage 与 provider 参数说明，零可选插件时 A/B 输出逐字节一致。
+- 默认能力注册顺序固定为 Phase 1 顺序（rect/circle/ellipse/line/text/g、19 条命令），`help` 从注册对象读取 usage 与 provider 参数说明；可选插件按装配/配置顺序追加，零可选插件时 A/B 输出逐字节一致。
 
 实现与口径见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)；根测试只通过公開包入口运行，`src/` 已删除。
 
@@ -291,6 +293,8 @@ VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转
 实际 cwd 不因 read/save 或插件配置改变。测试通过端口替身控制失败和条目，通过临时目录验证真实组合；日志在该目录外生成。
 
 查询命令的目录端口（#18 前置补丁）：`QueryContext` 构造为 `(document: ReadonlyDocument | null, directories?: DirectoryReader)`，`directories()` 返回注入端口，缺失时报 `directory access is not available`；`CommandDispatcher` 构造参数包含同一 `DirectoryReader` 并在构造 context 时注入，A/B 组合根都使用 host 的 `LocalDirectoryReader`。查询上下文仍只有只读文档与目录端口，不暴露 session、编辑或历史；dir 插件不 import Node fs/process.cwd，也不依赖已初始化文档。
+
+#18 已按上述端口接入 `dir`（`plugins/command-dir`）：适配器模式角色、排序/标记/特殊项策略、空目录与失败文案、真实临时目录与固定夹具测试见 [dir.md](dir.md)；A 在 `apps/cli/src/main.ts` 显式装入、B 在 `plugins.config.json` 声明，同一固定目录下 A/B 输出逐字节一致，逐条验收见 [018-cmd-02](evidence/acceptance/018-cmd-02.md)。
 
 dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期对 `EditorSessionPort` 使用替身独立开发。接口采用结构化请求/结果，引用公开编辑会话和 codec，不启动 CLI 子进程后解析终端文字。dsh 注册工具与生命周期跟随其官方 API；它不是 CLI PluginModule，不能套用本项目的 contributes 或 activate 形状。外部 API 未验证前不把集成完成写入报告。
 

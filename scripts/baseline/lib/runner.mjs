@@ -53,13 +53,20 @@ async function seedRunDirectory(session, runDirectory) {
  * Run one frozen transcript against `entry` inside a disposable copy of its fixtures.
  * `entry` is the compiled CLI bootstrap; the transcript path is absolute and never echoed by
  * the CLI, so captured bytes stay platform independent.
+ *
+ * `config` optionally selects the B-mode configuration file (absolute path). Phase 1
+ * compatibility comparisons pass a config with no optional plugins, so a build that
+ * ships optional commands still reproduces the `final` bytes; recording the `final`
+ * golden itself omits it because the Phase 1 CLI has no `--config` option.
  */
-export async function runSession(session, { entry, workRoot }) {
+export async function runSession(session, { entry, workRoot, config }) {
   const runDirectory = path.join(workRoot, session.name, 'run');
   await seedRunDirectory(session, runDirectory);
   const before = await snapshotDirectory(runDirectory);
   const transcript = fromRepo(session.transcript);
-  const result = spawnSync(process.execPath, [entry, '--script', transcript], {
+  const args = [entry, '--script', transcript];
+  if (config) args.push('--config', fromRepo(config));
+  const result = spawnSync(process.execPath, args, {
     cwd: runDirectory,
     encoding: 'buffer',
     timeout: 60_000,

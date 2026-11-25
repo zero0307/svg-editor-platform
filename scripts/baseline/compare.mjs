@@ -20,6 +20,12 @@ function usage() {
   process.exit(2);
 }
 
+/**
+ * Phase 1 compatibility is compared with every optional plugin disabled (course §6):
+ * a build that ships optional commands must still reproduce the `final` bytes.
+ */
+const disabledPluginsConfig = 'test/fixtures/plugins/no-optional-plugins.json';
+
 async function comparePair(expectedDirectory, actualDirectory) {
   const expected = await readGolden(expectedDirectory);
   const actual = await readGolden(actualDirectory);
@@ -44,7 +50,11 @@ async function compareSessions({ entry, goldenRoot, workRoot, only }) {
   let differed = 0;
   for (const session of selected) {
     const golden = await readGolden(path.join(goldenRoot, session.name));
-    const run = await runSession(session, { entry, workRoot });
+    const run = await runSession(session, {
+      entry,
+      workRoot,
+      config: fromRepo(disabledPluginsConfig),
+    });
     const differences = compareRun(run, golden);
     if (differences.length) {
       differed++;

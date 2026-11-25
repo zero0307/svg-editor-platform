@@ -6,6 +6,7 @@
     { "path": "./packages/host" },
     { "path": "./packages/builtins" },
     { "path": "./plugins/command-stats" },
+    { "path": "./plugins/command-dir" },
     { "path": "./apps/cli" }
   ]
 }
