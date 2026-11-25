@@ -18,7 +18,7 @@ VSCode 原生 Outline 需要显示 SVG 的根、容器、叶子和无 id 元素�
 
 - 新建 `packages/svg-xml`，包名 `@svgframe/svg-xml`，按 [ADR-0007](0007-workspaces-and-package-boundaries.md) 的库包形态：包根 `index.ts`、`composite`、`exports["."]` 只暴露 `dist/index.js` 与 `dist/index.d.ts`，测试在包根 `test/` 并编译到 `dist/test/`。
 - 公共 API 是一个函数：`parseSvgSyntax(source: string): SvgSyntaxResult`。`SvgSyntaxResult` 是判别联合 `{ ok: true; root: SvgSyntaxElement } | { ok: false; message: string }`，任何输入都不抛未捕获异常；调用方（VSCode）可在失败时清空大纲并继续工作。
-- 语法节点 `SvgSyntaxElement` 含：`tag`（原样限定名，允许未知标签、带前缀名）、可选原始 `id`、直接文本 `text`、`children`、`outerSpan`（整个元素）、`startTagSpan`（开始标签 `<` 到 `>`，含自闭合 `/>`）、`nameSpan`（开始标签内的标签名，供 `selectionRange`）。
+- 语法节点 `SvgSyntaxElement` 含：`tag`（原样限定名，允许未知标签、带前缀名）、可选原始 `id`、原始属性 `attributes`、直接文本 `text`、`children`、`outerSpan`（整个元素）、`startTagSpan`（开始标签 `<` 到 `>`，含自闭合 `/>`）、`nameSpan`（开始标签内的标签名，供 `selectionRange`）。`attributes` 是 #13 严格层需要的加法字段（原始属性顺序与值，不做实体解码）；不改变本 ADR 的 span 语义。
 - 语法层不套 CLI 白名单、不补 id、不创建领域对象、不做 SVG 语义校验；重复标签、无 id、嵌套 svg 都按源码保留。
 - `package.json` 只声明 `@svgframe/core` 一个内部依赖，`tsconfig` 引用 `../core`，为 #13 在同一包内使用 core 公开端口预留；语法层自身目前不 import core 的任何符号。
 
