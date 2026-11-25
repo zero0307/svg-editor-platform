@@ -1,8 +1,12 @@
 import { createReadStream } from 'node:fs';
+import boxPlugin from '@svgframe/shape-box';
 import { createApplication } from './Application.js';
 import { Repl } from './Repl.js';
 
 const USAGE = 'error: usage: npm run cli -- [--script <file> | --help]';
+
+/** A-mode explicit plugin assembly for this top-level composition root. */
+const embeddedPlugins = [{ module: boxPlugin, manifest: boxPlugin.manifest }];
 
 interface ParsedArguments {
   readonly script?: string;
@@ -40,7 +44,7 @@ const messageOf = (error: unknown): string =>
 const main = async (): Promise<void> => {
   const args = process.argv.slice(2);
   if (args.length === 1 && args[0] === '--help') {
-    const application = await createApplication();
+    const application = await createApplication({ embeddedPlugins });
     console.log((await application.dispatcher.help()).join('\n'));
     return;
   }
@@ -52,6 +56,7 @@ const main = async (): Promise<void> => {
   }
   const application = await createApplication({
     configPath: parsed.config,
+    embeddedPlugins,
     onPluginError: (message) => console.error(`error: ${message}`),
   });
   const input = parsed.script
