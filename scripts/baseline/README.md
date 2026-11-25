@@ -47,6 +47,8 @@ node scripts/baseline/compare.mjs --pair <expected-session-dir> <actual-session-
 
 比较范围：`stdout.txt`、`stderr.txt`、`exit-code.txt`、`files/**` 与 `files.sha256`，全部按原始字节；不 trim、不排序、不删除 warning/error。差异输出包含字节数、首个不同行号与前后三行上下文。`npm test` 中的 `test/baseline.test.ts` 会在当前构建上执行一次四会话回放。
 
+回放固定以 B 模式加载 `test/fixtures/plugins/no-optional-plugins.json`（`{"plugins":[]}`），即禁用全部可选插件；这样装入 `stats`/`dir` 等可选命令后仍对照 `final` 的 Phase 1 字节（课程 §6 要求基础兼容性比较时禁用新增插件）。`record.mjs` 录制 `final` golden 时不传 `--config`，因为 Phase 1 的 CLI 没有该选项。
+
 ## 固定条件与确定性
 
 1. 每个会话在 `artifacts/baseline/<session>/run` 重建：先删除、再复制种子夹具，因此上一轮 `save` 产物不会污染下一轮。
@@ -62,5 +64,5 @@ node scripts/baseline/compare.mjs --pair <expected-session-dir> <actual-session-
 ## 已知限制
 
 - golden 由 Windows + Node v26.13.0 生成并记录；`.nvmrc` 固定 24.22.1，团队主环境与之存在差异。当前比较对平台无硬依赖（无绝对路径、无时间戳），换平台仍需重跑 `compare.mjs` 后再声明通过。
-- `dir` 在 Phase 1 不存在，golden 只冻结 `error: unknown command: dir` 的缺省行为；带插件输出的 golden 由 `#18`/`#21` 追加，不改写本文件。
+- `dir` 在 Phase 1 不存在，golden 只冻结 `error: unknown command: dir` 的缺省行为；带插件输出的 golden 由 `#18`/`#21` 追加，不改写本文件。回放通过空配置禁用 `dir`/`stats`，因此该 golden 仍是 Phase 1 兼容性断言，而不是插件行为断言。
 - A/B 双装配回放、`box`/`stats` 会话属于 `#15`、`#21`，本目录只提供可复用的执行器。
