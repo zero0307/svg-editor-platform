@@ -12,6 +12,8 @@ export interface SvgSyntaxElement {
   readonly tag: string;
   /** Raw `id` attribute value when present. Missing ids are observed as `undefined`. */
   readonly id?: string;
+  /** Raw attribute values in source order; `id` is also present here. */
+  readonly attributes: Readonly<Record<string, string>>;
   /** Direct character data of this element, children excluded; raw and not trimmed. */
   readonly text: string;
   readonly children: readonly SvgSyntaxElement[];

@@ -216,6 +216,8 @@ box 包一次注册三类贡献：shape `box`、attribute `box-attributes`（处
 
 中立语法层已落地在 `packages/svg-xml`（#6）：公共入口 `parseSvgSyntax(source)` 返回 `{ ok: true; root } | { ok: false; message }`，元素带 `tag`、原始 `id`、直接文本、子元素与 `outerSpan`/`startTagSpan`/`nameSpan`；偏移统一为 0-based UTF-16 code unit、end 独占，行/列与 VSCode `Range` 转换由 `apps/vscode-svg` 完成。`xmldom` 不提供源码范围，语法层因此使用自写单遍扫描器，不依赖领域模型或 CLI 白名单；未知标签、重复标签、无 id 与同一行多元素都按源码位置保留。开放问题与取舍见 [ADR-0008](adr/0008-neutral-xml-syntax.md)。
 
+严格语义层已落地（#13）：`packages/svg-xml/strict/XmlSvgCodec.ts` 实现 core 的 `SvgCodec`，构造参数只有公开的 `ShapeProviderRegistry`；`SvgImportNormalizer`/`SvgImportContext`/`SvgTransform` 移植 Phase 1 的 ID、警告、世界变换与继承规范化，`SvgRestorer` 先选显式 `matches`、再按 `defaultTag` 回退，同层多命中拒绝，未知标签保留 `unknown shape type: <tag> (is the plugin loaded?)`，未知 `data-kind` 按标签默认恢复并保留属性。decode 顺序为源码/root 预检 → 全局重复 ID 与深度 → 补 ID 警告 → 变换/继承规范化 → 自底向上 provider 恢复完整子树 → `document.validate()`；叶 provider 应用一次世界变换，容器不重复应用。encode 保持 Phase 1 的声明、缩进、属性顺序、转义与末尾换行。详见 [ADR-0012](adr/0012-svg-readback-matching.md)。
+
 现有导入器在创建空 Group 后马上对节点施加变换，再读入子节点。box 需要完整子树后才能验证，因此不能简单地在现有 `fromSvg(tag)` 增加 box 特例。框架阶段先构建中立 SVG 中间树：全局预检 ID/命名空间/限制，逐叶规范化变换与继承属性，再以完整子树调用 provider 的恢复接口。明确每片叶子的几何只变换一次；恢复 box 后不能对整个子树再次施加累计变换。
 
 provider 选择由 SVG 标签与元数据匹配，允许普通 g 与标记 box 的特定匹配共存：先选择明确语义标记匹配，再使用标签默认 provider；同一级有多个匹配则拒绝，不按加载先后静默覆盖。没有特定 provider 的未知 `data-kind` 允许标签默认行为；未知 SVG 标签继续保留 Phase 1 的拒绝策略。codec 不得出现 `if (kind === 'box')`。

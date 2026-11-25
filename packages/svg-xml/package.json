@@ -15,6 +15,7 @@
     "test": "npm run build --silent && node --test \"dist/test/*.test.js\""
   },
   "dependencies": {
-    "@svgframe/core": "*"
+    "@svgframe/core": "*",
+    "@xmldom/xmldom": "0.9.12"
   }
 }

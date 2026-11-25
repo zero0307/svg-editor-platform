@@ -5,6 +5,7 @@ import type { SvgSyntaxSpan } from './SvgSyntaxSpan.js';
 interface StartTag {
   readonly id: string | undefined;
   readonly selfClosing: boolean;
+  readonly attributes: Readonly<Record<string, string>>;
 }
 
 /**
@@ -48,11 +49,20 @@ export class SvgSyntaxParser {
     const nameStart = this.index;
     const tag = this.readName('an element name');
     const nameEnd = this.index;
-    const { id, selfClosing } = this.parseStartTag(tag);
+    const { id, selfClosing, attributes } = this.parseStartTag(tag);
     const startTagSpan: SvgSyntaxSpan = { start, end: this.index };
     const nameSpan: SvgSyntaxSpan = { start: nameStart, end: nameEnd };
     if (selfClosing) {
-      return { tag, id, text: '', children: [], outerSpan: startTagSpan, startTagSpan, nameSpan };
+      return {
+        tag,
+        id,
+        attributes,
+        text: '',
+        children: [],
+        outerSpan: startTagSpan,
+        startTagSpan,
+        nameSpan,
+      };
     }
     const text: string[] = [];
     const children: SvgSyntaxElement[] = [];
@@ -79,6 +89,7 @@ export class SvgSyntaxParser {
         return {
           tag,
           id,
+          attributes,
           text: text.join(''),
           children,
           outerSpan: { start, end },
@@ -105,16 +116,17 @@ export class SvgSyntaxParser {
 
   private parseStartTag(tag: string): StartTag {
     let id: string | undefined;
+    const attributes: Record<string, string> = {};
     for (;;) {
       this.skipWhitespace();
       if (this.index >= this.source.length) this.fail(`unterminated start tag <${tag}>`);
       if (this.startsWith('/>')) {
         this.index += 2;
-        return { id, selfClosing: true };
+        return { id, selfClosing: true, attributes };
       }
       if (this.source[this.index] === '>') {
         this.index += 1;
-        return { id, selfClosing: false };
+        return { id, selfClosing: false, attributes };
       }
       const name = this.readAttributeName();
       this.skipWhitespace();
@@ -122,6 +134,8 @@ export class SvgSyntaxParser {
       this.index += 1;
       this.skipWhitespace();
       const value = this.readAttributeValue(name);
+      if (name in attributes) this.fail(`duplicate attribute ${name}`);
+      attributes[name] = value;
       if (name === 'id') id = value;
     }
   }
