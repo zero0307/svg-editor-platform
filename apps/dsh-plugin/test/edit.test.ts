@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { portEdits } from '../src/portEdits.js';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -162,4 +163,52 @@ test('insert a gate, rename it, and reconnect a branch; reject overlapping place
   assert.equal(graph.nodes.find((n) => n.id === 'gate')?.label, '安全审查（复核）');
   assert.ok(graph.edges.some((e) => e.from === 'gate' && e.to === 'v'));
   assert.ok(graph.edges.some((e) => e.from === 's' && e.to === 'gate'));
+});
+test('pointed line rename preserves all other bytes, even with duplicate titles, CRLF and entities', async () => {
+  const { files, store } = await setup();
+  const f = fixture();
+  await f.tools.createFlowchart({
+    path: 'x.svg',
+    width: 480,
+    height: 200,
+    nodes: [
+      { id: 'left', label: 'Add & Norm\r\n副标题', x: 10, y: 20, width: 180, height: 80 },
+      { id: 'right', label: 'Add & Norm\r\n副标题', x: 250, y: 20, width: 180, height: 80 },
+    ],
+    edges: [],
+  });
+  const original = f.files.get('x.svg')!.replace(/\r?\n/g, '\r\n');
+  files.set('before.svg', original);
+  const request = {
+    path: 'before.svg',
+    output: 'out.svg',
+    operation: 'rename' as const,
+    nodeId: 'right',
+    labelLine: 1,
+    label: '新 <&>',
+  };
+  const actual = await editFlowchart(store, request);
+  assert.equal(actual.changedNode, 'right');
+  assert.equal(actual.diskReadBack?.originalUnchanged, true);
+  assert.equal(
+    actual.diskReadBack?.outputSha256,
+    createHash('sha256').update(files.get('out.svg')!).digest('hex'),
+  );
+  const single = await f.tools.inspectNode('x.svg', 'right');
+  assert.equal(single.node.label, 'Add & Norm\r\n副标题');
+  assert.equal(single.nodeCount, 2);
+  assert.ok(!('structure' in single));
+  await assert.rejects(f.tools.inspectNode('x.svg', 'missing'), /No graph node/);
+  assert.equal(files.get('before.svg'), original);
+  assert.equal(
+    files.get('out.svg'),
+    original.replace(/(<text id="right-label"[^>]*>)Add &amp; Norm/, '$1新 &lt;&amp;&gt;'),
+  );
+  for (const line of [0, 1.5, 3])
+    await assert.rejects(editFlowchart(store, { ...request, output: 'no.svg', labelLine: line }));
+  await assert.rejects(
+    editFlowchart(store, { ...request, output: 'no.svg', label: '太长'.repeat(100) }),
+    /reflow/,
+  );
+  assert.ok(!files.has('no.svg'));
 });

@@ -133,13 +133,42 @@ export function apply(ctx: Context): void {
     defineTool({
       name: 'svg_inspect',
       description:
-        'Inspect an existing SVG before editing. If the requested shared trunk matches an availableEdits entry, call its tool with those node IDs, port names, the source path and a new output path. The edit preserves unrelated geometry, saves a comparison and verifies the file. Return canvas size, ordered structure, leaf text, raw SVG counts, import warnings and graph nodes and directed edges. Use graph.edges for verified links, inferredEdges for legacy geometry and unresolvedEdges for unidentified links.',
-      parameters: { path },
+        'Inspect an SVG on disk. Supply nodeId to read just one node and diagram counts. A desktop SVG selection already supplies the ID and current label for direct edits. Without nodeId this returns the full inventory. If the requested shared trunk matches an availableEdits entry, call its tool with those node IDs, port names, the source path and a new output path. The edit preserves unrelated geometry, saves a comparison and verifies the file. Return canvas size, ordered structure, leaf text, raw SVG counts, import warnings and graph nodes and directed edges. Use graph.edges for verified links, inferredEdges for legacy geometry and unresolvedEdges for unidentified links.',
+      parameters: { path, nodeId: { type: 'string', description: 'Read one node by stable ID.' } },
       output: {
-        schema: summary,
+        schema: {
+          oneOf: [
+            summary,
+            {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                path,
+                node: {
+                  type: 'object',
+                  required: true,
+                  additionalProperties: false,
+                  properties: nodeFields,
+                },
+                nodeCount: number,
+                edgeCount: number,
+                warnings: { type: 'array', required: true, items: { type: 'string' } },
+              },
+            },
+          ],
+        },
         render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }],
       },
-      execute: ({ path }, exec) => tools(exec).inspect(path),
+      async execute({ path, nodeId }, exec) {
+        try {
+          const svg = tools(exec);
+          return nodeId === undefined
+            ? await svg.inspect(path)
+            : await svg.inspectNode(path, nodeId);
+        } catch (error) {
+          argumentError(error);
+        }
+      },
     }),
   );
   ctx.tools.register(

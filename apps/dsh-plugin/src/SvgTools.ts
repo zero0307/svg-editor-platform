@@ -36,6 +36,19 @@ export class SvgTools {
       warnings: [...warnings],
     };
   }
+  async inspectNode(path: string, nodeId: string) {
+    const { document, warnings } = await this.newSession().read(path);
+    const graph = readFlowchart(document);
+    const node = graph.nodes.find((candidate) => candidate.id === nodeId);
+    if (!node) throw new RangeError('No graph node with ID ' + nodeId);
+    return {
+      path,
+      node,
+      nodeCount: graph.nodes.length,
+      edgeCount: graph.edges.length,
+      warnings: [...warnings],
+    };
+  }
   async createFlowchart(chart: Chart) {
     if (![chart.width, chart.height].every((n) => Number.isFinite(n) && n > 0))
       throw new RangeError('Canvas dimensions must be positive.');
