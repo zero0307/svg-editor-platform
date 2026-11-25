@@ -1,0 +1,6 @@
+measured final^{commit} (e5621a6) -> fb0427a (fb0427a) with rules v1, TypeScript 7.0.2
+  kernel files 28->61, lines 921->2197 (+1276), complexity 246->354 (+108)
+  assembly files 10->28, lines 686->1910 (+1224), complexity 212->482 (+270)
+  plugin files 0->67, lines 0->1924 (+1924), complexity 0->272 (+272)
+  vscode files 0->14; dsh files 0->11 (separate, not in CLI totals)
+wrote docs/metrics/e5621a6-to-fb0427a.json and docs/metrics/summary.md

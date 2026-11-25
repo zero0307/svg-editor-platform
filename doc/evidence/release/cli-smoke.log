@@ -1,0 +1,49 @@
+npm notice run svg-editor-cli@1.0.0 cli
+npm notice run node apps/cli/dist/main.js --help
+init [w] [h]
+read <file.svg>
+save [file.svg]
+canvas [w h]
+create <type> <id> [params...] [in <containerId>]
+delete <id>
+move <id> <dx> <dy>
+scale <id> <factor>
+set <id> <attr> <value>
+group <newGid> <id1> <id2>...
+ungroup <gid>
+addto <gid> <id>
+front <id>
+back <id>
+tree [id]
+show <id>
+undo
+redo
+help
+stats
+dir
+
+Types:
+  rect <id> <x> <y> <w> <h> [fill]
+  circle <id> <cx> <cy> <r> [fill]
+  ellipse <id> <cx> <cy> <rx> <ry> [fill]
+  line <id> <x1> <y1> <x2> <y2> [stroke]
+  text <id> <x> <y> "content"
+  g <id>
+  box <id> <x> <y> <w> <h> "label"
+Quote arguments containing spaces. Lines starting with # are comments.
+End input with Ctrl+D (Unix) or Ctrl+Z then Enter (Windows).
+--- help exit=0
+canvas 200x100 created
+box#b1 created (g#b1 + rect#b1-rect + text#b1-label)
+rect#r created
+svg (200x100) *
+├── g#b1 (box) *
+│   ├── rect#b1-rect  x=10 y=10 w=80 h=30 fill=#4a90d9 *
+│   └── text#b1-label  (30,30) "smoke" *
+└── rect#r  x=0 y=0 w=10 h=10 fill=red *
+rect: 2  text: 1  (total 3, containers 1)
+box#b1 label updated: "smoke v2"
+undone: box#b1 label updated: "smoke v2"
+(empty directory)
+saved to smoke.svg (4 elements)
+--- plugin session exit=0

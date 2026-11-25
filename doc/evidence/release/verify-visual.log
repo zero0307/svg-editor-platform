@@ -1,0 +1,12 @@
+npm notice run svg-editor-cli@1.0.0 verify:visual
+npm notice run npm run build --silent && node scripts/verify-visual.mjs
+{
+  "source": "examples/transforms.svg",
+  "sourceSha256": "69fbd19fd90fef0ff26952bcbc776547e8a7071eea98174e137b359e6e7ac78b",
+  "renderer": "resvg-js",
+  "width": 400,
+  "height": 200,
+  "differingChannels": 0,
+  "meanAbsoluteChannelDifference": 0
+}
+Offline visual verification passed: original and normalized SVG render identically.
