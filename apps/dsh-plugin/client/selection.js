@@ -96,13 +96,16 @@ export function quoteNode(input, path, node) {
     const selection = {
       path,
       nodeId: node.id,
+      ...(node.artwork ? { textIndex: node.textIndex, originalText: node.title } : {}),
       ...(node.label && node.label.length <= 200 ? { label: node.label } : {}),
     };
     const text =
       prefix +
       JSON.stringify(selection) +
       '\n' +
-      '该框已定位。修改框内文字可直接调用 svg_edit_flowchart，用 operation=rename、labelLine（框内从 1 起算）及新 label。返回的 diskReadBack 是主文件和原件的实际磁盘校验；如需单独查节点，可用 svg_inspect(path,nodeId)。';
+      (node.artwork
+        ? '保留原图样式。请用 svg_artwork 的 rename，以选区的 nodeId、textIndex、originalText 定位标题，另存新文件。要改框内其他行，用 inspect 核对行号及原文。'
+        : '该框已定位。修改框内文字可直接调用 svg_edit_flowchart，用 operation=rename、labelLine（框内从 1 起算）及新 label。返回的 diskReadBack 是主文件和原件的实际磁盘校验；如需单独查节点，可用 svg_inspect(path,nodeId)。');
     if (
       !input.insertQuote(text, {
         label: 'SVG 选区',

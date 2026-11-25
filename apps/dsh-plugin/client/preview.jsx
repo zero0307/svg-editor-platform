@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { artworkTargets } from '../src/artworkTargets.ts';
 import { sessionPath, targets, currentSelection, quoteNode } from './selection.js';
 
 export const name = 'svg-editor-selection';
@@ -43,7 +44,8 @@ function Preview({ content, resourceAddress, selectionSession, getInput }) {
       Number(root.getAttribute('height')),
     ];
     if (box.length !== 4 || !box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0) return;
-    return { box, nodes: targets(root) };
+    const native = targets(root);
+    return { box, nodes: native.length ? native : artworkTargets(root) };
   }, [bytes]);
   if (!url) return null;
   if (!scene?.nodes.length || !path)

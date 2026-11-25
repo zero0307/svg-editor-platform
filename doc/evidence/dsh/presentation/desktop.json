@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-25",
+  "host": "macOS DeepSeek Harness Desktop 0.2.2-rc.5",
+  "plugin": "0.11.0",
+  "model": "deepseek-flash",
+  "original": "trials/review-without.svg",
+  "copiesOnDiskIdentical": true,
+  "desktopSelectableNodes": 7,
+  "selected": {
+    "nodeId": "node-fact-check",
+    "textIndex": 1,
+    "originalText": "事实核查",
+    "replacement": "事实复核"
+  },
+  "reportedSeconds": 6,
+  "toolsOnEditTurn": ["svg_artwork", "svg_artwork", "svg_artwork"],
+  "usage": {
+    "totalTokens": 55103,
+    "outputTokens": 820,
+    "cacheReadTokens": 53248
+  },
+  "sourceSha256": "3ee0390ca674fa3aaecb0de70a82ff97a09710ad73b4dd9ff3a16c05c37abbe5",
+  "outputSha256": "c977641645442a89a58e9ed45801098824839af3a853f759c860822ae1263b7f",
+  "exactReplacementVerified": true,
+  "output": "desktop-edited.svg"
+}

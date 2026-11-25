@@ -1,5 +1,7 @@
 # 质量保证与验收计划
 
+DSH 0.11.0 增加自由 SVG 原稿的透明点选、精确改字和 1×／2× 像素保真验收，并记录真实桌面会话及与无插件绘图的比较。[保真与桌面验收](records/2026-11-25-dsh-presentation.md)
+
 DSH 0.8.1 的验收覆盖局部编辑、期待端口与磁盘几何的一致性、错误落点标记，以及相同模型的无插件对照。[对照方法与实测记录](records/2026-11-24-dsh-local-edits.md)
 
 已落地的检查包括[三组基线回放](evidence/baseline/README.md)、[核心契约用例](../packages/core/test/contracts.test.ts)和[宿主 I/O 用例](../packages/host/test/io.test.ts)。下列矩阵给出全阶段完成条件，各后续板块凭实际结果验收。

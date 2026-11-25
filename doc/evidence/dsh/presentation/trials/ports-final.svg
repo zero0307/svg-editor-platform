@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect id="dsh-background" data-dsh-role="background" x="0" y="0" width="1280" height="720" fill="#FFFFFF"/>
+
+  <text id="dsh-title" x="100" y="90" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="56" font-weight="700" letter-spacing="1" fill="#17263D">交叉注意力</text>
+  <text id="dsh-title-note-0" x="100" y="126" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="21" font-weight="400" fill="#617388">Q 来自解码器状态；K、V 从同一编码器记忆主干分叉</text>
+
+  <g id="decoder" data-dsh-role="node">
+    <rect id="decoder-rect" x="100" y="240" width="280" height="120" rx="16" fill="#F5F8FB" stroke="#C5D2DF" stroke-width="1.6"/>
+    <text id="decoder-label" x="240" y="311" text-anchor="middle" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="600" fill="#22364D">解码器状态</text>
+  </g>
+
+  <g id="memory" data-dsh-role="node">
+    <rect id="memory-rect" x="100" y="500" width="280" height="120" rx="16" fill="#F5F8FB" stroke="#C5D2DF" stroke-width="1.6"/>
+    <text id="memory-label" x="240" y="571" text-anchor="middle" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="600" fill="#22364D">编码器记忆</text>
+  </g>
+
+  <g id="cross" data-dsh-role="node">
+    <rect id="cross-rect" x="550" y="240" width="320" height="280" rx="18" fill="#E7F5F2" stroke="#4C9C8E" stroke-width="2"/>
+    <text id="cross-label" x="710" y="391" text-anchor="middle" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="30" font-weight="700" fill="#155D53">交叉注意力</text>
+    <circle id="cross-port-Q" cx="556" cy="300" r="3.2" fill="#2F7D72"/>
+    <circle id="cross-port-K" cx="556" cy="380" r="3.2" fill="#2F7D72"/>
+    <circle id="cross-port-V" cx="556" cy="460" r="3.2" fill="#2F7D72"/>
+  </g>
+
+  <g id="context" data-dsh-role="node">
+    <rect id="context-rect" x="960" y="320" width="240" height="120" rx="16" fill="#1C5A52" stroke="#1C5A52" stroke-width="1.6"/>
+    <text id="context-label" x="1080" y="391" text-anchor="middle" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="28" font-weight="600" fill="#FFFFFF">上下文表示</text>
+    <circle id="context-port" cx="966" cy="380" r="3.2" fill="#93D8CB"/>
+  </g>
+
+  <g id="q" data-dsh-role="edge" data-dsh-from="decoder" data-dsh-to="cross" data-dsh-inputs="[&quot;Q&quot;]">
+    <line id="q-route" data-dsh-part="route" x1="380" y1="300" x2="480" y2="300" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+    <g id="q-port-Q" data-dsh-part="port">
+      <line id="q-Q-branch" data-dsh-part="branch" x1="480" y1="300" x2="550" y2="300" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <line id="q-arrow" data-dsh-part="arrow" x1="538" y1="295" x2="550" y2="300" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <line id="q-arrow-2" data-dsh-part="arrow" x1="538" y1="305" x2="550" y2="300" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <text id="q-port-Q-name" x="516" y="290" text-anchor="middle" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="20" font-weight="700" fill="#3A5068">Q</text>
+    </g>
+  </g>
+
+  <g id="kv" data-dsh-role="edge" data-dsh-from="memory" data-dsh-to="cross" data-dsh-inputs="[&quot;K&quot;,&quot;V&quot;]">
+    <line id="kv-trunk-1" data-dsh-part="route" x1="380" y1="560" x2="445" y2="560" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+    <line id="kv-trunk-2" data-dsh-part="route" x1="445" y1="560" x2="445" y2="420" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+    <line id="kv-trunk-3" data-dsh-part="route" x1="445" y1="420" x2="480" y2="420" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+    <line id="kv-bus" data-dsh-part="bus" x1="480" y1="380" x2="480" y2="460" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+    <circle id="kv-fork" cx="480" cy="420" r="3.4" fill="#53657B"/>
+    <g id="kv-port-K" data-dsh-part="port">
+      <line id="kv-K-branch" data-dsh-part="branch" x1="480" y1="380" x2="550" y2="380" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <line id="kv-K-arrow" data-dsh-part="arrow" x1="538" y1="375" x2="550" y2="380" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <line id="kv-K-arrow-2" data-dsh-part="arrow" x1="538" y1="385" x2="550" y2="380" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <text id="kv-port-K-name" x="516" y="370" text-anchor="middle" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="20" font-weight="700" fill="#3A5068">K</text>
+    </g>
+    <g id="kv-port-V" data-dsh-part="port">
+      <line id="kv-V-branch" data-dsh-part="branch" x1="480" y1="460" x2="550" y2="460" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <line id="kv-V-arrow" data-dsh-part="arrow" x1="538" y1="455" x2="550" y2="460" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <line id="kv-V-arrow-2" data-dsh-part="arrow" x1="538" y1="465" x2="550" y2="460" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+      <text id="kv-port-V-name" x="516" y="450" text-anchor="middle" font-family="Inter, PingFang SC, Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif" font-size="20" font-weight="700" fill="#3A5068">V</text>
+    </g>
+  </g>
+
+  <g id="out" data-dsh-role="edge" data-dsh-from="cross" data-dsh-to="context">
+    <line id="out-route" data-dsh-part="route" x1="870" y1="380" x2="960" y2="380" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+    <line id="out-arrow" data-dsh-part="arrow" x1="948" y1="375" x2="960" y2="380" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+    <line id="out-arrow-2" data-dsh-part="arrow" x1="948" y1="385" x2="960" y2="380" stroke="#53657B" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+</svg>

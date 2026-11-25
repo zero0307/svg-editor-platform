@@ -1,5 +1,6 @@
 import type { Context } from '@deepseek-ai/cordis';
 import { defineTool, type ToolRunContext } from '@deepseek-ai/dsh-tools';
+import { artwork } from './artwork.js';
 import { DshFileStore } from './DshFileStore.js';
 import { checkFlowchart } from './checkFlowchart.js';
 import { parseSvg, serialize } from './chartDocument.js';
@@ -15,6 +16,24 @@ export function registerEditTools(ctx: Context) {
     render: (_args: unknown, v: unknown) => [{ type: 'text' as const, text: JSON.stringify(v) }],
   } as const;
   const store = (exec: ToolRunContext) => new DshFileStore(ctx, exec);
+  ctx.tools.register(
+    defineTool({
+      name: 'svg_artwork',
+      description:
+        'Use for polished original or reference-matched SVG illustrations. Author SVG freely with workspace drawing/file tools and retain its own CSS, icons, gradients, shadows and layout. Give each card a group like <g id="node-review"> with its body rect/ellipse/circle and visible text. Inspect the finished artwork to list desktop click targets without changing it. For a desktop artwork selection use rename with the quoted nodeId, 1-based textIndex, exact originalText, replacement label and a fresh output path. Changes only that text span and verifies all other bytes.',
+      parameters: {
+        path: required,
+        operation: { type: 'string', required: true, enum: ['inspect', 'rename'] },
+        output: str,
+        nodeId: str,
+        textIndex: num,
+        originalText: str,
+        label: str,
+      },
+      output,
+      execute: (args, exec) => artwork(store(exec), args),
+    }),
+  );
   ctx.tools.register(
     defineTool({
       name: 'svg_edit_flowchart',

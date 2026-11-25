@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { DOMParser } from '@xmldom/xmldom';
 import { SvgTools } from '../dist/src/SvgTools.js';
+import { prepareChart } from '../dist/src/presentationLayout.js';
 import { layoutFlowchart } from '../dist/src/layoutFlowchart.js';
 import { Phase1EditorSession } from '../dist/src/session.cjs';
 
@@ -234,6 +235,9 @@ for (const [sample, svgName] of [
   ['transformer-reference', 'captions/Transformer.svg'],
   ['release-curves', 'curves/release.svg'],
   ['transformer-qkv', 'qkv/Transformer.svg'],
+  ['transformer-presentation', 'presentation/Transformer.svg'],
+  ['cross-attention-auto', 'presentation/cross-attention.svg'],
+  ['editorial-auto', 'presentation/editorial.svg'],
 ]) {
   const input = JSON.parse(
     await readFile(new URL('../demo/' + sample + '.json', import.meta.url), 'utf8'),
@@ -255,9 +259,14 @@ for (const [sample, svgName] of [
         { quadraticPaths: true },
       ),
   );
-  const layout = input.width === undefined ? { ...input, ...layoutFlowchart(input) } : input;
+  const layout = input.direction
+    ? prepareChart(input)
+    : input.width === undefined
+      ? { ...input, ...layoutFlowchart(input) }
+      : input;
   await tools.createFlowchart({ ...layout, path: 'audit.svg' });
   audit(input, regenerated);
+  if (svgName.startsWith('presentation/')) assert.equal(regenerated, published);
   console.log(
     `${svgName}: ${input.nodes.length} nodes, ${input.edges.length} directed edges. Published and regenerated SVG passed endpoints, arrowheads, clearances and crossing checks.`,
   );

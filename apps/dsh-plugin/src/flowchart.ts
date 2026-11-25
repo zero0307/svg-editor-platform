@@ -28,6 +28,8 @@ export interface FlowchartGraph<T extends GraphNode = GraphNode> {
 }
 
 export interface Chart extends FlowchartGraph<ChartNode> {
+  autoDirection?: 'down' | 'right';
+  slideTitleWidth?: number;
   theme?: ChartTheme;
   connectorStyle?: import('./curveRoute.js').ConnectorStyle;
   edgeStyles?: readonly {
@@ -36,6 +38,7 @@ export interface Chart extends FlowchartGraph<ChartNode> {
     tone?: Tone;
   }[];
   title?: string;
+  subtitle?: string;
   panels?: readonly {
     label: string;
     description?: string;

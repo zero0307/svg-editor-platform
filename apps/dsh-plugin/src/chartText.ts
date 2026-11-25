@@ -94,14 +94,30 @@ export function nodeSize(label: string, wrap = wrapLabel) {
 }
 
 // Manual coordinates remain usable: scale the text to the supplied box if necessary.
-export function fitLabel(label: string, width: number, height: number, wrap = wrapLabel) {
+export function fitLabel(
+  label: string,
+  width: number,
+  height: number,
+  wrap = wrapLabel,
+  hierarchy = false,
+) {
   const available = Math.max(width - Math.min(2 * padding, width * 0.2), width * 0.5);
   // A very short manually positioned box benefits more from one scaled line than forced wrapping.
   const limit =
     height < lineHeight * 2 + 12
       ? Math.max(maxContentWidth, available)
       : Math.min(maxContentWidth, available);
-  const lines = wrap(label, limit);
+  const lines = hierarchy
+    ? label.split(/(\r\n|\r|\n)/).flatMap((part, i, parts) => {
+        if (i % 2) return [];
+        const ratio = i === 0 ? 1 : 0.85;
+        return wrap(part, available / ratio).map((line, j) => ({
+          ...line,
+          before: j === 0 && i > 0 ? parts[i - 1]! : line.before,
+          width: line.width * ratio,
+        }));
+      })
+    : wrap(label, limit);
   const widest = lines.reduce((max, l) => Math.max(max, l.width), 1);
   const scale = Math.min(1, available / widest, (height * 0.84) / (lines.length * lineHeight));
   return { lines, size: fontSize * scale, step: lineHeight * scale };

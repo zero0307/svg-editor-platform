@@ -1,28 +1,50 @@
 # DSH SVG 流程图插件
 
-在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.9.2 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
+在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.11.1 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
 
 ## 在已有 DSH 中试用
 
 将验收包下载到当前目录，指定自己实际使用的 profile，以下以 web 为例。
 
 ```sh
-dsh plugin --profile web add ./dsh-svg-editor-0.9.2.tgz
+dsh plugin --profile web add ./dsh-svg-editor-0.11.1.tgz
 ```
 
 打开该 profile 的 DSH 会话，给智能体这段指令（模型会话需要配置可用模型）：
 
-> 画一个审批流程。提交后并行评审和复核，两项都完成后通过。先用 svg_layout_flowchart 布局，再用 svg_create_flowchart 保存成 review.svg，最后用 svg_inspect 核对节点、文字和连线。把文件路径和检查结果告诉我。
+> 画一个审批流程。提交后并行评审和复核，两项都完成后通过。用 svg_create_flowchart 直接排成一页 16∶9 幻灯片，保存成 review.svg，再用 svg_inspect 核对节点、文字和连线。把文件路径和检查结果告诉我。
 
 第一次请选择新文件名。预期 `graph.nodes` 和 `graph.edges` 各有 4 项。再次生成到已有文件时会提示失败，已有内容会保留。卸载命令为 `dsh plugin --profile web remove dsh-svg-editor`。
 
 | 工具                   | 输入                                                 | 返回                                                            |
 | ---------------------- | ---------------------------------------------------- | --------------------------------------------------------------- |
 | `svg_layout_flowchart` | `nodes[{id,label}]` 和有方向的 `edges[{id,from,to}]` | 画布大小、节点坐标和原连线，可直接交给生成工具                  |
-| `svg_create_flowchart` | 布局结果加 `path`，可选 `theme`，也可手工指定坐标    | 新建 SVG 的路径、节点数和边数                                   |
+| `svg_create_flowchart` | 文件名、节点、连线，可选方向、主题或完整坐标         | 新建 SVG 的路径、节点数和边数                                   |
 | `svg_inspect`          | `path`                                               | 业务节点、有向边、未确认关系，以及原始 SVG 结构、统计和导入警告 |
 
 自动布局支持分叉、汇合、孤立节点和多个互不相连的子图。有环图可以手工指定坐标，连接线要求两个不同端点。检查工具支持课程编辑器的 SVG 子集。
+
+## 保留自由设计的原稿，在桌面点选改字
+
+想保留 DeepSeek 自己设计的图标、滤镜、渐变、路径和版式，可以直接让它自由绘制：
+
+> 设计一张课堂投影用的稿件发布流程图，配色和版式你定。把每个业务节点放在带唯一 ID 的 SVG 分组里，保留节点框和可编辑文字。保存为 稿件发布.svg，用 svg_artwork inspect 核对可以点选的节点。
+
+在文件预览里点中某个框，再说「把这个框的标题改成『事实复核』，另存为 复核版.svg」。原文件直接作为图像绘制，命中区域来自单独的透明图层。工具以节点 ID、文字序号和原文共同定位，再从磁盘核对新文件。普通墨迹、投影、渐变、背景和连接线沿用原稿。业务连线的拓扑核验可用下面的结构化绘图模式。
+
+此版本识别具有唯一 ID 的分组、直接包含的矩形／圆形／椭圆形框，以及框内的 SVG 文字、tspan 和子分组中的公式或徽标文字。组名以 `node-`、`step-` 等开头或带 `data-svg-node` 最可靠。文字已转成路径、嵌在位图里的图，或靠 CSS 改变几何位置的图需要单独处理。换成长标题后请查看实际宽度，原稿模式只替换文字。[模型启用插件后自由绘制的交叉注意力](../../doc/evidence/dsh/presentation/trials/ports-artwork-design.svg) · [实测原稿](../../doc/evidence/dsh/presentation/trials/review-without.svg) · [测试记录](../../doc/records/2026-11-25-dsh-presentation.md)
+
+## 直接画一张投影用流程图
+
+向 `svg_create_flowchart` 提供文件名、节点、连线和可选标题，即可自动排版。省略坐标和画布尺寸，`direction: "down"` 指定自上而下，`"right"` 指定从左向右。省略方向时，工具在两种布局里选择画幅更接近 16∶9 的一种。带标题的小型演示图默认使用 16∶9 画布。用 `format: "slide"` 指定幻灯片尺寸比例，或用 `format: "content"` 紧贴内容。换行可以区分节点的主标题和说明；并行步骤按上游节点的位置排列。
+
+例如「把收稿、并行事实核查和文字审校、终审、发表画成课程幻灯片。用 svg_create_flowchart 自动排版，保存为全新的 review.svg，然后读回核对」。有精确参考、有回路或要指定面板位置时，可以传完整坐标并选择 `theme: "presentation"`。演示主题会区分主副文字，另有原来的 `studio` 和黑白 `print`。
+
+[可编辑的 Transformer 示例](../../doc/evidence/dsh/presentation/Transformer.svg) · [Transformer 输入](demo/transformer-presentation.json) · [模型提供节点后自动排版的交叉注意力](../../doc/evidence/dsh/presentation/cross-attention.svg) · [自然语言对照实验](../../doc/records/2026-11-25-dsh-presentation.md)
+
+```sh
+npm run demo:dsh -- --input apps/dsh-plugin/demo/cross-attention-auto.json --theme presentation
+```
 
 ## 在桌面预览中点选节点
 

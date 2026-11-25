@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1192" height="500" viewBox="0 0 1192 500">
+
+  <rect id="dsh-background" data-dsh-role="background" data-dsh-theme="presentation" x="0" y="0" width="1192" height="500" fill="#FFFFFF"/>
+
+  <!-- 两条并行审校路径：上路径为事实核查线，下路径为文字审校线，纵向严格对齐 -->
+  <g id="e1" data-dsh-role="edge" data-dsh-from="receive" data-dsh-to="fact">
+    <line id="dsh-line-1" data-dsh-part="route" x1="200" y1="306" x2="296" y2="182" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-2" data-dsh-part="arrow" x1="293.97" y1="191.81" x2="296" y2="182" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-3" data-dsh-part="arrow" x1="287.01" y1="186.42" x2="296" y2="182" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <g id="e2" data-dsh-role="edge" data-dsh-from="receive" data-dsh-to="copy">
+    <line id="dsh-line-4" data-dsh-part="route" x1="200" y1="306" x2="296" y2="430" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-5" data-dsh-part="arrow" x1="287.01" y1="425.58" x2="296" y2="430" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-6" data-dsh-part="arrow" x1="293.97" y1="420.19" x2="296" y2="430" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <g id="e3" data-dsh-role="edge" data-dsh-from="fact" data-dsh-to="fact_ok">
+    <line id="dsh-line-7" data-dsh-part="route" x1="440" y1="182" x2="536" y2="182" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-8" data-dsh-part="arrow" x1="527.00" y1="186.40" x2="536" y2="182" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-9" data-dsh-part="arrow" x1="527.00" y1="177.60" x2="536" y2="182" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <g id="e4" data-dsh-role="edge" data-dsh-from="copy" data-dsh-to="proof_ok">
+    <line id="dsh-line-10" data-dsh-part="route" x1="440" y1="430" x2="536" y2="430" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-11" data-dsh-part="arrow" x1="527.00" y1="434.40" x2="536" y2="430" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-12" data-dsh-part="arrow" x1="527.00" y1="425.60" x2="536" y2="430" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <!-- 事实确认与校样确认分别汇入终审，两条入线互不交叉 -->
+  <g id="e5" data-dsh-role="edge" data-dsh-from="fact_ok" data-dsh-to="final">
+    <line id="dsh-line-13" data-dsh-part="route" x1="680" y1="182" x2="776" y2="296" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-14" data-dsh-part="arrow" x1="766.84" y1="291.95" x2="776" y2="296" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-15" data-dsh-part="arrow" x1="773.57" y1="286.28" x2="776" y2="296" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <g id="e6" data-dsh-role="edge" data-dsh-from="proof_ok" data-dsh-to="final">
+    <line id="dsh-line-16" data-dsh-part="route" x1="680" y1="430" x2="776" y2="316" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-17" data-dsh-part="arrow" x1="773.57" y1="325.72" x2="776" y2="316" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-18" data-dsh-part="arrow" x1="766.84" y1="320.05" x2="776" y2="316" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <g id="e7" data-dsh-role="edge" data-dsh-from="final" data-dsh-to="publish">
+    <line id="dsh-line-19" data-dsh-part="route" x1="920" y1="306" x2="992" y2="306" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-20" data-dsh-part="arrow" x1="983.00" y1="310.40" x2="992" y2="306" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+    <line id="dsh-line-21" data-dsh-part="arrow" x1="983.00" y1="301.60" x2="992" y2="306" stroke="#536379" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+
+  <text id="dsh-title" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="36" font-weight="700" text-anchor="start" x="56" y="48" fill="#202D46">稿件发布</text>
+  <text id="dsh-title-note-0" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="400" text-anchor="start" x="56" y="73" fill="#536378">收稿后同时进入事实核查与文字审校，两项确认汇入终审，再发表</text>
+
+  <g id="receive" data-dsh-role="node">
+    <rect id="receive-rect" rx="8" x="56" y="276" width="144" height="60" fill="#DBF3EF" stroke="#63A89C" stroke-width="1.5"/>
+    <rect id="receive-accent" data-dsh-part="accent" rx="1.5" x="61" y="285" width="3" height="42" fill="#63A89C"/>
+    <text id="receive-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="128" y="311.5" fill="#155E54">收稿</text>
+  </g>
+  <g id="fact" data-dsh-role="node">
+    <rect id="fact-rect" rx="8" x="296" y="152" width="144" height="60" fill="#FFFFFF" stroke="#A1AFBF" stroke-width="1.5"/>
+    <text id="fact-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="368" y="187.5" fill="#23364C">事实核查</text>
+  </g>
+  <g id="copy" data-dsh-role="node">
+    <rect id="copy-rect" rx="8" x="296" y="400" width="144" height="60" fill="#FFFFFF" stroke="#A1AFBF" stroke-width="1.5"/>
+    <text id="copy-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="368" y="435.5" fill="#23364C">文字审校</text>
+  </g>
+  <g id="fact_ok" data-dsh-role="node">
+    <rect id="fact_ok-rect" rx="8" x="536" y="152" width="144" height="60" fill="#FFFFFF" stroke="#A1AFBF" stroke-width="1.5"/>
+    <text id="fact_ok-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="608" y="187.5" fill="#23364C">事实确认</text>
+  </g>
+  <g id="proof_ok" data-dsh-role="node">
+    <rect id="proof_ok-rect" rx="8" x="536" y="400" width="144" height="60" fill="#FFFFFF" stroke="#A1AFBF" stroke-width="1.5"/>
+    <text id="proof_ok-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="608" y="435.5" fill="#23364C">校样确认</text>
+  </g>
+  <g id="final" data-dsh-role="node">
+    <rect id="final-rect" rx="8" x="776" y="276" width="144" height="60" fill="#24364C" stroke="#24364C" stroke-width="1.5"/>
+    <text id="final-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="848" y="311.5" fill="#FFFFFF">终审</text>
+  </g>
+  <g id="publish" data-dsh-role="node">
+    <rect id="publish-rect" rx="8" x="992" y="276" width="144" height="60" fill="#24364C" stroke="#24364C" stroke-width="1.5"/>
+    <text id="publish-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="16" font-weight="600" text-anchor="middle" x="1064" y="311.5" fill="#FFFFFF">发表</text>
+  </g>
+</svg>

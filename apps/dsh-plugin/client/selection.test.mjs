@@ -63,3 +63,26 @@ test('the packed browser entry registers the metadata and keyed preview under th
   assert.equal(definition.extensions[0], 'svg');
   assert.equal(definition.id, slot.key);
 });
+
+test('a freeform artwork quote carries the selected label guard and its real line number', () => {
+  let draft = '';
+  const input = {
+    state: { getSnapshot: () => ({ draft }) },
+    insertQuote(text) {
+      draft = text;
+      return true;
+    },
+    focus() {},
+  };
+  assert.equal(
+    quoteNode(input, '原稿.svg', { id: 'step-2', title: '校验字段', artwork: true, textIndex: 2 }),
+    '',
+  );
+  assert.deepEqual(currentSelection(draft), {
+    path: '原稿.svg',
+    nodeId: 'step-2',
+    textIndex: 2,
+    originalText: '校验字段',
+  });
+  assert.match(draft, /svg_artwork/);
+});

@@ -105,9 +105,36 @@ export class SvgTools {
         },
         n.id,
       );
-      const { lines, size, step } = fitLabel(n.label, n.width, n.height, wrap);
+      if (
+        chart.theme === 'presentation' &&
+        !oval &&
+        n.width >= 72 &&
+        n.height >= 32 &&
+        (n.tone === 'accent' || n.tone === 'warm')
+      ) {
+        session.create(
+          {
+            type: 'rect',
+            id: graphicId(n.id + '-accent'),
+            args: [String(n.x + 5), String(n.y + 9), '3', String(n.height - 18), nodePaint.stroke],
+            presentation: { rx: '1.5' },
+            dataAttributes: { 'data-dsh-part': 'accent' },
+          },
+          n.id,
+        );
+      }
+      const { lines, size, step } = fitLabel(
+        n.label,
+        n.width,
+        n.height,
+        wrap,
+        chart.theme === 'presentation',
+      );
       const firstBaseline = n.y + n.height / 2 - ((lines.length - 1) * step) / 2 + size * 0.34;
+      let subtitle = false;
       lines.forEach((line, index) => {
+        if (line.before) subtitle = true;
+        const secondary = chart.theme === 'presentation' && subtitle;
         const separator =
           line.before === '\r\n'
             ? 'crlf'
@@ -124,8 +151,8 @@ export class SvgTools {
             presentation: {
               fill: nodePaint.ink,
               'font-family': 'Inter, PingFang SC, Microsoft YaHei, sans-serif',
-              'font-size': String(Number(size.toPrecision(5))),
-              'font-weight': '600',
+              'font-size': String(Number((secondary ? size * 0.85 : size).toPrecision(5))),
+              'font-weight': secondary ? '400' : '600',
               'text-anchor': 'middle',
             },
             dataAttributes:

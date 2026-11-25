@@ -191,10 +191,14 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
   const kept = nodes.filter((n) => !drop.has(n.id));
   const expectedEdges = [...graph.edges.filter((e) => !removedEdges.has(e.id)), ...addEdges];
   indexFlowchart({ nodes: kept, edges: expectedEdges });
+  const presentation = all.some(
+    (e) => e.parentNode === root && e.getAttribute('data-dsh-theme') === 'presentation',
+  );
   const scratch = memorySession('');
   if (!lineEdit)
     await new SvgTools(scratch.session).createFlowchart({
       path: 'generated.svg',
+      theme: presentation ? 'presentation' : undefined,
       width: Number(root.getAttribute('width')),
       height: Number(root.getAttribute('height')),
       nodes: kept,
@@ -242,7 +246,8 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
     }
     for (const label of labels) {
       for (const key of ['fill', 'font-family', 'font-weight', 'text-anchor'])
-        if (first.hasAttribute(key)) label.setAttribute(key, first.getAttribute(key)!);
+        if (first.hasAttribute(key) && !(presentation && key === 'font-weight'))
+          label.setAttribute(key, first.getAttribute(key)!);
       generatedId(label);
       old.appendChild(root.ownerDocument!.importNode(label, true));
     }

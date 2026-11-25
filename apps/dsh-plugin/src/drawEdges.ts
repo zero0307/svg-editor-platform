@@ -1,6 +1,7 @@
 import type { EditorSessionPort } from '@svgframe/core';
 import { arrowWings, makeEdgeRouter, type Point } from './edgeRouting.js';
 import { shapeRoute, type ConnectorStyle, type Span } from './curveRoute.js';
+import { automaticPorts } from './automaticPorts.js';
 import { inputFork, checkPortLabels, type ForkPort } from './inputFork.js';
 import type { Bounds } from './edgeRouting.js';
 import type { Chart, ChartNode, Tone } from './flowchart.js';
@@ -17,6 +18,7 @@ export function drawEdges(
   const portLabels: ForkPort[] = [];
   const obstacles = captionObstacles ?? (chart.edges.some((e) => e.inputs) ? [] : undefined);
   const routeEdge = makeEdgeRouter(chart);
+  const namedRoutes = automaticPorts(chart, nodes);
   const edgeIds = new Set(chart.edges.map((e) => e.id));
   const options = new Map<string, { style?: ConnectorStyle; tone?: Tone }>();
   const styles = ['angular', 'arc', 'rounded'];
@@ -47,11 +49,9 @@ export function drawEdges(
     const key = pairKey(edge.from, edge.to),
       index = (drawn.get(key) ?? 0) + 1;
     drawn.set(key, index);
-    const route = routeEdge(
-      nodes.get(edge.from)!,
-      nodes.get(edge.to)!,
-      index / (totals.get(key)! + 1),
-    );
+    const route =
+      namedRoutes.get(edge.id) ??
+      routeEdge(nodes.get(edge.from)!, nodes.get(edge.to)!, index / (totals.get(key)! + 1));
     session.create({
       type: 'g',
       id: edge.id,
@@ -72,7 +72,9 @@ export function drawEdges(
     const stroke = muted
       ? print
         ? '#656565'
-        : '#9A6335'
+        : chart.theme === 'presentation'
+          ? '#68778A'
+          : '#9A6335'
       : accent
         ? print
           ? '#202020'

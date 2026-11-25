@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect id="background" x="0" y="0" width="960" height="540" fill="#F7F9FC"/>
+
+  <g id="header">
+    <rect id="header-rule" x="466" y="24" width="28" height="3" rx="1.5" fill="#3F7F91"/>
+    <text id="eyebrow" x="480" y="45" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="10.5" font-weight="500" letter-spacing="2" text-anchor="middle" fill="#6E7E92">编辑流程</text>
+    <text id="title" x="480" y="86" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="40" font-weight="700" text-anchor="middle" fill="#1D2C44">稿件发布</text>
+    <text id="subtitle" x="480" y="111" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#66758A">双轨并行 · 分别确认 · 汇入终审</text>
+  </g>
+
+  <g id="flow">
+    <g id="edge-receive-fact" data-dsh-role="edge" data-dsh-from="receive" data-dsh-to="fact">
+      <path d="M480 184 L480 191 Q480 199 472 199 L346 199 Q338 199 338 207 L338 214" fill="none" stroke="#7B8BA0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="arrow-receive-fact" d="M334 206 L342 206 L338 214 Z" fill="#7B8BA0"/>
+    </g>
+
+    <g id="edge-receive-text" data-dsh-role="edge" data-dsh-from="receive" data-dsh-to="text">
+      <path d="M480 184 L480 191 Q480 199 488 199 L614 199 Q622 199 622 207 L622 214" fill="none" stroke="#7B8BA0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="arrow-receive-text" d="M618 206 L626 206 L622 214 Z" fill="#7B8BA0"/>
+    </g>
+
+    <g id="edge-fact-confirm" data-dsh-role="edge" data-dsh-from="fact" data-dsh-to="fact-ok">
+      <path d="M338 264 L338 294" fill="none" stroke="#7B8BA0" stroke-width="1.7" stroke-linecap="round"/>
+      <path id="arrow-fact-confirm" d="M334 286 L342 286 L338 294 Z" fill="#7B8BA0"/>
+    </g>
+
+    <g id="edge-text-confirm" data-dsh-role="edge" data-dsh-from="text" data-dsh-to="text-ok">
+      <path d="M622 264 L622 294" fill="none" stroke="#7B8BA0" stroke-width="1.7" stroke-linecap="round"/>
+      <path id="arrow-text-confirm" d="M618 286 L626 286 L622 294 Z" fill="#7B8BA0"/>
+    </g>
+
+    <g id="edge-confirm-final" data-dsh-role="edge" data-dsh-from="fact-ok" data-dsh-to="final">
+      <path d="M338 344 L338 351 Q338 359 346 359 L480 359 L480 374" fill="none" stroke="#7B8BA0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path id="arrow-confirm-final" d="M476 366 L484 366 L480 374 Z" fill="#7B8BA0"/>
+    </g>
+
+    <g id="edge-proof-final" data-dsh-role="edge" data-dsh-from="text-ok" data-dsh-to="final">
+      <path d="M622 344 L622 351 Q622 359 614 359 L480 359" fill="none" stroke="#7B8BA0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g id="edge-final-publish" data-dsh-role="edge" data-dsh-from="final" data-dsh-to="publish">
+      <path d="M480 424 L480 454" fill="none" stroke="#7B8BA0" stroke-width="1.7" stroke-linecap="round"/>
+      <path id="arrow-final-publish" d="M476 446 L484 446 L480 454 Z" fill="#7B8BA0"/>
+    </g>
+
+    <circle id="split-junction" cx="480" cy="199" r="2.4" fill="#7B8BA0"/>
+    <circle id="merge-junction" cx="480" cy="359" r="2.4" fill="#7B8BA0"/>
+
+    <g id="node-receive" data-dsh-role="node">
+      <rect id="receive-box" x="404" y="134" width="152" height="50" rx="10" fill="#20344D" stroke="#20344D" stroke-width="1.4"/>
+      <text id="receive-label" x="480" y="165" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="17" font-weight="600" text-anchor="middle" fill="#FFFFFF">收稿</text>
+    </g>
+
+    <g id="node-fact" data-dsh-role="node">
+      <rect id="fact-box" x="240" y="214" width="196" height="50" rx="9" fill="#EDF5F9" stroke="#C5DBE6" stroke-width="1.4"/>
+      <text id="fact-label" x="338" y="245" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="16.5" font-weight="600" text-anchor="middle" fill="#1E4C63">事实核查</text>
+    </g>
+
+    <g id="node-text" data-dsh-role="node">
+      <rect id="text-box" x="524" y="214" width="196" height="50" rx="9" fill="#F4F1F9" stroke="#D8CFE7" stroke-width="1.4"/>
+      <text id="text-label" x="622" y="245" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="16.5" font-weight="600" text-anchor="middle" fill="#493B64">文字审校</text>
+    </g>
+
+    <g id="node-fact-ok" data-dsh-role="node">
+      <rect id="fact-ok-box" x="240" y="294" width="196" height="50" rx="9" fill="#E9F4EF" stroke="#B7D9CC" stroke-width="1.4"/>
+      <rect id="fact-ok-accent" x="250" y="307" width="3" height="24" rx="1.5" fill="#4E937F"/>
+      <text id="fact-ok-label" x="338" y="325" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="16.5" font-weight="600" text-anchor="middle" fill="#1F5A4B">事实确认</text>
+    </g>
+
+    <g id="node-text-ok" data-dsh-role="node">
+      <rect id="text-ok-box" x="524" y="294" width="196" height="50" rx="9" fill="#E9F4EF" stroke="#B7D9CC" stroke-width="1.4"/>
+      <rect id="text-ok-accent" x="534" y="307" width="3" height="24" rx="1.5" fill="#4E937F"/>
+      <text id="text-ok-label" x="622" y="325" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="16.5" font-weight="600" text-anchor="middle" fill="#1F5A4B">校样确认</text>
+    </g>
+
+    <g id="node-final" data-dsh-role="node">
+      <rect id="final-box" x="404" y="374" width="152" height="50" rx="10" fill="#20344D" stroke="#20344D" stroke-width="1.4"/>
+      <text id="final-label" x="480" y="405" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="17" font-weight="600" text-anchor="middle" fill="#FFFFFF">终审</text>
+    </g>
+
+    <g id="node-publish" data-dsh-role="node">
+      <rect id="publish-box" x="404" y="454" width="152" height="50" rx="10" fill="#FFF4DE" stroke="#E5C58B" stroke-width="1.4"/>
+      <rect id="publish-accent" x="414" y="467" width="3" height="24" rx="1.5" fill="#C9943F"/>
+      <text id="publish-label" x="480" y="485" font-family="'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans CJK SC',sans-serif" font-size="17" font-weight="600" text-anchor="middle" fill="#82591A">发表</text>
+    </g>
+  </g>
+</svg>

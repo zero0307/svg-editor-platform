@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <rect id="dsh-background" data-dsh-role="background" data-dsh-theme="presentation" x="0" y="0" width="960" height="540" fill="#FFFFFF"/>
+  <rect id="dsh-slide-field" data-dsh-role="background" rx="12" x="326" y="12" width="622" height="516" fill="#F3F7FA"/>
+  <g id="receive_fact" data-dsh-role="edge" data-dsh-from="receive" data-dsh-to="fact_check">
+    <line id="dsh-line-1" data-dsh-part="route" stroke-linecap="round" x1="621.16" y1="96" x2="580.84" y2="144" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-2" data-dsh-part="arrow" stroke-linecap="round" x1="583.2289991781436" y1="135.55886957055932" x2="580.84" y2="144" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-3" data-dsh-part="arrow" stroke-linecap="round" x1="588.7420742046288" y1="140.1898525928069" x2="580.84" y2="144" stroke="#536379" stroke-width="1.65"/>
+  </g>
+  <g id="receive_copy" data-dsh-role="edge" data-dsh-from="receive" data-dsh-to="copy_edit">
+    <line id="dsh-line-4" data-dsh-part="route" stroke-linecap="round" x1="664.84" y1="96" x2="705.16" y2="144" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-5" data-dsh-part="arrow" stroke-linecap="round" x1="697.2579257953712" y1="140.1898525928069" x2="705.16" y2="144" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-6" data-dsh-part="arrow" stroke-linecap="round" x1="702.7710008218564" y1="135.55886957055932" x2="705.16" y2="144" stroke="#536379" stroke-width="1.65"/>
+  </g>
+  <g id="fact_to_confirm" data-dsh-role="edge" data-dsh-from="fact_check" data-dsh-to="fact_confirm">
+    <line id="dsh-line-7" data-dsh-part="route" stroke-linecap="round" x1="559" y1="196" x2="559" y2="244" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-8" data-dsh-part="arrow" stroke-linecap="round" x1="555.4" y1="236" x2="559" y2="244" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-9" data-dsh-part="arrow" stroke-linecap="round" x1="562.6" y1="236" x2="559" y2="244" stroke="#536379" stroke-width="1.65"/>
+  </g>
+  <g id="copy_to_proof" data-dsh-role="edge" data-dsh-from="copy_edit" data-dsh-to="proof_confirm">
+    <line id="dsh-line-10" data-dsh-part="route" stroke-linecap="round" x1="727" y1="196" x2="727" y2="244" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-11" data-dsh-part="arrow" stroke-linecap="round" x1="723.4" y1="236" x2="727" y2="244" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-12" data-dsh-part="arrow" stroke-linecap="round" x1="730.6" y1="236" x2="727" y2="244" stroke="#536379" stroke-width="1.65"/>
+  </g>
+  <g id="fact_confirm_final" data-dsh-role="edge" data-dsh-from="fact_confirm" data-dsh-to="final_review">
+    <line id="dsh-line-13" data-dsh-part="route" stroke-linecap="round" x1="580.84" y1="296" x2="621.16" y2="344" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-14" data-dsh-part="arrow" stroke-linecap="round" x1="613.2579257953712" y1="340.1898525928069" x2="621.16" y2="344" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-15" data-dsh-part="arrow" stroke-linecap="round" x1="618.7710008218564" y1="335.5588695705593" x2="621.16" y2="344" stroke="#536379" stroke-width="1.65"/>
+  </g>
+  <g id="proof_confirm_final" data-dsh-role="edge" data-dsh-from="proof_confirm" data-dsh-to="final_review">
+    <line id="dsh-line-16" data-dsh-part="route" stroke-linecap="round" x1="705.16" y1="296" x2="664.84" y2="344" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-17" data-dsh-part="arrow" stroke-linecap="round" x1="667.2289991781436" y1="335.5588695705593" x2="664.84" y2="344" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-18" data-dsh-part="arrow" stroke-linecap="round" x1="672.7420742046288" y1="340.1898525928069" x2="664.84" y2="344" stroke="#536379" stroke-width="1.65"/>
+  </g>
+  <g id="final_publish" data-dsh-role="edge" data-dsh-from="final_review" data-dsh-to="publish">
+    <line id="dsh-line-19" data-dsh-part="route" stroke-linecap="round" x1="643" y1="396" x2="643" y2="444" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-20" data-dsh-part="arrow" stroke-linecap="round" x1="639.4" y1="436" x2="643" y2="444" stroke="#536379" stroke-width="1.65"/>
+    <line id="dsh-line-21" data-dsh-part="arrow" stroke-linecap="round" x1="646.6" y1="436" x2="643" y2="444" stroke="#536379" stroke-width="1.65"/>
+  </g>
+  <text id="dsh-title" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="34" font-weight="700" text-anchor="start" x="28" y="205" fill="#202D46">稿件发布</text>
+  <g id="receive" data-dsh-role="node">
+    <rect id="receive-rect" rx="9" x="575" y="44" width="136" height="52" fill="#24364C" stroke="#24364C" stroke-width="1.5"/>
+    <text id="receive-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="643" y="75.1" fill="#FFFFFF">收稿</text>
+  </g>
+  <g id="fact_check" data-dsh-role="node">
+    <rect id="fact_check-rect" rx="7" x="491" y="144" width="136" height="52" fill="#FFFFFF" stroke="#A1AFBF" stroke-width="1.5"/>
+    <text id="fact_check-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="559" y="175.1" fill="#23364C">事实核查</text>
+  </g>
+  <g id="copy_edit" data-dsh-role="node">
+    <rect id="copy_edit-rect" rx="7" x="659" y="144" width="136" height="52" fill="#FFFFFF" stroke="#A1AFBF" stroke-width="1.5"/>
+    <text id="copy_edit-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="727" y="175.1" fill="#23364C">文字审校</text>
+  </g>
+  <g id="fact_confirm" data-dsh-role="node">
+    <rect id="fact_confirm-rect" rx="7" x="491" y="244" width="136" height="52" fill="#FFFFFF" stroke="#A1AFBF" stroke-width="1.5"/>
+    <text id="fact_confirm-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="559" y="275.1" fill="#23364C">事实确认</text>
+  </g>
+  <g id="proof_confirm" data-dsh-role="node">
+    <rect id="proof_confirm-rect" rx="7" x="659" y="244" width="136" height="52" fill="#FFFFFF" stroke="#A1AFBF" stroke-width="1.5"/>
+    <text id="proof_confirm-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="727" y="275.1" fill="#23364C">校样确认</text>
+  </g>
+  <g id="final_review" data-dsh-role="node">
+    <rect id="final_review-rect" rx="9" x="575" y="344" width="136" height="52" fill="#24364C" stroke="#24364C" stroke-width="1.5"/>
+    <text id="final_review-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="643" y="375.1" fill="#FFFFFF">终审</text>
+  </g>
+  <g id="publish" data-dsh-role="node">
+    <rect id="publish-rect" rx="8" x="575" y="444" width="136" height="52" fill="#DBF3EF" stroke="#63A89C" stroke-width="1.5"/>
+    <rect id="publish-accent" data-dsh-part="accent" rx="1.5" x="580" y="453" width="3" height="34" fill="#63A89C"/>
+    <text id="publish-label" font-family="Inter, PingFang SC, Microsoft YaHei, sans-serif" font-size="15" font-weight="600" text-anchor="middle" x="643" y="475.1" fill="#155E54">发表</text>
+  </g>
+</svg>

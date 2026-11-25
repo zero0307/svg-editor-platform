@@ -42,7 +42,9 @@ function audit(svg, zoom, only, clearance = 3) {
     assert.ok(label);
     portLabels.push(g.removeChild(label));
   }
-  const foreground = raster(children.filter((el) => el.hasAttribute('data-dsh-role')));
+  const foreground = raster(
+    children.filter((el) => ['node', 'edge'].includes(el.getAttribute('data-dsh-role'))),
+  );
   const captions = [...children, ...portLabels].filter(
     (el) => el.tagName === 'text' && (!only || el.getAttribute('id') === only),
   );
@@ -159,6 +161,21 @@ for (const theme of ['studio', 'print']) {
         ' ' +
         zoom +
         'x: all nine port labels and six captions passed the ink check.',
+    );
+  }
+}
+
+for (const [name, count] of [
+  ['Transformer', 17],
+  ['cross-attention', 4],
+  ['editorial', 1],
+]) {
+  const svg = await readFile(new URL('presentation/' + name + '.svg', evidence), 'utf8');
+  for (const zoom of [1, 2]) {
+    const report = audit(svg, zoom);
+    assert.deepEqual(report, { overlaps: 0, close: 0, captions: count });
+    console.log(
+      'Presentation ' + name + ' ' + zoom + 'x: ' + count + ' captions and port labels clear.',
     );
   }
 }
