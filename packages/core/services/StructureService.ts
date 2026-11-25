@@ -23,7 +23,7 @@ export class StructureService {
     if (!parent.canRemoveChild(shape))
       throw new DomainError(`cannot remove necessary part: ${shape.id}`);
     parent.remove(shape);
-    return `${shape.tag}#${shape.id} deleted`;
+    return `${shape.kind}#${shape.id} deleted`;
   }
   /** Moves `id` to the end of `containerId`, preserving the child's own subtree. */
   moveTo(document: EditableDocument, id: string, containerId: string): string {
@@ -37,7 +37,7 @@ export class StructureService {
         `cannot insert ${shape.tag}#${shape.id} into ${target.tag}#${target.id}`,
       );
     target.insert(shape);
-    return `${shape.tag}#${shape.id} added to ${target.tag}#${target.id}`;
+    return `${shape.kind}#${shape.id} added to ${target.kind}#${target.id}`;
   }
   /**
    * Groups the given ids into a new `g` container. The insertion point and child
@@ -70,7 +70,7 @@ export class StructureService {
     const group = new Group(id);
     parent.insert(group, position);
     ordered.forEach((shape) => group.insert(shape));
-    return `${group.tag}#${group.id} created with ${ordered.length} children`;
+    return `${group.kind}#${group.id} created with ${ordered.length} children`;
   }
   /**
    * Dissolves a nested ordinary container. Composite containers reject the
@@ -80,7 +80,7 @@ export class StructureService {
   ungroup(document: EditableDocument, id: string): string {
     const shape = document.require(id);
     if (!(shape instanceof ContainerShape)) throw new DomainError(`not a container: ${id}`);
-    if (!shape.canUngroup()) throw new DomainError(`cannot ungroup ${shape.kind}: ${id}`);
+    if (!shape.canUngroup()) throw new DomainError(`cannot ungroup composite shape: ${id}`);
     const parent = shape.parent;
     if (!parent) throw new DomainError(`cannot ungroup root: ${id}`);
     if (parent === document.root)
@@ -108,7 +108,7 @@ export class StructureService {
       parent.insert(child, position++);
     }
     parent.remove(shape);
-    return `${shape.tag}#${shape.id} ungrouped (${children.length} children)`;
+    return `${shape.kind}#${shape.id} ungrouped (${children.length} children)`;
   }
   private effectiveAttribute(shape: Shape, name: string): string {
     let current: Shape | null = shape;

@@ -24,8 +24,12 @@ export class CreateAction extends EditAction {
       this.containerId === undefined ? candidate.root : candidate.container(this.containerId);
     const shape = this.shapes.create({ type: this.type, id: this.id, parameters: this.parameters });
     candidate.add(shape, parent);
-    return `${shape.tag}#${shape.id} created${
-      this.containerId === undefined ? '' : ` in ${parent.tag}#${this.containerId}`
+    const parts = shape.creationParts();
+    const created = `${shape.kind}#${shape.id} created${
+      parts.length ? ` (${parts.join(' + ')})` : ''
+    }`;
+    return `${created}${
+      this.containerId === undefined ? '' : ` in ${parent.kind}#${this.containerId}`
     }`;
   }
 }

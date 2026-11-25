@@ -47,6 +47,16 @@ export class BoxShape extends Group {
     return false;
   }
   /**
+   * Public feedback hook: a created box reports its container tag plus the role
+   * parts, without the kernel knowing the `box` domain type.
+   */
+  override creationParts(): readonly string[] {
+    return [
+      `${this.tag}#${this.id}`,
+      ...this.children().map((child) => `${child.tag}#${child.id}`),
+    ];
+  }
+  /**
    * Every node invariant: the serialization marker stays and both role parts are
    * present with the required element names.
    */

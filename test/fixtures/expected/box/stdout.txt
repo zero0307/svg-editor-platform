@@ -1,10 +1,10 @@
 canvas 800x600 created
-g#n1 created
-g#n2 created
+box#n1 created (g#n1 + rect#n1-rect + text#n1-label)
+box#n2 created (g#n2 + rect#n2-rect + text#n2-label)
 line#arrow1 created
 g#flowchart created with 3 children
-g#n2 moved by (0,100)
-undone: g#n2 moved by (0,100)
+box#n2 moved by (0,100)
+undone: box#n2 moved by (0,100)
 box#n2 fill propagated to n2-rect
 box#n2 label updated: "处理数据 v2"
 undone: box#n2 label updated: "处理数据 v2"

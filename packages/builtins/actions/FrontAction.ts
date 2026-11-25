@@ -11,6 +11,6 @@ export class FrontAction extends EditAction {
     const parent = shape.parent;
     if (!parent) throw new DomainError(`cannot move root: ${shape.id}`);
     parent.insert(shape);
-    return `${shape.tag}#${shape.id} moved to front`;
+    return `${shape.kind}#${shape.id} moved to front`;
   }
 }

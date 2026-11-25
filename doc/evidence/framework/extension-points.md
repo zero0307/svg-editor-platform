@@ -45,7 +45,18 @@
 - **缺省行为**：无匹配处理器时走 `Shape.setAttribute`（Phase 1 白名单）；冲突抛 `AttributeHandlerConflictError` 并携带竞争处理器名称。
 - **错误与测试**：`packages/core/test/attribute-dispatch.test.ts:28/38/49/60/73`（回退、未知属性、候选文档、失败不回退、冲突前拒绝）、`packages/core/test/attribute.test.ts:47/58/70/99/108`、`test/framework-acceptance.test.ts`（多子部件一次 undo、失败保持历史与事件）。
 
-## 5. 加载与装配（复核，不新增实现）
+## 5. 命令反馈钩子（#19 后续补丁）
+
+- **职责**：复合图形通过公开多态钩子返回本次创建产生的领域部件，内核据此输出 `<kind>#<id> created (<part> + …)`；命令反馈的标识统一用领域 `kind`，不再用 SVG `tag`。
+- **契约**：`packages/core/domain/Shape.ts` 的 `creationParts(): readonly string[]`，默认 `[]`；复合图形覆盖，例如 box 返回 `['g#n1','rect#n1-rect','text#n1-label']`。
+- **框架调用位置**：`CreateAction.apply`（`packages/core/services/CreateAction.ts`）读取 `shape.creationParts()` 并追加摘要；`StructureService` 的删除/移动/分组/解散反馈与 `AttributeEditingService` 默认反馈使用 `shape.kind`；builtins 的 `MoveAction`/`ScaleAction`/`FrontAction`/`BackAction` 同样使用 `kind`。
+- **拒绝文案**：`ungroup` 复合图形为 `cannot ungroup composite shape: <id>`；普通顶层 `g` 仍为 `cannot ungroup top-level container: <id>`。
+- **现有实现**：`plugins/shape-box/BoxShape.creationParts()`（box 输出 `box#n1 created (g#n1 + rect#n1-rect + text#n1-label)`）；测试替身 `packages/core/test/support/DemoBoxShape.ts`、`test/framework/StampShape.ts`。
+- **缺省行为**：普通图形 `creationParts()` 为空，create 输出仍为 `rect#r created`；`kind` 默认等于 `tag`，六种 builtins 输出逐字节不变。
+- **undo 裁决**：保持 CLI 统一的 `undone: <原消息>`，不实现 §6.1B 的示意文案（见 [ADR-0017](../../adr/0017-polymorphic-command-feedback.md)）。
+- **测试**：`packages/core/test/feedback.test.ts`、`test/command-feedback.test.ts`、`test/fixtures/expected/box/stdout.txt`（box transcript 逐字节）。
+
+## 6. 加载与装配（复核，不新增实现）
 
 - 加载器：`packages/host/loader/PluginLoader.ts:28-79` 只读配置、按目录解析模块并把模块对象交给 `PluginInstaller.install`（`packages/host/loader/PluginInstaller.ts:72-153`）；失败消息冻结为 `plugin not found: <module>`、`plugin has no default export: <name>`、`plugin manifest mismatch: <name> (declared: …, registered: …)`、`plugin failed to activate: <name> (<reason>)`、`duplicate registration: <category>/<name>`、`invalid plugin config`。
 - A/B 同一路径：`apps/cli/src/Application.ts:46-91` 先用 `PluginInstaller` 安装 builtins，再按 `configPath` 选择 B（`PluginLoader`）或 A（`embeddedPlugins`）；两者都经过同一个 `install`。

@@ -46,6 +46,18 @@ export abstract class Shape implements ReadonlyShape {
   canUngroup(): boolean {
     return false;
   }
+  /**
+   * Public polymorphic feedback hook: the domain parts a composite command
+   * created, for example `['g#n1', 'rect#n1-rect', 'text#n1-label']`.
+   *
+   * Plain shapes return an empty list, so their `create` feedback keeps the Phase 1
+   * bytes. Composite shapes opt in by overriding this method; the kernel appends
+   * the returned identifiers to the command result as ` (a + b)` without knowing
+   * the concrete domain type.
+   */
+  creationParts(): readonly string[] {
+    return [];
+  }
   textContent(): string | null {
     return null;
   }

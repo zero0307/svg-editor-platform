@@ -14,6 +14,6 @@ export class MoveAction extends EditAction {
     const shape = candidate.require(this.id);
     shape.move(this.dx, this.dy);
     const detail = shape.summary();
-    return `${shape.tag}#${shape.id} moved by (${this.dx},${this.dy})${detail ? `: ${detail}` : ''}`;
+    return `${shape.kind}#${shape.id} moved by (${this.dx},${this.dy})${detail ? `: ${detail}` : ''}`;
   }
 }
