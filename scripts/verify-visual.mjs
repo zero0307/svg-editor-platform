@@ -3,11 +3,14 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { Resvg } from '@resvg/resvg-js';
-import { ShapeFactory } from '../dist/src/application/ShapeFactory.js';
-import { XmlSvgCodec } from '../dist/src/infrastructure/XmlSvgCodec.js';
+import { ShapeProviderRegistry } from '@svgframe/core';
+import { registerDefaultShapes } from '@svgframe/builtins';
+import { XmlSvgCodec } from '@svgframe/svg-xml';
 
 // Local rendering only: no browser, preview server, remote fonts or image loading.
-const codec = new XmlSvgCodec(new ShapeFactory());
+const providers = new ShapeProviderRegistry();
+registerDefaultShapes(providers);
+const codec = new XmlSvgCodec(providers);
 const directory = 'artifacts/visual';
 await mkdir(directory, { recursive: true });
 const candidateFonts = [

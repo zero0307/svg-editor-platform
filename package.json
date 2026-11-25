@@ -13,10 +13,10 @@
     "plugins/*"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "cli": "npm run build --silent && node dist/src/bootstrap/main.js",
-    "test": "npm run build --silent && node --test dist/test/*.test.js",
-    "test:coverage": "npm run build --silent && node --experimental-test-coverage --test dist/test/*.test.js",
+    "build": "npm run build:packages && tsc -p tsconfig.json",
+    "cli": "node apps/cli/dist/main.js",
+    "test": "npm run build --silent && node --test \"dist/test/*.test.js\"",
+    "test:coverage": "npm run build --silent && node --experimental-test-coverage --test \"dist/test/*.test.js\"",
     "build:packages": "tsc -b tsconfig.build.json",
     "test:packages": "npm run build:packages && npm test --workspaces --if-present",
     "verify:visual": "npm run build --silent && node scripts/verify-visual.mjs",

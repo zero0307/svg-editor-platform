@@ -1,8 +1,8 @@
 # SVG Editor Platform
 
-高级软件开发 Lab1 的 SVG 编辑平台，基于 [svg-editor-cli](https://github.com/zero0307/svg-editor-cli) 的 Phase 1 完整历史继续开发。现有 CLI 使用 TypeScript、Command 与 Composite 模式，已具备六种内置图形、19 条命令、SVG 读写及撤销重做。
+高级软件开发 Lab1 的 SVG 编辑平台，基于 [svg-editor-cli](https://github.com/zero0307/svg-editor-cli) 的 Phase 1 完整历史继续开发。CLI 使用 TypeScript、Command 与 Composite 模式，提供六种内置图形、19 条命令、SVG 读写与撤销重做。
 
-当前运行代码仍为 Phase 1 实现；Phase 2 已建立 npm workspaces（`packages/*`、`apps/*`、`plugins/*`）与包边界检查，`@svgframe/core`、VSCode 扩展和 DSH 插件的契约/骨架已按节点落地，插件框架仍在推进。旧 `src/` CLI 保留到默认命令迁移（#14），`final` 标签仍是兼容基线，最终验收后另建 `p2`。工作区命令与当前包布局见 [文件组织规范](doc/repository-layout.md#工作区phase-2) 和 [ADR-0007](doc/adr/0007-workspaces-and-package-boundaries.md)。
+Phase 2 已建立 npm workspaces 与包边界检查；`@svgframe/core`（领域/事务/扩展点）、`@svgframe/svg-xml`（严格 codec + 中立语法层）、`@svgframe/host`（加载器与 IO 适配）、`@svgframe/builtins`（默认命令与六种图形）与 `@svgframe/cli`（A/B 组合根与 REPL）均已落地。旧 `src/` 已在 #14 删除，根 `test/` 的 89 项 Phase 1 回归通过公开包入口运行。`final` 标签仍是兼容基线，最终验收后另建 `p2`。工作区命令与当前包布局见 [文件组织规范](doc/repository-layout.md#工作区phase-2)、[ADR-0006](doc/adr/0006-cli-pluginization-and-composition-roots.md) 与 [ADR-0007](doc/adr/0007-workspaces-and-package-boundaries.md)。
 
 ## 团队开发入口
 
@@ -22,6 +22,7 @@
 
 ```sh
 npm ci
+npm run build
 npm run cli
 ```
 
@@ -53,7 +54,7 @@ npm run verify:visual
 
 上述检查也由 [GitHub Actions](https://github.com/zero0307/svg-editor-platform/actions) 在Ubuntu/Windows、Node22/24上运行。合并门槛为 `CI required`，操作说明见 [CI文档](ci/README.md)。
 
-流程图和历史示例会生成 `examples/flowchart.svg`、`examples/history.svg`。构建后，也可以运行 `node dist/src/bootstrap/main.js`，从标准输入读取命令，或用 `--script "含空格的路径"` 读取脚本。脚本遇到错误后会继续处理剩余行；只要出现过错误，退出码就是 1，全部成功则为 0。
+流程图和历史示例会生成 `examples/flowchart.svg`、`examples/history.svg`。构建后，也可以运行 `node apps/cli/dist/main.js`，从标准输入读取命令，或用 `--script "含空格的路径"` 读取脚本；`--config [路径]` 选择从 `plugins.config.json`（默认根文件）加载可选插件的组合根。脚本遇到错误后会继续处理剩余行；只要出现过错误，退出码就是 1，全部成功则为 0。
 
 目前已实现课程要求的六种内置类型和 19 条命令，包括嵌套分组、完整撤销/重做、SVG 读写和自动补 id。编辑失败时保留原文档，保存文件时采用原子替换。`box` 留待后续插件阶段实现。
 
@@ -77,4 +78,4 @@ Phase 1 的课程平台提交文件保留在 [doc/submission/README.md](doc/subm
 - [分组和撤销示例](examples/history.commands)
 - [嵌套变换导入示例](examples/transforms.commands)
 
-运行时只依赖 [@xmldom/xmldom](https://github.com/xmldom/xmldom)，用于解析和序列化 XML。测试使用 [Node.js 内置测试运行器](https://nodejs.org/docs/latest-v24.x/api/test.html)。
+运行时通过 workspace 链接使用 `@svgframe/*` 包；XML 解析与序列化由 `packages/svg-xml` 依赖的 [@xmldom/xmldom](https://github.com/xmldom/xmldom) 完成。测试使用 [Node.js 内置测试运行器](https://nodejs.org/docs/latest-v24.x/api/test.html)。

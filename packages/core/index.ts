@@ -40,6 +40,7 @@ export type {
   QueryPreparation,
 } from './extensions/Command.js';
 export { CommandRegistry } from './extensions/CommandRegistry.js';
+export type { CommandToken } from './extensions/CommandToken.js';
 export { EditAction } from './extensions/EditAction.js';
 export { QueryContext } from './extensions/QueryContext.js';
 export type { TreeDecorator } from './extensions/TreeDecorator.js';
@@ -71,8 +72,10 @@ export type { EditorSessionPort } from './ports/EditorSessionPort.js';
 
 // Editing services: candidate-document session, attribute dispatch, structure policy.
 export { EditorSession } from './services/EditorSession.js';
+export { ProviderShapeCreationService } from './services/ProviderShapeCreationService.js';
 export { AttributeEditingService } from './services/AttributeEditingService.js';
 export { AttributeEditAction } from './services/AttributeEditAction.js';
+export { CreateAction } from './services/CreateAction.js';
 export { StructureService } from './services/StructureService.js';
 export { DeleteAction } from './services/DeleteAction.js';
 export { AddToAction } from './services/AddToAction.js';

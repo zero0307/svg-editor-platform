@@ -1,8 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { SvgString } from '../src/domain/SvgString.js';
-import { Rect } from '../src/domain/shapes/Rect.js';
-import { Text } from '../src/domain/shapes/Text.js';
+import { SvgString, SvgDocument } from '@svgframe/core';
+import { Rect, Text } from '@svgframe/builtins';
 import { TestHarness } from './TestHarness.js';
 
 const invalidStrings = [
@@ -58,14 +57,14 @@ test('illegal strings fail atomically and preserve redo history', async () => {
   assert.equal(h.editor.document().require('r').geometry().x, '5');
 });
 
-test('legal Unicode, Chinese, emoji, tabs and newlines remain valid SVG content', async () => {
+test('legal Unicode, Chinese, emoji, tabs and newlines remain valid SVG content', () => {
   const allowed = '\t\n\r 中文 😀 \u0020\ud7ff\ue000\ufffd\u{10000}\u{10ffff}';
   assert.equal(SvgString.validate(allowed, 'text'), allowed);
   const h = new TestHarness();
   const content = '第一行 😀\n第二行\t<&>"';
-  await h.run('init', 'create text t 1 2 "original"');
-  h.editor.document().require('t').setAttribute('text', content);
-  const source = h.snapshot();
+  const document = new SvgDocument();
+  document.add(new Text('t', 1, 2, content));
+  const source = h.codec.encode(document);
   const decoded = h.codec.decode(source);
   assert.equal(decoded.document.require('t').textContent(), content);
   assert.equal(h.codec.encode(decoded.document), source);

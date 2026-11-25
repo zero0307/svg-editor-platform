@@ -4,7 +4,7 @@
 
 ## 状态
 
-本仓库已初始化并继承 Phase 1 历史。旧 CLI 运行布局仍为 `src/`、`test/`，`npm run check`、`npm test`、`npm run verify:visual` 入口保持。Phase 2 已建立 npm workspaces 与包边界检查（`npm run build:packages`、`npm run test:packages`，约定见 ADR-0007），当前实际包为 `packages/core`、`apps/vscode-svg`、`apps/dsh-plugin`；`plugins/` 与其余包按节点建立，不得把目标目录或计划命令当作现有能力。
+本仓库已初始化并继承 Phase 1 历史。旧 `src/` 已在 #14 删除；当前运行布局为 `packages/*`（core/svg-xml/host/builtins）与 `apps/*`（cli/vscode-svg/dsh-plugin），根 `test/` 保留 89 项 Phase 1 回归、经公开包入口运行，新增 3 项组合根测试。根入口为 `npm run build`、`npm test`（92 项，含 6 项基线）、`npm run check`、`npm run build:packages`、`npm run test:packages`、`npm run cli`、`npm run verify:visual`（约定见 ADR-0006/ADR-0007）。`plugins/` 与正式业务插件按节点建立，不得把目标目录或计划命令当作现有能力。
 
 ## 修改范围
 

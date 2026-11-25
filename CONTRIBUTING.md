@@ -84,7 +84,7 @@ PR 用 [PR 模板](.github/pull_request_template.md)。至少一位非作者评�
 
 先保留现有 npm、TypeScript、Prettier、`node:test` 和 XML 依赖，以锁文件为准；迁移工作区时单独提交构建变化，不同时更换测试框架。新增依赖说明它解决的问题、使用范围及是否进入运行时。安装变更同时提交 `package.json` 与锁文件，不提交 `node_modules`、构建产物、访问令牌或本地凭据。
 
-原仓库已有的 `npm run check`、`npm test`、`npm run verify:visual` 保留原名与语义。工程任务已建立工作区入口：`npm run build:packages`（按 TypeScript 项目引用构建 `packages/*`）、`npm run test:packages`（构建后运行全部 workspace 测试）、单包 `npm test -w <包名>`；根 `npm run check` 已包含格式、文档、旧 89 项回归、包构建/测试和包边界检查。命令与包布局见 [ADR-0007](doc/adr/0007-workspaces-and-package-boundaries.md) 与 [文件组织规范](doc/repository-layout.md#工作区phase-2)。每次改动先跑相关测试，再执行合并要求的全量检查；不为低影响文案变更重复生成无关视觉证据。
+原仓库已有的 `npm run check`、`npm test`、`npm run verify:visual` 保留原名与语义。工程任务已建立工作区入口：`npm run build:packages`（按 TypeScript 项目引用构建库包与 CLI）、`npm run test:packages`（构建后运行全部 workspace 测试）、单包 `npm test -w <包名>`；根 `npm run check` 已包含格式、文档、根测试（92 项，含 6 项基线）、包构建/测试和包边界检查。`npm run cli` 现在运行 `apps/cli/dist/main.js`，组合根 A/B 与 `--config` 约定见 [ADR-0006](doc/adr/0006-cli-pluginization-and-composition-roots.md)；命令与包布局见 [ADR-0007](doc/adr/0007-workspaces-and-package-boundaries.md) 与 [文件组织规范](doc/repository-layout.md#工作区phase-2)。每次改动先跑相关测试，再执行合并要求的全量检查；不为低影响文案变更重复生成无关视觉证据。
 
 ## 文档和 AI 协作记录
 

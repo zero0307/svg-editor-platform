@@ -5,9 +5,8 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { Readable, Writable } from 'node:stream';
-import { Tokenizer } from '../src/cli/Tokenizer.js';
-import { Repl } from '../src/cli/Repl.js';
-import { LocalFileStore } from '../src/infrastructure/LocalFileStore.js';
+import { Repl, Tokenizer } from '@svgframe/cli';
+import { LocalFileStore } from '@svgframe/host';
 import { TestHarness } from './TestHarness.js';
 
 test('tokenizer supports empty quoted text, literal paths, escaped quotes, colors and comments', () => {
@@ -107,7 +106,7 @@ test('real filesystem writes atomically, replaces a file and cleans failed tempo
 
 test('compiled executable supports pipes, scripts with spaces, help and failure exit codes', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'svg-cli-'));
-  const entry = resolve('dist/src/bootstrap/main.js');
+  const entry = resolve('apps/cli/dist/main.js');
   try {
     const script = join(directory, 'demo commands.txt');
     const svg = join(directory, 'result.svg');

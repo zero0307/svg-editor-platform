@@ -17,9 +17,15 @@ const legacyLayers = {
   infrastructure: new Set(['infrastructure', 'application', 'domain']),
   bootstrap: new Set(['bootstrap', 'cli', 'application', 'infrastructure', 'domain']),
 };
-const legacyFiles = (await readdir(legacyRoot, { recursive: true })).filter((file) =>
-  file.endsWith('.ts'),
-);
+let legacyFiles = [];
+try {
+  legacyFiles = (await readdir(legacyRoot, { recursive: true })).filter((file) =>
+    file.endsWith('.ts'),
+  );
+} catch {
+  // #14 removes the old kernel; the workspace rules below remain mandatory.
+  legacyFiles = [];
+}
 let legacyEdges = 0;
 for (const file of legacyFiles) {
   const source = await readFile(path.join(legacyRoot, file), 'utf8');

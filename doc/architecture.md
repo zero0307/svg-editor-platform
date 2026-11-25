@@ -1,26 +1,28 @@
 # SVG Editor Platform 架构与接口方案
 
-状态：总体架构方向已确认采用；以下接口和目标包仍为实施设计，尚未实现。方案面向 `zero0307/svg-editor-platform`，采用 npm workspaces，保留 TypeScript、面向对象、Node 内置测试运行器与现有 Prettier；团队统一 Node 24 LTS，具体补丁版本在开工时锁定。是否继续验证原 CLI 的 Node 22 兼容性作为单独决策，不能默认由旧配置推出。
+状态：框架内核、默认命令、严格 codec、宿主加载器与 CLI 已按本方案落地（`packages/core`、`host`、`svg-xml`、`builtins`、`apps/cli`）；旧 `src/` 已在 #14 删除。剩余工作集中在可选插件（stats/dir/box/修改标签）、VSCode/dsh 深入集成与验收指标；方案面向 `zero0307/svg-editor-platform`，采用 npm workspaces，保留 TypeScript、面向对象、Node 内置测试运行器与现有 Prettier。
 
 本方案从 Phase 1 的 `final^{commit}` 开始渐进重构。已核对的基线提交为 `e5621a68afd4731626d54566f17ba55885d1bc0f`。先冻结基线并建立回归，再完成框架通用能力，最后用独立提交接入插件。新增 `box` 或标签时，内核、加载器与既有插件均不再修改。
 
-## 1. 现有代码中值得保留的基础
+## 1. Phase 1 代码的迁移落点
 
-| 现有位置                                                   | 已有能力                                              | Phase 2 处理方式                                                              |
-| ---------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `src/domain/shapes/Shape.ts`、`Group.ts`                   | 封装属性、Composite、公开遍历及多态 `clone()`         | 演进为内核公开领域抽象，区分 SVG 标签与领域类型；增加通用不变量与结构操作契约 |
-| `src/domain/SvgDocument.ts`                                | 全局 ID 检查、新增子树检查、文档克隆与校验            | 保留；校验改为每个节点均调用多态不变量，不按图形名字判断                      |
-| `src/application/commands/EditCommand.ts`                  | 在脱离当前文档的副本上执行，成功后才形成 before/after | 作为一次编辑事务的基础；禁止通过 SVG 重新解析来制作撤销快照                   |
-| `src/application/CommandHistory.ts`                        | 成功后才入栈，失败不清空 redo；文档命令设置屏障       | 保留行为，提供只读状态查询和提交后事件                                        |
-| `src/application/SvgEditor.ts`                             | 读入完成后才替换当前文档；保存完成后才设置屏障        | 演进为公开编辑会话服务，供 CLI 和适配器使用                                   |
-| `src/application/ShapeFactory.ts`                          | 一个集中式图形工厂                                    | 改成 `ShapeProvider` 注册表；六种具体图形及工厂规则移至 builtins              |
-| `src/cli/CommandRouter.ts`                                 | 命令表、解析、帮助及错误输出                          | 拆出通用分发器；具体命令注册移至 builtins，命令自己提供参数规则及帮助         |
-| `src/cli/ShapePresenter.ts`                                | 递归树输出与单图形展示                                | 保留无标签输出，再接入统一行尾装饰管线                                        |
-| `src/infrastructure/XmlSvgCodec.ts`、`SvgImportContext.ts` | XML、ID 补全、SVG 子集与坐标变换规范化                | 移到 `svg-xml`；解析和语义恢复分开，恢复通过 provider 完成                    |
-| `src/infrastructure/LocalFileStore.ts`                     | 文件读写边界与原子保存                                | 保留为宿主适配器；另新增目录读取适配器，不能让插件直接调用文件系统            |
-| `scripts/check-architecture.mjs`                           | 依赖方向、一类一文件检查                              | 迁移为跨 workspace 检查，新增包导出边界、禁止插件互相导入、禁止内核依赖插件   |
+`src/` 及其分层规则已在 #14 删除；Phase 1 的 89 项回归已迁到根 `test/`，只通过公开包入口运行。具体落点：
 
-特别注意：当前 Router 用 `name !== 'init' && name !== 'read' && name !== 'help'` 判断是否需要文档。如果沿用该代码，`dir` 会在未初始化时失败。必须在框架阶段改成命令声明的前置条件，而非继续增加名字例外。
+| Phase 1 位置                                               | 已有能力                                              | 当前落点                                                                                                 |
+| ---------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `src/domain/shapes/Shape.ts`、`Group.ts`                   | 封装属性、Composite、公开遍历及多态 `clone()`         | `packages/core/domain/Shape.ts`、`ContainerShape.ts`、`Group.ts`；具体图形在 `packages/builtins/shapes/` |
+| `src/domain/SvgDocument.ts`                                | 全局 ID 检查、新增子树检查、文档克隆与校验            | `packages/core/domain/SvgDocument.ts`（每节点调用 `validateInvariant()`）                                |
+| `src/application/commands/EditCommand.ts`                  | 在脱离当前文档的副本上执行，成功后才形成 before/after | `packages/core/extensions/EditAction.ts` + `services/EditorSession.ts` 的候选文档事务                    |
+| `src/application/CommandHistory.ts`                        | 成功后才入栈，失败不清空 redo；文档命令设置屏障       | `packages/core/services/EditHistory.ts`（内部，不向插件开放）                                            |
+| `src/application/SvgEditor.ts`                             | 读入完成后才替换当前文档；保存完成后才设置屏障        | `packages/core/services/EditorSession.ts`（公开 `EditorSessionPort`）                                    |
+| `src/application/ShapeFactory.ts`                          | 一个集中式图形工厂                                    | `packages/core/services/ProviderShapeCreationService.ts` + `packages/builtins/providers/`                |
+| `src/cli/CommandRouter.ts`                                 | 命令表、解析、帮助及错误输出                          | `apps/cli/src/CommandDispatcher.ts` + `packages/builtins/commands/`                                      |
+| `src/cli/ShapePresenter.ts`                                | 递归树输出与单图形展示                                | `packages/core/presentation/TreePresenter.ts`                                                            |
+| `src/infrastructure/XmlSvgCodec.ts`、`SvgImportContext.ts` | XML、ID 补全、SVG 子集与坐标变换规范化                | `packages/svg-xml/strict/XmlSvgCodec.ts`，恢复通过注册 provider                                          |
+| `src/infrastructure/LocalFileStore.ts`                     | 文件读写边界与原子保存                                | `packages/host/adapters/LocalFileStore.ts`；目录读取为 `LocalDirectoryReader`                            |
+| `scripts/check-architecture.mjs`                           | 依赖方向、一类一文件检查                              | 跨 workspace 边界检查；旧 `src/` 规则在目录不存在时自动跳过（#14）                                       |
+
+Phase 1 用命令名判断是否需要文档的问题已解决：`Command.prepare` 返回 `requiresDocument`/`effect`，分发器只按元数据路由；测试用 `requiresDocument:false` 的假命令证明未初始化文档可执行，用名为 `read` 但要求文档的查询命令证明不存在名称例外。
 
 ## 2. 包划分与允许依赖
 
@@ -41,7 +43,7 @@ plugins/
   tree-modified/          # modified-star 标签与实例级 dirty 状态
 ```
 
-包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 在框架提交中一次建立。
+包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin`，`plugins/*` 随各插件节点建立。
 
 | 模块                    | 可依赖                                                                | 不可依赖                                                        |
 | ----------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
@@ -57,7 +59,7 @@ plugins/
 
 ## 3. 重构前后依赖图
 
-重构前（以当前源码为准）：
+重构前（Phase 1 的 `src/`，已在 #14 删除，仅作历史对照）：
 
 ```plantuml
 @startuml
@@ -85,7 +87,7 @@ end note
 @enduml
 ```
 
-目标依赖（实线为源码依赖，虚线为运行时调用/注册）：
+目标依赖（实线为源码依赖，虚线为运行时调用/注册）。当前实际依赖已按此图建立：`apps/cli` 只 import core/host/svg-xml/builtins（并按配置经 host loader 加载插件），`builtins` 只依赖 core，core 不依赖任何具体包。
 
 ```plantuml
 @startuml
@@ -136,12 +138,12 @@ CORE ..> PLUGIN : 调用已注册接口
 
 | 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                         |
 | ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | ---------------------------------- |
-| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | 真实 codec 选择与降级（#13）       |
-| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 真实分发器与内置命令（#14）        |
+| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | box 等可选 provider（#19）         |
+| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 可选命令插件（#17/#18）            |
 | `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | box/modified-star 插件（#19/TREE） |
 | `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | box 专用处理器（#19）              |
 
-#7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。#10 已把树展示与行尾装饰管线落为 `TreePresenter`（见 [ADR-0005](adr/0005-tree-display-and-decoration.md)），真实 CLI 接入仍属 #14。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
+#7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。#10 已把树展示与行尾装饰管线落为 `TreePresenter`（见 [ADR-0005](adr/0005-tree-display-and-decoration.md)）。#14 已把六种图形和 19 条默认命令迁入 `packages/builtins`，并由 `apps/cli` 经同一 `PluginInstaller` 装配（见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)）。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
 调用约定：
 
@@ -265,6 +267,17 @@ VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转
 
 加载器目录不导入具体插件，也没有名称映射表；builtin 插件由组合根经过同一安装校验路径装入。A 不允许直接调用裸 `activate` 绕过 Installer。
 
+### 9.1 CLI 组合根（#14）
+
+`apps/cli` 是唯一 CLI 入口：`src/main.ts` 编译到 `apps/cli/dist/main.js`，保持 `--script`、`--help`、未知参数与脚本缺失的文案和退出码；无 `--script` 且 stdin 非 TTY 时无 banner/提示符，TTY 时保留提示符。`Tokenizer`、`CommandDispatcher`、`Repl` 位于 app 内，分发器只按 `requiresDocument`/`effect` 路由且不列命令名白名单。
+
+- A 组合根：显式 import core/host/svg-xml/builtins 装配，`embeddedPlugins` 为空时不装可选插件；默认入口即 A。
+- B 组合根：同一装配后再用 `PluginLoader.loadFromConfig` 读取 `plugins.config.json`；`--config <path>` 选择 B，省略值时默认根 `plugins.config.json`。
+- 两条路径都先通过同一个 `PluginInstaller` 安装 `BuiltinsPlugin`（manifest 声明六种图形与 19 条命令），再安装可选插件；失败插件按 host 规则输出并继续。
+- 默认能力注册顺序固定为 Phase 1 顺序（rect/circle/ellipse/line/text/g、19 条命令），`help` 从注册对象读取 usage 与 provider 参数说明，零可选插件时 A/B 输出逐字节一致。
+
+实现与口径见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)；根测试只通过公開包入口运行，`src/` 已删除。
+
 ## 10. 目录适配器与 dsh 边界
 
 `DirectoryReader` 是 core 的公开端口，暴露 `cwd()` 与 `list(path)` 或等价的最小能力。`LocalDirectoryReader` 位于 host，适配 Node `process.cwd()` 和 `fs.readdir({ withFileTypes:true })`，在框架阶段完成；dir接入提交不再新增宿主运行逻辑。dir 插件只拿到该接口，负责直接子项的分类和稳定排序。排序采用大小写敏感的 JavaScript 字符串序比较（`a < b`），避免依赖机器 locale。符号链接显示 `[LINK]`，其余特殊项显示 `[OTHER]`，不跟随链接；顺序固定为目录、普通文件、链接、其他，各组按名称排序。标记与名称之间均为两个空格。包含隐藏项，过滤 `.`、`..`。此扩展标记需要测试，目录和普通文件仍按实验规定显示。
@@ -292,7 +305,7 @@ dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期�
 - 清单验证在 activate 暂存后、正式提交前执行；A/B 共用事务。
 - 中立 XML 语法层与严格 SVG 语义层分离、完整子树恢复及变换只执行一次。
 
-以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。
+以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)；默认命令插件化、A/B 组合根与旧 `src/` 删除见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)。
 
 ## 13. 指标口径与路径分类
 
@@ -309,4 +322,5 @@ dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期�
 `apps/vscode-svg/` 与 `apps/dsh-plugin/` 单列，不混入 CLI 三类。`scripts/metrics/migration.json` 维护旧路径 → 新路径与分类变化，并按两端实际文件检测 `moved`/`pending`/`both`/`neither`；旧路径与新路径并存时两边都计入，避免把搬目录当成复杂度消除。
 
 产物为 `docs/metrics/<from7>-to-<to7>.json` 与 `docs/metrics/summary.md`，含输入 SHA、工具与规则版本、排除清单、生成命令、每文件指标、三类汇总与迁移表。生成物确定性（无墙钟时间与绝对路径，同参数两次运行逐字节一致），并已加入 `.prettierignore` 以免格式化破坏可比性。
-公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)。
+
+#14 删除旧 `src/` 后，分类表中“旧路径（基线）”仍用于 `final` 对比（`git ls-tree` 读取历史，不依赖工作区），新路径 `packages/builtins/` 与 `apps/cli/` 已实际存在；后续客户端应用继续单列。
