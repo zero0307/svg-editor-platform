@@ -1,0 +1,28 @@
+{
+  "name": "@svgframe/tree-modified",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Instance-scoped modified-star tree label based on persisted content baselines",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "svgframe": {
+    "contributes": {
+      "decorators": [
+        "modified-star"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsc -b .",
+    "test": "npm run build --silent && node --test \"dist/test/*.test.js\""
+  },
+  "dependencies": {
+    "@svgframe/core": "*"
+  }
+}

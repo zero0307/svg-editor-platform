@@ -73,13 +73,29 @@ test('A and B expose the box type and stay byte-identical on the box session', a
 
 test('the frozen box transcript replays byte-exactly with the box plugin', async () => {
   const work = await mkdtemp(join(tmpdir(), 'svg-box-session-'));
+  const configDirectory = resolve('artifacts/plugin-box-tests');
   try {
+    // #19 froze these bytes with the stats/dir/box plugin set only; a later
+    // decorator (tree-modified) would add row suffixes, so this replay pins the
+    // historical plugin set instead of rewriting the frozen golden.
+    await mkdir(configDirectory, { recursive: true });
+    const boxOnlyConfig = join(configDirectory, 'box-only.json');
+    await writeFile(
+      boxOnlyConfig,
+      `${JSON.stringify({
+        plugins: [
+          { module: '@svgframe/command-stats' },
+          { module: '@svgframe/command-dir' },
+          { module: '@svgframe/shape-box' },
+        ],
+      })}\n`,
+    );
     const stdout = await readFile(join(expected, 'stdout.txt'));
     const exitCode = Number((await readFile(join(expected, 'exit-code.txt'), 'utf8')).trim());
     assert.equal(stdout.includes(13), false, 'expected output must use LF only');
     const result = spawnSync(
       process.execPath,
-      [entry, '--script', transcript, '--config', config],
+      [entry, '--script', transcript, '--config', boxOnlyConfig],
       { cwd: work, encoding: 'buffer' },
     );
     assert.equal(result.error, undefined);
@@ -95,6 +111,7 @@ test('the frozen box transcript replays byte-exactly with the box plugin', async
       assert.match(saved, new RegExp(`id="${id}"`));
   } finally {
     await rm(work, { recursive: true, force: true });
+    await rm(configDirectory, { recursive: true, force: true });
   }
 });
 

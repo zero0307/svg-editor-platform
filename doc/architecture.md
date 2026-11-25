@@ -43,7 +43,7 @@ plugins/
   tree-modified/          # modified-star 标签与实例级 dirty 状态
 ```
 
-包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin` 与 `plugins/command-stats`（#17）、`plugins/command-dir`（#18）、`plugins/shape-box`（#19），其余 `plugins/*` 随各插件节点建立。
+包名可采用 `@svgframe/core`、`@svgframe/host`、`@svgframe/svg-xml`、`@svgframe/builtins` 和文档示例中的插件名。目录名与注册名无需一致，例如 `plugins/tree-modified` 注册的 decorator 名为 `modified-star`。每个包用 `exports` 明确公共入口，禁止通过相对路径跨包读取 `src/internal`。TypeScript project references、构建顺序与包 exports 已建立；当前实际包为 `core`、`svg-xml`、`host`、`builtins`、`apps/cli`、`apps/vscode-svg`、`apps/dsh-plugin` 与 `plugins/command-stats`（#17）、`plugins/command-dir`（#18）、`plugins/shape-box`（#19）、`plugins/tree-modified`（#20）。
 
 | 模块                    | 可依赖                                                                | 不可依赖                                                        |
 | ----------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- |
@@ -136,12 +136,12 @@ CORE ..> PLUGIN : 调用已注册接口
 
 契约文件均位于 `packages/core`，公共入口只有包根的 `index.ts`（`exports` → `dist/index.js`）。注册名是稳定字符串：命令用命令名，图形用领域类型名，装饰器与属性处理器用标签/处理器名；注册表拒绝重复名并保持注册顺序。测试位于 `packages/core/test/`。
 
-| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                                              |
-| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | ------------------------------------------------------- |
-| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | 无（`box` #19 已接入）                                  |
-| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 无（`stats` #17、`dir` #18 已接入）                     |
-| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | `box-type-label` #19 已接入；`modified-star` #20 待接入 |
-| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | 无（`box-attributes` #19 已接入）                       |
+| 扩展点             | 契约文件                                       | 稳定注册名 | 注册表                     | 本节点测试                                     | 未完成部分                                             |
+| ------------------ | ---------------------------------------------- | ---------- | -------------------------- | ---------------------------------------------- | ------------------------------------------------------ |
+| `ShapeProvider`    | `packages/core/extensions/ShapeProvider.ts`    | `type`     | `ShapeProviderRegistry`    | 创建、匹配、恢复、重复与缺省注册               | 无（`box` #19 已接入）                                 |
+| `Command`          | `packages/core/extensions/Command.ts`          | `name`     | `CommandRegistry`          | 四种 effect 路由、前置条件、失败不改状态       | 无（`stats` #17、`dir` #18 已接入）                    |
+| `TreeDecorator`    | `packages/core/extensions/TreeDecorator.ts`    | `name`     | `TreeDecoratorRegistry`    | 后缀拼接、零后缀字节不变、故障隔离             | 无（`box-type-label` #19、`modified-star` #20 已接入） |
+| `AttributeHandler` | `packages/core/extensions/AttributeHandler.ts` | `name`     | `AttributeHandlerRegistry` | 纯 `handles`、候选文档 `apply`、冲突与故障契约 | 无（`box-attributes` #19 已接入）                      |
 
 #7 已把命令/属性/结构三部分落为真实服务：`EditorSession`（候选文档事务）、`AttributeEditingService`/`AttributeEditAction` 与 `StructureService`（含四个结构动作）。#10 已把树展示与行尾装饰管线落为 `TreePresenter`（见 [ADR-0005](adr/0005-tree-display-and-decoration.md)）。#14 已把六种图形和 19 条默认命令迁入 `packages/builtins`，并由 `apps/cli` 经同一 `PluginInstaller` 装配（见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)）。失败原子性、事件与结构策略约定见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
@@ -151,7 +151,7 @@ M2 框架冻结（F = `a21f758`）时的**实际**文件/函数、每个实现�
 
 #18 已接入 `dir`（`plugins/command-dir`）：`requiresDocument:false` + `effect:'query'`，只通过 `QueryContext.directories()` 读取 `cwd()` 与直接子项，排序、`[DIR]/[FILE]/[LINK]/[OTHER]` 标记、空目录与失败文案全在插件内，适配器角色与策略见 [dir.md](dir.md)；Phase 1 兼容性回放通过空配置禁用可选插件（`test/fixtures/plugins/no-optional-plugins.json`），golden 未改。逐条验收见 [018-cmd-02](evidence/acceptance/018-cmd-02.md)。
 
-#19 已接入 `box`（`plugins/shape-box`）：一个包原子注册 `box` provider、`box-attributes` 处理器与 `box-type-label` 装饰器；`BoxShape extends Group` 并用派生 ID `<id>-rect`/`<id>-label`、`data-kind="box"`、`canRemoveChild`/`canUngroup` 与 `validateInvariant` 保护结构；`restore` 只按显式标记匹配、拒绝坏结构，未装插件时自动降级为普通 `g` 并保留 `data-kind`。命令反馈仍使用框架的 `tag`#`id` 文案（未实现多态反馈钩子），`ungroup` 文案为框架固定的 `cannot ungroup box: <id>`，两处偏差记入 [ADR-0014](adr/0014-box-structure-and-readback.md) 并作为后续独立框架补丁；逐条验收见 [019-box-01](evidence/acceptance/019-box-01.md)。
+#19 已接入 `box`（`plugins/shape-box`）：一个包原子注册 `box` provider、`box-attributes` 处理器与 `box-type-label` 装饰器；`BoxShape extends Group` 并用派生 ID `<id>-rect`/`<id>-label`、`data-kind="box"`、`canRemoveChild`/`canUngroup` 与 `validateInvariant` 保护结构；`restore` 只按显式标记匹配、拒绝坏结构，未装插件时自动降级为普通 `g` 并保留 `data-kind`。#19 后续框架补丁（[ADR-0017](adr/0017-polymorphic-command-feedback.md)）已补上多态命令反馈，box 输出 `box#n1 created (g#n1 + rect#n1-rect + text#n1-label)`、`cannot ungroup composite shape: <id>`；undo 仍为统一的 `undone: <message>`。逐条验收见 [019-box-01](evidence/acceptance/019-box-01.md)。
 
 调用约定：
 
@@ -219,7 +219,7 @@ box 内部维护必要子部件的角色与 ID，通过公开形状服务创建 
 
 box 包一次注册三类贡献：shape `box`、attribute `box-attributes`（处理 fill/label）、decorator `box-type-label`。三个贡献随插件加载事务一起提交或回滚。树中的基准名仍是 `g#id`，`(box)` 由自己的 decorator 提供；不能把标签直接写死在 shape summary 或渲染器里。
 
-实现落点（#19）：`plugins/shape-box` 的 `BoxShape`、`BoxProvider`、`BoxAttributeHandler`、`BoxTypeLabelDecorator` 按本节实现，具体模板、派生 ID、结构策略、读回/降级、序列化与偏差见 [ADR-0014](adr/0014-box-structure-and-readback.md)。其中“命令反馈多态钩子”在 F 中未落地，`ungroup` 文案由 `StructureService` 固定为 `cannot ungroup <kind>: <id>`；两处偏差不在 #19 接入提交中补内核，列为后续独立框架补丁。
+实现落点（#19）：`plugins/shape-box` 的 `BoxShape`、`BoxProvider`、`BoxAttributeHandler`、`BoxTypeLabelDecorator` 按本节实现，具体模板、派生 ID、结构策略、读回/降级与序列化见 [ADR-0014](adr/0014-box-structure-and-readback.md)。命令反馈多态钩子已由 #19 后续补丁实现（[ADR-0017](adr/0017-polymorphic-command-feedback.md)）：create/move/delete/set 使用领域 `kind` 与复合创建摘要，`ungroup` 输出 `cannot ungroup composite shape: <id>`；undo 仍为 `undone: <原消息>`。
 
 ## 7. XML 与 VSCode 的复用边界
 
@@ -247,6 +247,8 @@ VSCode 端的 DecorationProvider、DocumentSymbolProvider 和 VSCode `Range` 转
 选择祖先传播：叶子变化、节点插入/删除或重排会使其祖先及根行出现 `*`。删除节点无法显示自身标签，但保存基准中的旧父链须参与祖先计算。各 decorator 只返回本标签后缀，按稳定注册顺序拼接，每个后缀前一个空格；默认装配 box 标签早于 modified 标签。零标签保留原字节输出，两个标签不互相读取状态。
 
 实现落点（#10）：`packages/core/presentation/TreePresenter.ts` 的 `tree`/`show` 基础行与 Phase 1 逐字节一致；每行构造只读 `TreeRow`（整棵树的根行为 `document.root`、`tree id`/`show` 首行 depth 0），按注册顺序拼接非空后缀且每个后缀前一个空格。装饰器抛错时上报并只在该 presenter 实例中禁用该装饰器，其余后缀与后续行继续；`connect(session.events)` 转发七类已提交事件，`onEvent` 失败同样禁用。两个实例的禁用状态互不影响，新增装饰器无需改渲染代码。详见 [ADR-0005](adr/0005-tree-display-and-decoration.md)，CLI 实际接入归 #14。
+
+实现落点（#20）：`plugins/tree-modified` 的 `ContentSnapshot`/`ModifiedStarDecorator` 按本节实现。基准取最近一次成功 `init`/`read`/`save` 的公开内容投影（节点身份、`tag`/`kind`、文字、父节点、有序子节点、持久化属性与画布尺寸），不使用 XML 字符串；差异集合向当前祖先传播，删除节点按基准旧父链标记祖先，画布变化只标根行。`ModifiedStarPlugin.activate` 在暂存 context 注册装饰器并用 `context.subscribe` 转发事件（提交后连接、失败回滚），因此不需要组合根在 `TreePresenter` 上额外接线。默认顺序为 `box-type-label` 后 `modified-star`，行尾形如 `g#n1 (box) *`。规则与取舍见 [ADR-0015](adr/0015-dirty-semantics.md)，逐条验收见 [020-tree-01](evidence/acceptance/020-tree-01.md)。
 
 ## 9. A/B 同一路径的加载与回滚
 
@@ -321,7 +323,7 @@ dsh 板块单独做“SVG 结构检查/流程图生成”工具插件，初期�
 - 清单验证在 activate 暂存后、正式提交前执行；A/B 共用事务。
 - 中立 XML 语法层与严格 SVG 语义层分离、完整子树恢复及变换只执行一次。
 
-以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)；默认命令插件化、A/B 组合根与旧 `src/` 删除见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)；box 的结构、属性语义与读回见 [ADR-0014](adr/0014-box-structure-and-readback.md)。
+以上决策先标 Proposed；用实现和测试验证后再改 Accepted。不得把“至少三条 ADR”理解为可以遗漏正文明确要求说明的其他设计取舍。公开契约骨架的签名、注册名、只读边界与受影响消费者记录在 [ADR-0003](adr/0003-core-public-contracts.md)，在该 ADR 中同样保持 Proposed，待消费方集成后复核；候选文档事务、属性分派与结构策略见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)；树展示与行尾装饰管线见 [ADR-0005](adr/0005-tree-display-and-decoration.md)；默认命令插件化、A/B 组合根与旧 `src/` 删除见 [ADR-0006](adr/0006-cli-pluginization-and-composition-roots.md)；box 的结构、属性语义与读回见 [ADR-0014](adr/0014-box-structure-and-readback.md)；dirty 语义、祖先传播与标签顺序见 [ADR-0015](adr/0015-dirty-semantics.md)。
 
 ## 13. 指标口径与路径分类
 
