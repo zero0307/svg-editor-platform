@@ -186,7 +186,10 @@ test('boxes can be grouped while their necessary parts cannot be split off', () 
     assert.throws(() => session.edit(action));
     assert.equal(snapshot(session.document()), grouped, 'a rejected action keeps the document');
   }
-  assert.throws(() => session.edit(new UngroupAction(structure, 'n1')), /cannot ungroup box: n1/);
+  assert.throws(
+    () => session.edit(new UngroupAction(structure, 'n1')),
+    /cannot ungroup composite shape: n1/,
+  );
   assert.throws(
     () => session.edit(new DeleteAction(structure, 'n1-rect')),
     /cannot remove necessary part: n1-rect/,
@@ -201,7 +204,7 @@ test('boxes can be grouped while their necessary parts cannot be split off', () 
 test('deleting the whole box is allowed, including nested boxes, and undo restores it', () => {
   const { session, shapes, structure } = scene();
   session.edit(new CreateAction(shapes, 'rect', 'extra', ['0', '0', '5', '5'], 'n1'));
-  assert.equal(session.edit(new DeleteAction(structure, 'n1')), 'g#n1 deleted');
+  assert.equal(session.edit(new DeleteAction(structure, 'n1')), 'box#n1 deleted');
   assert.equal(session.document().find('n1'), undefined);
   assert.equal(session.document().find('n2'), undefined);
   assert.equal(session.document().find('extra'), undefined);

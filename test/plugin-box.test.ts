@@ -256,10 +256,10 @@ test('normal commands protect necessary parts, allow whole delete and undo, and 
     for (const expected of [
       'error: cannot remove necessary part: n1-rect',
       'error: cannot move necessary part: n1-rect',
-      'error: cannot ungroup box: n1',
+      'error: cannot ungroup composite shape: n1',
       'rect#extra deleted',
-      'g#n1 deleted',
-      'undone: g#n1 deleted',
+      'box#n1 deleted',
+      'undone: box#n1 deleted',
       'error: id already exists: n1-rect',
     ])
       assert.ok(lines.includes(expected), `missing output line ${JSON.stringify(expected)}`);

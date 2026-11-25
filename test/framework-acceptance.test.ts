@@ -63,7 +63,7 @@ function addStamp(
 test('create: a composite provider builds role parts through the public creation service', () => {
   const { session, creation } = setup();
   const message = session.edit(new CreateAction(creation, 'stamp', 's1', ['draft']));
-  assert.equal(message, 'g#s1 created');
+  assert.equal(message, 'stamp#s1 created');
   const stamp = session.document().require('s1');
   assert.ok(stamp instanceof StampShape);
   assert.equal(stamp.kind, 'stamp');

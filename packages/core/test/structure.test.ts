@@ -56,7 +56,7 @@ test('delete removes a leaf as one undo unit', async () => {
 
 test('delete removes a whole composite subtree when its parent allows it', async () => {
   const { session } = await sessionWith(protectedDocument);
-  assert.equal(session.edit(new DeleteAction(structure, 'box1')), 'g#box1 deleted');
+  assert.equal(session.edit(new DeleteAction(structure, 'box1')), 'demo-box#box1 deleted');
   assert.throws(() => session.document().require('box1'), /no such shape/);
   assert.throws(() => session.document().require('box1-rect'), /no such shape/);
   assert.equal(session.document().require('leaf').id, 'leaf');
@@ -160,7 +160,7 @@ test('ungroup rejects a composite before the ordinary top-level restriction', as
   const { session } = await sessionWith(protectedDocument);
   assert.throws(
     () => session.edit(new UngroupAction(structure, 'box1')),
-    /cannot ungroup demo-box: box1/,
+    /cannot ungroup composite shape: box1/,
   );
   assert.equal(session.document().require('box1').kind, 'demo-box');
 });

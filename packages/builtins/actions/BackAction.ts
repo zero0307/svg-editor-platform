@@ -11,6 +11,6 @@ export class BackAction extends EditAction {
     const parent = shape.parent;
     if (!parent) throw new DomainError(`cannot move root: ${shape.id}`);
     parent.insert(shape, 0);
-    return `${shape.tag}#${shape.id} moved to back`;
+    return `${shape.kind}#${shape.id} moved to back`;
   }
 }

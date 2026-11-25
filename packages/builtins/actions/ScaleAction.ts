@@ -13,6 +13,6 @@ export class ScaleAction extends EditAction {
     if (this.factor <= 0) throw new DomainError('scale factor must be positive');
     const shape = candidate.require(this.id);
     shape.scale(this.factor);
-    return `${shape.tag}#${shape.id} scaled by ${this.factor}`;
+    return `${shape.kind}#${shape.id} scaled by ${this.factor}`;
   }
 }

@@ -213,6 +213,8 @@ box 内部维护必要子部件的角色与 ID，通过公开形状服务创建 
 
 实现落点（#7）：公开策略是 `Shape.canUngroup()`、`ContainerShape.canRemoveChild(child)`、`ContainerShape.canInsertChild(child)`；`StructureService` 提供 `remove`/`moveTo`/`group`/`ungroup`，并由 `DeleteAction`/`AddToAction`/`GroupAction`/`UngroupAction` 包装成候选文档编辑，命令只能经过这些动作。删除整棵复合图形只检查父容器，删除或移出必要部件由复合容器拒绝，文案为 `cannot remove necessary part: <id>`/`cannot move necessary part: <id>`；`ungroup` 先查复合规则再查 Phase 1 顶层限制，并按 P1 物化继承样式。复合容器必须在最终类型重写 `protected newContainer()`，否则 clone 会退回父类并丢失策略（#19 需遵守）。详见 [ADR-0004](adr/0004-candidate-transactions-and-structure.md)。
 
+命令反馈（#19 后续补丁）：反馈标识统一使用领域 `kind` 而非 SVG `tag`；`Shape.creationParts()` 默认返回 `[]`，复合图形可返回创建出的领域部件，`CreateAction` 在 `… created` 后追加 ` (<part> + …)`。删除/移动/分组/解散与默认属性反馈同样使用 `kind`，六种 builtins 因 `kind === tag` 输出不变；`ungroup` 拒绝复合图形报 `cannot ungroup composite shape: <id>`，普通顶层分组仍报 `cannot ungroup top-level container: <id>`。undo 保持 `undone: <原消息>`，不实现 §6.1B 的示意文案。详见 [ADR-0017](adr/0017-polymorphic-command-feedback.md)。
+
 读取已安装插件的错误 box 时首选拒绝整个读入，避免默默改变领域语义。缺失必要部件、角色类型错误、重复 ID、循环结构均不能生成不完整 box。未装 box 插件时则使用普通 g provider，保存已有 `data-kind` 元数据并明确说明语义降级；重复 ID 在语义分派前就拒绝，不能通过降级绕过。
 
 box 包一次注册三类贡献：shape `box`、attribute `box-attributes`（处理 fill/label）、decorator `box-type-label`。三个贡献随插件加载事务一起提交或回滚。树中的基准名仍是 `g#id`，`(box)` 由自己的 decorator 提供；不能把标签直接写死在 shape summary 或渲染器里。
