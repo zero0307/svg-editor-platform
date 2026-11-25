@@ -1,8 +1,10 @@
 # ADR-0017 复合图形的多态命令反馈
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-25  
 关联：Issue #19 后续框架补丁；需求来源 phase_cli_1.md §4.4/§6.1B、architecture §6；消费者 #17~#20
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 

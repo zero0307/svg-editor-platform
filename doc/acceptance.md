@@ -1,6 +1,8 @@
 # 质量保证与验收计划
 
-状态：设计方案，尚未执行 Phase 2 验证。责任按项目板块划分，不预先绑定个人；实施时在 Issue 中填写负责人和复核人。
+状态：设计方案与 **Phase 2 收口记录**。责任按项目板块划分，不预先绑定个人；实施时在 Issue 中填写负责人和复核人。
+
+2026-11-25 收口：35 个需求 ID 的逐条实际状态见 [§8](#8-收口状态2026-11-25)，结论为 **31 通过、4 部分通过、0 未执行**；候选提交 `fb0427a`，`p2` 发布待用户确认（[发布清单](release-checklist.md)）。本文件前半部分保留计划口径，§8 是实际结果，两者冲突时以 §8 与对应证据为准。
 
 2026-11-24 更新：TASK-QA-01 已从 `final^{commit}` 的实际构建生成四个会话的逐字节 golden 与固定夹具（见 [基线证据](evidence/baseline/README.md)），补充 `test/baseline.test.ts` 回归测试。BASE-01 的 Phase 2 对比本身仍未执行，不能据此声明兼容性已通过。
 
@@ -167,3 +169,47 @@ A 的运行源码变化仅为新增插件及一个顶层组合根文件；B 仅�
 每个功能完成须同时具备：对应需求 ID；实现与公开契约；必要的成功和失败测试；更新相关文档/ADR；可定位的验证结果；另一板块的复核记录。每个 PR 只勾选实际完成的检查，未运行写明原因及补验任务。
 
 最终验收时 `doc/README.md` 统一链接实际实现的扩展点清单、前后 PlantUML、ADR、会话、证据、指标和交付步骤。第三部分 dsh 的运行标准须先确认，当前不把插件市场发布列为硬性门槛。
+
+## 8. 收口状态（2026-11-25）
+
+被测候选 `fb0427a`（21 个节点后的集成分支；`p2` 未创建）。逐条状态依据实际证据，命令均为真实执行；证据相对 `doc/`。**35 个需求 ID：31 通过、4 部分通过、0 未执行**（Issue 描述里的“30 个”与实际矩阵行数不一致，以矩阵 35 行为准）。
+
+| ID      | 状态     | 证据                                                                                                   | 真实命令 / 说明                                                      |
+| ------- | -------- | ------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| BASE-01 | 通过     | [baseline](evidence/baseline/README.md)、[assembly](evidence/assembly/README.md)                       | `npm test`（四会话 4/4）、空配置 4/4                                 |
+| BASE-02 | 通过     | [check.log](evidence/release/check.log)、[扩展点清单](evidence/framework/extension-points.md)          | `node scripts/check-architecture.mjs`（0 违规）                      |
+| EXT-01  | 通过     | `test/framework-acceptance.test.ts`、core 102 项                                                       | `npm run test:packages`                                              |
+| EXT-02  | 通过     | [扩展点清单](evidence/framework/extension-points.md)                                                   | 四类契约/实现/缺省/错误测试齐全                                      |
+| CMD-01  | 通过     | [017-cmd-01](evidence/acceptance/017-cmd-01.md)、`plugins/command-stats/test`                          | `npm run test:packages`                                              |
+| CMD-02  | 通过     | [017](evidence/acceptance/017-cmd-01.md)/[018](evidence/acceptance/018-cmd-02.md)、assembly            | A/B help、未知命令                                                   |
+| DIR-01  | 通过     | `plugins/command-dir/test`、[dir.md](dir.md)                                                           | 替身覆盖                                                             |
+| DIR-02  | 通过     | [018-cmd-02](evidence/acceptance/018-cmd-02.md)、目录夹具                                              | 真实临时目录                                                         |
+| DIR-03  | 通过     | [018-cmd-02](evidence/acceptance/018-cmd-02.md)                                                        | 状态不变/无文档                                                      |
+| ATTR-01 | 通过     | [019-box-01](evidence/acceptance/019-box-01.md)、box 30 项                                             | `npm run test:packages`                                              |
+| ATTR-02 | 通过     | core attribute 测试、ADR-0017                                                                          | 回退/冲突/失败不转默认                                               |
+| ATTR-03 | 通过     | core 事务故障测试                                                                                      | 候选文档失败保持状态                                                 |
+| BOX-01  | 通过     | [019-box-01](evidence/acceptance/019-box-01.md)、`doc/transcript/box.txt`                              | transcript 回放                                                      |
+| BOX-02  | 通过     | [019-box-01](evidence/acceptance/019-box-01.md)                                                        | ID 预检/重复读入拒绝                                                 |
+| BOX-03  | 通过     | [019-box-01](evidence/acceptance/019-box-01.md)                                                        | 往返/降级/坏结构拒绝                                                 |
+| BOX-04  | 通过     | [019-box-01](evidence/acceptance/019-box-01.md)                                                        | 结构不变量                                                           |
+| BOX-05  | 通过     | box 30 项、[assembly diff](evidence/assembly/README.md)                                                | 插件独立测试；接入零内核改动                                         |
+| TREE-01 | 通过     | [020-tree-01](evidence/acceptance/020-tree-01.md)                                                      | 无标签字节/双标签顺序                                                |
+| TREE-02 | 通过     | [020-tree-01](evidence/acceptance/020-tree-01.md)、ADR-0015                                            | 保存点/undo/redo/失败                                                |
+| TREE-03 | 通过     | [020-tree-01](evidence/acceptance/020-tree-01.md)                                                      | 实例隔离/祖先传播                                                    |
+| LOAD-01 | 通过     | `packages/host/test`（39 项）、assembly                                                                | A/B 同一 install                                                     |
+| LOAD-02 | 通过     | host 测试、assembly                                                                                    | 四类错误文案                                                         |
+| LOAD-03 | 通过     | host 测试                                                                                              | 重复名/回滚/订阅                                                     |
+| LOAD-04 | 通过     | host 测试                                                                                              | 配置非法/相对路径/求值失败                                           |
+| ASM-01  | 通过     | [assembly compare.json](evidence/assembly/compare.json)                                                | 三组 A/B 逐字节 + 4/4                                                |
+| ASM-02  | 通过     | [diff-C_A/B、zero-change-check](evidence/assembly/README.md)                                           | 仅 diff 证据；C_A/C_B 在 F 上不可构建（见 #21）                      |
+| VS-01   | 通过     | [vscode README](evidence/vscode/README.md)                                                             | 真实 Extension Host 截图                                             |
+| VS-02   | 通过     | [vscode README](evidence/vscode/README.md)                                                             | Outline 截图 + 25 项测试                                             |
+| VS-03   | 通过     | [vscode.md](vscode.md)                                                                                 | 分析与复用说明                                                       |
+| PKG-01  | 通过     | [clean-env.md](evidence/vscode/install/clean-env.md)                                                   | VSIX 干净安装                                                        |
+| PKG-02  | 部分通过 | [dsh/install](evidence/dsh/install/README.md)                                                          | 干净目录安装/加载/卸载已验；模型侧调用未执行                         |
+| MET-01  | 部分通过 | [docs/metrics](../docs/metrics/README.md)、[metrics-recheck.log](evidence/release/metrics-recheck.log) | `final→fb0427a` 已生成并复核；`p2` 未创建，final→p2 终版待发布后重跑 |
+| DOC-01  | 通过     | [README](README.md)、ADR、puml                                                                         | 报告入口、扩展点、前后图、≥3 ADR；实际图未渲染（无 PlantUML jar）    |
+| DSH-01  | 部分通过 | [016-dsh-02](evidence/acceptance/016-dsh-02.md)、[dsh 证据](evidence/dsh/README.md)                    | SDK 锁定/最小插件/安装演示已验；真实模型调用缺凭据                   |
+| REL-01  | 部分通过 | [release-checklist](release-checklist.md)                                                              | 候选 SHA/命令/证据齐全；`p2`、`main` 合并、推送待用户确认            |
+
+未执行/部分通过的原因已在各行写明；没有把计划、预设文案或历史 README 当作通过证据。

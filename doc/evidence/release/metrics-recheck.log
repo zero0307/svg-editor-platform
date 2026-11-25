@@ -1,0 +1,25 @@
+# 指标复核：报告提交 vs 被测候选提交
+# measured candidate: fb0427ad5895eaaebb13a5c18be8cb19ffa30183
+# report commit:      412727fdab1a11d1d6951f22a256387415bc3725
+# command: node scripts/metrics/metrics.mjs --from 'final^{commit}' --to 412727fd --out artifacts/metrics-recheck
+#          node scripts/metrics/verify-report.mjs --report docs/metrics/e5621a6-to-fb0427a.json --candidate artifacts/metrics-recheck/e5621a6-to-412727f.json
+metrics report recheck
+report file: docs\metrics\e5621a6-to-fb0427a.json
+candidate file: artifacts\metrics-recheck\e5621a6-to-412727f.json
+measured commit (report):    fb0427ad5895eaaebb13a5c18be8cb19ffa30183
+measured commit (candidate):  412727fdab1a11d1d6951f22a256387415bc3725
+rules version: 1 / 1
+classification sha256: 39b9251f0a5b4c0e / 39b9251f0a5b4c0e
+target source digest: 19683ac3a8c34158b27fd8f556c166cc9ff86cc34fdd8a23458b4d11a73c879f
+candidate source digest: 19683ac3a8c34158b27fd8f556c166cc9ff86cc34fdd8a23458b4d11a73c879f
+same target source files: true
+same baseline source files: true
+same target summary: true
+same rules version: true
+same classification: true
+same measured source data: true
+
+expected differences: inputs.to.commit and command only (the report commit sits on top of the measured candidate and changes docs/metrics plus scripts/metrics).
+PASS measured CLI sources are identical between the report and the candidate commit
+
+verify exit=0

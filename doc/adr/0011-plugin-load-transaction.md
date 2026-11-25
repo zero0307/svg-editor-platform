@@ -1,8 +1,10 @@
 # ADR-0011 插件加载事务、清单校验与 A/B 共享入口
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-25  
 关联：Issue #8（TASK-HOST-01）；需求条目 EXT-01、LOAD-01、LOAD-02、LOAD-03、LOAD-04；消费者 #14（A/B 组合根）、#17~#20（插件）
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 

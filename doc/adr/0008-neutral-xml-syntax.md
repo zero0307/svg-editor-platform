@@ -1,8 +1,10 @@
 # ADR-0008 中立 XML 语法入口与源码范围约定
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-24  
 关联：Issue #6（TASK-XML-01）；需求条目 BASE-02、VS-02、VS-03；消费者 #11（VSCode Outline）、#13（严格 codec）
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 

@@ -1,61 +1,30 @@
 # 架构决策索引
 
-本文件只做 ADR 导航，不复制决策正文。每项落地时单独创建 ADR，编号只递增、不复用；表中决策主题索引仍是 Proposed 方向，不能据此声明实现完成。
+本文件只做 ADR 导航，不复复制决策正文。编号只递增、不复用；`0013` 未创建（保留编号，不补虚构决策）。状态在 2026-11-25 收口时逐条复核：有实现与真实测试/证据支撑的标 **Accepted**，证据不足的保持 **Proposed** 并写明缺什么。
 
-已建立的 ADR：
+## 已建立
 
-- [ADR-0001 仓库初始化与历史](0001-repository-bootstrap.md)
-- [ADR-0002 CI 与协作配置](0002-ci-and-collaboration.md)
-- [ADR-0003 内核公开契约、四扩展点与只读边界](0003-core-public-contracts.md)
-- [ADR-0007 npm workspaces、构建顺序与包边界检查](0007-workspaces-and-package-boundaries.md)
-- [ADR-0008 中立 XML 语法入口与源码范围约定](0008-neutral-xml-syntax.md)
-- [ADR-0009 VSCode 适配器边界](0009-vscode-adapter-boundary.md)
-- [ADR-0010 DSH 插件边界](0010-dsh-plugin-boundary.md)
-- [ADR-0011 插件加载事务、清单校验与 A/B 共享入口](0011-plugin-load-transaction.md)
-- [ADR-0012 provider 驱动的严格 SVG 读回与匹配](0012-svg-readback-matching.md)
+| 编号                                                        | 决策                                   | 状态         | 依据 / 缺什么                                                                                                                                         |
+| ----------------------------------------------------------- | -------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ADR-0001](0001-repository-bootstrap.md)                    | 保留历史初始化团队开发仓库             | Accepted     | 初始化记录与 Git 历史                                                                                                                                 |
+| [ADR-0002](0002-ci-and-collaboration.md)                    | CI 门槛与公开协作                      | Accepted     | `.github/workflows/ci.yml`、协作配置记录；远程 CI 运行需仓库侧确认                                                                                    |
+| [ADR-0003](0003-core-public-contracts.md)                   | 内核公开契约、四扩展点与只读边界       | Accepted     | `packages/core`、`test/framework-acceptance.test.ts`、[扩展点清单](../evidence/framework/extension-points.md)                                         |
+| [ADR-0004](0004-candidate-transactions-and-structure.md)    | 候选文档事务、属性分派与通用结构策略   | Accepted     | core 事务/结构属性测试、[017](../evidence/acceptance/017-cmd-01.md)/[019](../evidence/acceptance/019-box-01.md)                                       |
+| [ADR-0005](0005-tree-display-and-decoration.md)             | 树展示与行尾装饰管线                   | Accepted     | core 树展示测试、零装饰器字节回放、[020](../evidence/acceptance/020-tree-01.md)                                                                       |
+| [ADR-0006](0006-cli-pluginization-and-composition-roots.md) | 默认命令插件化、A/B 组合根与旧内核迁移 | Accepted     | `apps/cli`、`packages/builtins`、[assembly](../evidence/assembly/README.md) 三组 A/B                                                                  |
+| [ADR-0007](0007-workspaces-and-package-boundaries.md)       | npm workspaces、构建顺序与包边界检查   | Accepted     | `check-architecture` 11 包 0 违规、`test:packages` 310 项                                                                                             |
+| [ADR-0008](0008-neutral-xml-syntax.md)                      | 中立 XML 语法入口与源码范围约定        | Accepted     | `packages/svg-xml` 语法层测试、VSCode Outline 证据                                                                                                    |
+| [ADR-0009](0009-vscode-adapter-boundary.md)                 | VSCode 判定逻辑与宿主适配分离          | Accepted     | 25 项扩展测试、真实 Extension Host 截图                                                                                                               |
+| [ADR-0010](0010-dsh-plugin-boundary.md)                     | DSH 插件与 CLI 插件边界                | **Proposed** | 实现、干净安装/加载/卸载已验；**缺**模型侧真实工具调用（无 `DEEPSEEK_API_KEY`）                                                                       |
+| [ADR-0011](0011-plugin-load-transaction.md)                 | 插件加载事务、清单校验与 A/B 共享入口  | Accepted     | host 39 项故障矩阵、A/B 同路径                                                                                                                        |
+| [ADR-0012](0012-svg-readback-matching.md)                   | provider 驱动的严格 SVG 读回与匹配     | Accepted     | `strict-codec` 36 项、box 往返/降级                                                                                                                   |
+| [ADR-0014](0014-box-structure-and-readback.md)              | box 复合图形的结构、属性语义与读回     | Accepted     | box 30 项、[019](../evidence/acceptance/019-box-01.md)                                                                                                |
+| [ADR-0015](0015-dirty-semantics.md)                         | 内容脏状态、祖先传播与标签顺序         | Accepted     | tree-modified 26 项、[020](../evidence/acceptance/020-tree-01.md)                                                                                     |
+| [ADR-0016](0016-metrics-rules-and-classification.md)        | 指标规则、解析器与路径分类             | Accepted     | [docs/metrics](../../docs/metrics/README.md)、[012](../evidence/acceptance/012-met-01.md)、[metrics-recheck](../evidence/release/metrics-recheck.log) |
+| [ADR-0017](0017-polymorphic-command-feedback.md)            | 复合图形的多态命令反馈                 | Accepted     | core 反馈测试、box 会话、[019](../evidence/acceptance/019-box-01.md)                                                                                  |
 
-后续编号继续递增、已占用编号不复用：0004~0006 未占用；其他主题使用未占用编号并与负责人确认，避免多人同时占用。使用下方模板；属性和标签章节明确要求记录的内容应全部覆盖，不能只凑够三篇。
+## 使用方式
 
-| 决策主题索引 | 决策                     | 推荐方向                                                                             | 需要验证的代价与边界                                                  |
-| ------------ | ------------------------ | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
-| DEC-01       | 仓库、模块与依赖边界     | 保留原历史；npm workspaces；core公开抽象，host装配，插件独立                         | 新旧仓库交付一致；跨包exports与依赖检查                               |
-| DEC-02       | 属性处理器契约与编辑事务 | 对工作副本执行；多处理器命中直接拒绝；成功后一次提交与一次undo                       | handles纯查询；部分修改抛错不改变文档或历史；不转默认属性处理         |
-| DEC-03       | box读回和结构保护        | 缺插件降级g；插件存在但结构坏则拒绝整次读入；必要子部件不可删除/移走                 | 重复ID始终拒绝；整体delete和嵌套合法；clone保留插件类型               |
-| DEC-04       | dirty与标签顺序          | 与保存快照比较；新建文档以空文档为比较基线；新节点立即标记，祖先传播；按注册顺序拼接 | undo回保存点清除*；init/read/save屏障兼容Phase1；无标签输出逐字节不变 |
-| DEC-05       | 插件加载事务和清单校验   | activate写暂存注册表；核对四类别名称集合和重复名后原子发布                           | A/B同路径；失败撤销注册与订阅；后续插件仍加载                         |
-| DEC-06       | XML复用边界              | 通用语法/位置层可复用，CLI领域导入和VSCode Outline分别适配                           | 保留无ID、任意标签与源码range；不把CLI规范化树用于点击定位            |
-| DEC-07       | DSH MVP和版本边界        | 工具插件+SVG服务端口；固定DSH发行版或commit                                          | DSH生命周期独立；fake可测、实际profile安装卸载验证                    |
-
-DEC-04 中“undo回保存点”指保存后又编辑、再undo回到该状态；不能绕过 Phase 1 保存操作本身设置的撤销屏障。dirty规则为推荐方案，应与树标签板块的最终契约同步。
-
-单篇可复制模板见 [TEMPLATE.md](TEMPLATE.md)。
-
-## 单篇模板
-
-```markdown
-# ADR-NNN 标题
-
-状态：Proposed / Accepted / Superseded
-日期：YYYY-MM-DD
-关联：Issue、PR、需求条目
-
-## 背景
-
-实际问题、课程约束和变化点。
-
-## 决策
-
-公开接口、调用顺序、失败与恢复行为。
-
-## 备选与取舍
-
-考虑过的方案，选择理由和承担的代价。
-
-## 验证
-
-对应测试、反例、证据路径和最终代码位置。
-
-## 后续
-
-需要调整的条件；如被替代，链接后继ADR。
-```
+- 新增决策使用下一个未占用编号（当前下一个是 `0018`；`0013` 保留为空号）。
+- 已接受决策变化时新增 ADR 并交叉引用，不悄悄改写原决策；被替代的标 `Superseded` 并链接后继。
+- 单篇模板见 [TEMPLATE.md](TEMPLATE.md)；每条 ADR 的“验证”节写明测试、反例、证据路径与最终代码位置。

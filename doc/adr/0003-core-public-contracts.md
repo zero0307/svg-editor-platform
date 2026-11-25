@@ -1,8 +1,10 @@
 # ADR-0003 内核公开契约、四扩展点与只读边界
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-24  
 关联：Issue #2；需求条目 BASE-02、EXT-01、EXT-02、ATTR-02、LOAD-01；消费者 #5、#7、#8、#10、#13、#14、#16、#17~#20
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 

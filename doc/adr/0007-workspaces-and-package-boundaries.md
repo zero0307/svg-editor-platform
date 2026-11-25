@@ -1,8 +1,10 @@
 # ADR-0007 npm workspaces、构建顺序与包边界检查
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-24  
 关联：Issue #5（TASK-ENG-01）；需求条目 BASE-01、BASE-02、EXT-01；消费者 #6、#7、#8、#9、#10、#13、#14、#17~#20
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 

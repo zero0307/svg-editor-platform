@@ -1,8 +1,10 @@
 # ADR-0015 内容脏状态、祖先传播与标签顺序
 
-状态：Proposed  
+状态：Accepted  
 日期：2026-11-25  
 关联：Issue #20（TASK-TREE-01）；需求条目 TREE-01、TREE-02、TREE-03、BASE-02；消费者 #21（A/B 回放）、#22（p2）
+
+验证证据（2026-11-25 收口复核）：实现与测试见 doc/evidence/acceptance/、doc/evidence/framework/、doc/evidence/assembly/；状态由 TASK-QA-03 复核后更新。
 
 ## 背景
 

@@ -32,24 +32,37 @@
 
 证据在 [evidence/assembly/README.md](evidence/assembly/README.md)：`sha.json`、`diff-C_A.txt`、`diff-C_B.txt`、`zero-change-check.txt`、三组 A/B 日志、help 顺序一致性、空配置 4/4、以及 C_A/C_B 在 F 上不可构建的真实失败日志（`BoxShape.creationParts` 依赖 F 之后的多态反馈补丁 `df4fd1d`；按授权不改 F 内核，故 C_A/C_B 仅作 diff 证据）。证据分支只提交、未推送、未合并、未打 tag。
 
+## Phase 2 收口（#22，TASK-QA-03）
+
+| 项目         | 值                                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- |
+| 被测候选     | `fb0427ad5895eaaebb13a5c18be8cb19ffa30183`（`fb0427a`）                                                             |
+| 指标提交     | `412727fdab1a11d1d6951f22a256387415bc3725`（`412727f`，只含 `docs/metrics/` 与发布前证据）                          |
+| 指标产物     | [docs/metrics/README.md](../docs/metrics/README.md)：`e5621a6-to-fb0427a.json`、`summary.md`                        |
+| 源码复核     | [release/metrics-recheck.log](evidence/release/metrics-recheck.log)：报告提交与候选提交的 CLI 源码/指标一致（PASS） |
+| 发布清单     | [release-checklist.md](release-checklist.md)（候选 SHA、复跑命令、证据 refs、p2 步骤；**p2 未创建**）               |
+| 收口复核记录 | [records/2026-11-25-quality-closeout.md](records/2026-11-25-quality-closeout.md)（复核清单与 AI 纠错）              |
+
 ## 证据目录
 
-| 里程碑             | 路径                                                                             | 内容                                                                                                                                        |
-| ------------------ | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Phase 1 基线       | [evidence/baseline/README.md](evidence/baseline/README.md)                       | golden、四会话退出码、规格差异、生成与比较日志                                                                                              |
-| M2 框架冻结（F）   | [evidence/framework/extension-points.md](evidence/framework/extension-points.md) | 四扩展点契约/调用位置/实现/缺省/错误测试                                                                                                    |
-| M2 环境            | [evidence/framework/environment.json](evidence/framework/environment.json)       | Node/npm/TypeScript/OS、`.nvmrc` 差异、实测命令                                                                                             |
-| M2 检查            | [evidence/framework/check.log](evidence/framework/check.log)                     | `npm run check` 原始输出                                                                                                                    |
-| M2 指标            | [evidence/framework/metrics-v1.log](evidence/framework/metrics-v1.log)           | `final^{commit}` → F 的指标生成日志                                                                                                         |
-| M3 stats（#17）    | [evidence/acceptance/017-cmd-01.md](evidence/acceptance/017-cmd-01.md)           | stats 插件逐条验收、A/B 字节一致、禁用与无文档行为                                                                                          |
-| M3 dir（#18）      | [evidence/acceptance/018-cmd-02.md](evidence/acceptance/018-cmd-02.md)           | dir 插件逐条验收、真实目录组合、A/B 字节一致                                                                                                |
-| M3 box（#19）      | [evidence/acceptance/019-box-01.md](evidence/acceptance/019-box-01.md)           | box 三类贡献逐条验收、transcript 回放、读回/降级、结构保护                                                                                  |
-| M3 tree（#20）     | [evidence/acceptance/020-tree-01.md](evidence/acceptance/020-tree-01.md)         | modified-star 状态机、保存/撤销、双标签顺序、禁用与 A/B                                                                                     |
-| M3 接入证据（#21） | [evidence/assembly/README.md](evidence/assembly/README.md)                       | F/C_A/C_B/I、接入 diff、零改动检查、三会话 A/B 逐字节、空配置 4/4、C_A/C_B 不可构建说明                                                     |
-| DSH（#4/#16）      | [evidence/acceptance/016-dsh-02.md](evidence/acceptance/016-dsh-02.md)           | `svg_inspect`/`svg_create_flowchart` 逐条验收、真实宿主加载/卸载、干净目录安装与 sha256                                                     |
-| DSH 安装证据       | [evidence/dsh/install/README.md](evidence/dsh/install/README.md)                 | 命令、退出码、`--dump-config`、加载日志、产物哈希                                                                                           |
-| 指标产物           | [docs/metrics/README.md](../docs/metrics/README.md)                              | `e5621a6-to-a21f758.json`、`summary.md`、重算说明                                                                                           |
-| 节点验收           | `doc/evidence/acceptance/`                                                       | `001-qa-01`、`004-dsh-01`、`012-met-01`、`015-frame-01`、`016-dsh-02`、`017-cmd-01`、`018-cmd-02`、`019-box-01`、`020-tree-01`、`021-qa-02` |
+| 里程碑               | 路径                                                                             | 内容                                                                                                                                        |
+| -------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Phase 1 基线         | [evidence/baseline/README.md](evidence/baseline/README.md)                       | golden、四会话退出码、规格差异、生成与比较日志                                                                                              |
+| M2 框架冻结（F）     | [evidence/framework/extension-points.md](evidence/framework/extension-points.md) | 四扩展点契约/调用位置/实现/缺省/错误测试                                                                                                    |
+| M2 环境              | [evidence/framework/environment.json](evidence/framework/environment.json)       | Node/npm/TypeScript/OS、`.nvmrc` 差异、实测命令                                                                                             |
+| M2 检查              | [evidence/framework/check.log](evidence/framework/check.log)                     | `npm run check` 原始输出                                                                                                                    |
+| M2 指标              | [evidence/framework/metrics-v1.log](evidence/framework/metrics-v1.log)           | `final^{commit}` → F 的指标生成日志                                                                                                         |
+| M3 stats（#17）      | [evidence/acceptance/017-cmd-01.md](evidence/acceptance/017-cmd-01.md)           | stats 插件逐条验收、A/B 字节一致、禁用与无文档行为                                                                                          |
+| M3 dir（#18）        | [evidence/acceptance/018-cmd-02.md](evidence/acceptance/018-cmd-02.md)           | dir 插件逐条验收、真实目录组合、A/B 字节一致                                                                                                |
+| M3 box（#19）        | [evidence/acceptance/019-box-01.md](evidence/acceptance/019-box-01.md)           | box 三类贡献逐条验收、transcript 回放、读回/降级、结构保护                                                                                  |
+| M3 tree（#20）       | [evidence/acceptance/020-tree-01.md](evidence/acceptance/020-tree-01.md)         | modified-star 状态机、保存/撤销、双标签顺序、禁用与 A/B                                                                                     |
+| M3 接入证据（#21）   | [evidence/assembly/README.md](evidence/assembly/README.md)                       | F/C_A/C_B/I、接入 diff、零改动检查、三会话 A/B 逐字节、空配置 4/4、C_A/C_B 不可构建说明                                                     |
+| DSH（#4/#16）        | [evidence/acceptance/016-dsh-02.md](evidence/acceptance/016-dsh-02.md)           | `svg_inspect`/`svg_create_flowchart` 逐条验收、真实宿主加载/卸载、干净目录安装与 sha256                                                     |
+| DSH 安装证据         | [evidence/dsh/install/README.md](evidence/dsh/install/README.md)                 | 命令、退出码、`--dump-config`、加载日志、产物哈希                                                                                           |
+| M4 发布前检查（#22） | [evidence/release/README.md](evidence/release/README.md)                         | 干净安装、根检查、视觉、CLI 冒烟、最终候选指标、报告提交源码复核（PASS）                                                                    |
+| 指标产物             | [docs/metrics/README.md](../docs/metrics/README.md)                              | `e5621a6-to-fb0427a.json`（最终候选）、`summary.md`、重算说明                                                                               |
+| 收口复核             | [records/2026-11-25-quality-closeout.md](records/2026-11-25-quality-closeout.md) | 证据复核清单、AI 纠错、未完成项                                                                                                             |
+| 节点验收             | `doc/evidence/acceptance/`                                                       | `001-qa-01`、`004-dsh-01`、`012-met-01`、`015-frame-01`、`016-dsh-02`、`017-cmd-01`、`018-cmd-02`、`019-box-01`、`020-tree-01`、`021-qa-02` |
 
 ## 命令
 
@@ -64,6 +77,10 @@ node scripts/assembly/diff-evidence.mjs --framework a21f758 --code evidence/box-
   --config evidence/box-config --integration d2b5e23
 node scripts/assembly/replay.mjs --entry apps/cli/dist/main.js --config plugins.config.json \
   --integration d2b5e23 --out doc/evidence/assembly
+node scripts/metrics/metrics.mjs --from 'final^{commit}' --to fb0427a --out docs/metrics
+node scripts/metrics/metrics.mjs --from 'final^{commit}' --to 412727f --out artifacts/metrics-recheck
+node scripts/metrics/verify-report.mjs --report docs/metrics/e5621a6-to-fb0427a.json \
+  --candidate artifacts/metrics-recheck/e5621a6-to-412727f.json
 ```
 
 Phase 1 回放与可选插件：A 默认入口已装入 `stats`/`dir`/`box`/`tree-modified`，`compare.mjs` 因此显式以空配置（B 模式）运行，使 `dir` 会话仍断言 Phase 1 的 `error: unknown command: dir`；`record.mjs` 录制 `final` 时不传 `--config`。目录端口与多态反馈补丁见“F 后框架补丁”行；`#19` box transcript 回放固定使用 stats/dir/box 插件集，避免 `modified-star` 后缀改变冻结字节。
@@ -74,7 +91,8 @@ Windows `win32 x64`，Node `v26.13.0`，npm `12.2.1`，TypeScript `7.0.2`。`.nv
 
 ## 未执行项
 
-- `#22` 的 p2 指标（终版）、发布清单与 p2 tag（`#21` 的 C_A/C_B 与完整 A/B 回放已在本索引 M3 行完成；证据分支等待负责人推送并做一次新克隆检出验证）。
+- `p2` 标签、`main` 合并与远程推送：按用户要求未执行；候选 `fb0427a`、指标提交 `412727f` 与复跑命令已写入 [release-checklist.md](release-checklist.md)，等待确认。
+- C_A/C_B 证据分支已由负责人推送到 `origin`（`origin/evidence/box-code`、`origin/evidence/box-config` 可见）；收口时仍**未做新克隆检出验证**，且两分支在 F 上不可构建（缺 #19 后续框架补丁），仅作 diff 证据。
 - **可选插件的已知语义差异**：多态命令反馈已由 [ADR-0017](adr/0017-polymorphic-command-feedback.md) 补丁实现（box 输出 `box#…`、`cannot ungroup composite shape: <id>`）；undo 仍为统一的 `undone: <原消息>`，P1 §6.1B 的 `moved back by` 等示意文案不实现。dirty 状态不跨进程持久化（[ADR-0015](adr/0015-dirty-semantics.md)）。
 - 真实 VSCode Extension Host 安装演示（由 V 板块单独记录）；真实 DSH 宿主的加载/卸载与干净目录安装已验（`evidence/dsh/install/`），但**模型侧真实工具调用未执行**（本机无 `DEEPSEEK_API_KEY`，`headless` 在模型调用前退出）。
-- 跨平台与 Node 22/24 检查；`npm run verify:visual` 未作为冻结门槛重跑。
+- 跨平台与 Node 22/24 未验证；`npm run verify:visual` 已在候选 `fb0427a` 上重跑（[release 证据](evidence/release/README.md)），但未作为每个节点的门槛。
