@@ -10,6 +10,23 @@ const invisible = (e: Element) =>
   get(e, 'display') === 'none' ||
   get(e, 'visibility') === 'hidden' ||
   /(?:^|;)\s*(?:display\s*:\s*none|visibility\s*:\s*hidden)\b/i.test(get(e, 'style'));
+export function artworkTransform(root: Element, shape: Element) {
+  const transforms = [];
+  for (let e: Element | null = shape; e && e !== root; e = e.parentNode as Element | null) {
+    if (e.namespaceURI !== svg || (e !== shape && e.localName !== 'g') || invisible(e)) return;
+    const transform = get(e, 'transform');
+    if (transform) {
+      if (
+        !/^(?:\s*(?:matrix|translate|scale|rotate|skewX|skewY)\([\d.,eE+\s-]+\)\s*,?\s*)+$/.test(
+          transform,
+        )
+      )
+        return;
+      transforms.unshift(transform);
+    }
+  }
+  return transforms.join(' ');
+}
 function geometry(shape: Element) {
   const kind = shape.localName;
   const keys =
@@ -107,21 +124,9 @@ export function artworkTargets(root: Element) {
     const body = bodies.reduce((best, b) => (b.area >= best.area ? b : best));
     const rows = textRows(g);
     if (!rows.length) return [];
-    const transforms = [];
-    for (let e: Element | null = body.el; e && e !== root; e = e.parentNode as Element | null) {
-      if ((e !== body.el && e.localName !== 'g') || invisible(e)) return [];
-      const transform = get(e, 'transform');
-      if (transform) {
-        if (
-          !/^(?:\s*(?:matrix|translate|scale|rotate|skewX|skewY)\([\d.,eE+\s-]+\)\s*,?\s*)+$/.test(
-            transform,
-          )
-        )
-          return [];
-        transforms.unshift(transform);
-      }
-    }
-    if (transforms.length) body.geometry.transform = transforms.join(' ');
+    const transform = artworkTransform(root, body.el);
+    if (transform === undefined) return [];
+    if (transform) body.geometry.transform = transform;
     const primary = rows.reduce((best, item) => (item.rank > best.rank ? item : best));
     return [
       {

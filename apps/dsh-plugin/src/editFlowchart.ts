@@ -13,6 +13,7 @@ import { indexFlowchart, validPortName, type ChartNode, type GraphEdge } from '.
 import { SvgTools } from './SvgTools.js';
 import { checkInsertSpace } from './editGeometry.js';
 import { renameLine } from './renameLine.js';
+import { verifyEditStyle, type EditConnectorStyle } from './curveRoute.js';
 import { changePreview } from './changePreview.js';
 
 export interface EditRequest {
@@ -26,6 +27,7 @@ export interface EditRequest {
   label?: string;
   labelLine?: number;
   edgeId?: string;
+  connectorStyle?: EditConnectorStyle;
   x?: number;
   y?: number;
   width?: number;
@@ -39,6 +41,8 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
     (req.previewPath && [req.path, req.output].includes(req.previewPath))
   )
     throw new RangeError('Choose distinct .svg paths for the original, output and preview.');
+  if (req.connectorStyle && req.operation !== 'reconnect')
+    throw new RangeError('connectorStyle is only valid for reconnect.');
   if (req.labelLine !== undefined && req.operation !== 'rename')
     throw new RangeError('labelLine is only valid for rename.');
   const before = await files.read(req.path);
@@ -74,6 +78,7 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
   let rename: ChartNode | undefined;
   let lineEdit: ReturnType<typeof renameLine> | undefined;
   let edgeColor: string | undefined;
+  let previousRoute: Element[] = [];
   const fresh = (base: string) => {
     let result = base,
       i = 1;
@@ -145,6 +150,9 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
     context.push(resolve(old.from), resolve(old.to), from, to);
     removeEdge(old);
     if (req.operation === 'reconnect') {
+      previousRoute = elements(byId(old.id)).filter(
+        (e) => e.getAttribute('data-dsh-part') === 'route',
+      );
       addEdges.push({ ...old, from: from.id, to: to.id });
     } else if (req.operation === 'insert') {
       if (!req.nodeId || !req.label?.trim() || original.has(req.nodeId) || req.from || req.to)
@@ -203,6 +211,15 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
       height: Number(root.getAttribute('height')),
       nodes: kept,
       edges: addEdges,
+      connectorStyle:
+        req.connectorStyle === 'straight'
+          ? 'angular'
+          : (req.connectorStyle ??
+            (previousRoute.some((e) => e.localName === 'path')
+              ? previousRoute.length === 1
+                ? 'arc'
+                : 'rounded'
+              : 'angular')),
     });
   const generated = lineEdit ? root : parseSvg(scratch.contents());
   const resultElements = new Map(elements(generated).map((e) => [e.getAttribute('id'), e]));
@@ -256,7 +273,25 @@ export async function editFlowchart(files: FileStore, req: EditRequest) {
     const anchor = top([...removedEdges][0]!);
     for (const edge of addEdges) {
       const g = resultElements.get(edge.id)!;
+      if (req.operation === 'reconnect') {
+        const route = elements(g).filter((e) => e.getAttribute('data-dsh-part') === 'route');
+        verifyEditStyle(
+          req.connectorStyle,
+          route.length,
+          route.filter((e) => e.localName === 'path').length,
+        );
+      }
       for (const part of elements(g)) {
+        if (previousRoute.length && part.hasAttribute('stroke')) {
+          const old = previousRoute[0]!;
+          if (old.hasAttribute('stroke-width'))
+            part.setAttribute('stroke-width', old.getAttribute('stroke-width')!);
+          if (
+            part.getAttribute('data-dsh-part') === 'route' &&
+            old.hasAttribute('stroke-dasharray')
+          )
+            part.setAttribute('stroke-dasharray', old.getAttribute('stroke-dasharray')!);
+        }
         generatedId(part);
         if (edgeColor && part.hasAttribute('stroke')) part.setAttribute('stroke', edgeColor);
         if (edgeColor && part.localName === 'text') part.setAttribute('fill', edgeColor);

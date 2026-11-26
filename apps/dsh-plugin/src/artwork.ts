@@ -1,12 +1,20 @@
 import { createHash } from 'node:crypto';
 import type { FileStore } from '@svgframe/core';
 import { parseSvg } from './chartDocument.js';
+import { edgeTargets } from './edgeTargets.js';
+import type { EditConnectorStyle } from './curveRoute.js';
+import { reconnectArtwork } from './artworkReconnect.js';
 import { artworkTargets } from './artworkTargets.js';
 import { replaceLeafText } from './renameLine.js';
 
 interface Request {
   path: string;
-  operation: 'inspect' | 'rename';
+  operation: 'inspect' | 'rename' | 'reconnect';
+  edgeId?: string;
+  originalGeometry?: string;
+  connectorStyle?: EditConnectorStyle;
+  from?: string;
+  to?: string;
   output?: string;
   nodeId?: string;
   textIndex?: number;
@@ -14,34 +22,102 @@ interface Request {
   label?: string;
 }
 
+async function saveChecked(
+  files: FileStore,
+  path: string,
+  output: string,
+  before: string,
+  after: string,
+) {
+  await files.write(output, after);
+  const [saved, original] = await Promise.all([files.read(output), files.read(path)]);
+  if (saved !== after || original !== before)
+    throw new Error('Artwork changed during disk verification.');
+  return {
+    otherBytesUnchanged: true,
+    diskReadBack: {
+      originalUnchanged: true,
+      outputSha256: createHash('sha256').update(saved).digest('hex'),
+    },
+  };
+}
+type Saved = Awaited<ReturnType<typeof saveChecked>> & { path: string };
 type ArtworkResult =
   | {
       path: string;
       selectableNodes: number;
+      selectableEdges: number;
       nodes: { nodeId: string; title: string; textIndex: number; lines: string[] }[];
+      edges: {
+        edgeId: string;
+        title: string;
+        originalGeometry: string;
+        reconnectable: boolean;
+        from: string | null;
+        to: string | null;
+      }[];
     }
-  | {
-      path: string;
-      nodeId: string;
-      textIndex: number;
-      savedLabel: string;
-      otherBytesUnchanged: boolean;
-      diskReadBack: { originalUnchanged: boolean; outputSha256: string };
-    };
+  | (Saved & { nodeId: string; textIndex: number; savedLabel: string })
+  | (Saved & { edgeId: string; from: string; to: string });
 export async function artwork(files: FileStore, req: Request): Promise<ArtworkResult> {
+  if (req.connectorStyle && req.operation !== 'reconnect')
+    throw new RangeError('connectorStyle is only valid for reconnect.');
   const before = await files.read(req.path),
-    nodes = artworkTargets(parseSvg(before));
-  if (req.operation === 'inspect')
+    root = parseSvg(before),
+    nodes = artworkTargets(root);
+  if (req.operation === 'inspect') {
+    const edges = edgeTargets(root, nodes).filter((e) => e.artwork);
     return {
       path: req.path,
       selectableNodes: nodes.length,
+      selectableEdges: edges.length,
       nodes: nodes.map((n) => ({
         nodeId: n.id,
         title: n.title,
         textIndex: n.textIndex,
         lines: n.rows.map((r) => r.value),
       })),
+      edges: edges.map((e) => {
+        const { from, to } = e;
+        return {
+          edgeId: e.id,
+          title: e.title,
+          originalGeometry: e.originalGeometry!,
+          reconnectable: !!e.reconnectable,
+          from: from ?? null,
+          to: to ?? null,
+        };
+      }),
     };
+  }
+  if (req.operation === 'reconnect') {
+    if (!req.output || req.output === req.path) throw new RangeError('Choose a new output path.');
+    const edge = edgeTargets(root, nodes).find((e) => e.artwork && e.id === req.edgeId);
+    if (!edge || !req.originalGeometry || edge.originalGeometry !== req.originalGeometry)
+      throw new RangeError('The selected connector no longer matches. Inspect and pick it again.');
+    const changed = reconnectArtwork(
+      before,
+      root,
+      edge,
+      nodes,
+      req.from,
+      req.to,
+      req.connectorStyle,
+    );
+    const savedEdge = edgeTargets(parseSvg(changed.source), nodes).find((e) => e.id === edge.id);
+    if (
+      !savedEdge ||
+      !Object.entries(changed.values).every(([k, v]) => savedEdge.element.getAttribute(k) === v)
+    )
+      throw new RangeError('The selected route did not round-trip.');
+    return {
+      path: req.output,
+      edgeId: edge.id,
+      from: changed.from,
+      to: changed.to,
+      ...(await saveChecked(files, req.path, req.output, before, changed.source)),
+    };
+  }
   const { output, nodeId, textIndex, originalText, label } = req;
   if (
     !output ||
@@ -71,19 +147,11 @@ export async function artwork(files: FileStore, req: Request): Promise<ArtworkRe
   const reread = artworkTargets(parseSvg(after)).find((n) => n.id === nodeId);
   if (reread?.rows[textIndex! - 1]?.value !== label.trim())
     throw new RangeError('The replacement did not round-trip in the original SVG.');
-  await files.write(output, after);
-  const [saved, original] = await Promise.all([files.read(output), files.read(req.path)]);
-  if (saved !== after || original !== before)
-    throw new Error('Artwork changed during disk verification.');
   return {
     path: output,
     nodeId,
     textIndex: textIndex!,
     savedLabel: label,
-    otherBytesUnchanged: true,
-    diskReadBack: {
-      originalUnchanged: true,
-      outputSha256: createHash('sha256').update(saved).digest('hex'),
-    },
+    ...(await saveChecked(files, req.path, output, before, after)),
   };
 }

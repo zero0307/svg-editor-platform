@@ -1,12 +1,16 @@
 # DeepSeek Harness SVG 插件
 
-当前开发版为 0.11.1。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 可直接根据节点、标签和连线排版并生成可编辑 SVG，也支持显式坐标，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
+当前开发版为 0.13.0。在 DSH 会话中，`svg_layout_flowchart` 将节点与有向边排成流程图，`svg_create_flowchart` 可直接根据节点、标签和连线排版并生成可编辑 SVG，也支持显式坐标，`svg_inspect` 读回画布、按文档顺序排列的结构、类型统计和导入警告。工具使用该会话的工作目录和 DSH 文件服务。生成目标须为新 `.svg` 文件，同名文件由宿主原子保护。
 
 使用局部编辑、独立条件核验和前后预览，见[插件用法](../apps/dsh-plugin/README.md#在原图上修改并核验)。
 
 桌面预览支持把点中的节点引用到当前会话。0.9.2 的五轮同名节点实测均首轮精确改对。[桌面对照报告](records/2026-11-25-dsh-desktop-selection.md)
 
 ## 保留原稿的点选
+
+0.13.0 在选中线后提供起点、终点与线型三个控件。在图上选模块和线型后，可在同一轮对话里另存修改结果。[连线编辑设计与实际读回](records/2026-11-26-dsh-edge-selection.md#单条连线的编辑方案与-0130-实测)
+
+0.12.0 可以直接点下一个节点或连线，当前会话内仅保留最后一个 SVG 选区。原生流程图引用整条逻辑边，自由 SVG 支持重连带独立箭头标记的线。升级桌面插件后完整退出应用再打开，以便前端和模型工具一起更新。[操作示例](../apps/dsh-plugin/README.md#在桌面预览中点选节点与连线) · [桌面复验](records/2026-11-26-dsh-edge-selection.md)
 
 0.11.1 的桌面预览直接显示原 SVG，独立的点击层识别图中的业务节点。用 `svg_artwork` 检查或修改选中文字时，原有 CSS、图标、阴影与连线保留。复验用的是无插件组实际绘制的三份 SVG。[插件使用示例](../apps/dsh-plugin/README.md#保留自由设计的原稿在桌面点选改字) · [测试记录](records/2026-11-25-dsh-presentation.md)
 
@@ -132,7 +136,7 @@ npm run verify:visual
 npm ci
 npm pack --workspace dsh-svg-editor --pack-destination .
 dsh --profile svg-demo --from-default-profile sdk-minimal --dump-config
-dsh plugin --profile svg-demo add ./dsh-svg-editor-0.11.1.tgz
+dsh plugin --profile svg-demo add ./dsh-svg-editor-0.13.0.tgz
 dsh --profile svg-demo --dump-config
 ```
 
@@ -188,12 +192,12 @@ npm run verify:dsh
 
 2026-11-19 在 Apple Silicon Mac 上使用官方 DeepSeek Harness Desktop 0.2.2-rc.5、插件 `dsh-svg-editor@0.2.0` 和模型 DeepSeek-V4.1-Flash 完成。桌面应用使用自己的 `desktop` profile。[官方桌面版说明](https://github.com/deepseek-ai/deepseek-harness/blob/master/apps/desktop/README.zh.md#bundled-command-runtime)
 
-以下命令展示在当前分支安装 0.11.1 的方法。表中记录对应当时实测的 0.2.0。
+以下命令展示在当前分支安装 0.13.0 的方法。表中记录对应当时实测的 0.2.0。
 
 1. 在仓库根目录按上文安装依赖并运行 `npm pack --workspace dsh-svg-editor --pack-destination .`。首次使用桌面版时先启动一次，再用 ⌘Q 退出。从同一目录执行以下命令，将验收包安装到桌面版。
 
    ```sh
-   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.11.1.tgz"
+   "/Applications/DeepSeek Harness.app/Contents/Resources/runtime/cli/bin/dsh" plugin --profile desktop add "$PWD/dsh-svg-editor-0.13.0.tgz"
    ```
 
 2. 重新打开桌面应用，确认插件已启用并选择可用模型。在可写的工作区打开会话。首次复验请选择尚无 `桌面验收.svg` 的目录，后续复跑也可以换新的工作区。

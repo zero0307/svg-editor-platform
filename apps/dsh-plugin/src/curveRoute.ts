@@ -107,3 +107,20 @@ export function shapeRoute(
   line(last);
   return spans;
 }
+
+export type EditConnectorStyle = ConnectorStyle | 'straight';
+
+// Creation may choose a fallback; an explicit edit must actually produce the requested shape.
+export function verifyEditStyle(
+  style: EditConnectorStyle | undefined,
+  parts: number,
+  curves: number,
+) {
+  if (!style) return;
+  if (style === 'straight' && (parts !== 1 || curves !== 0))
+    throw new RangeError('A clear straight connection is unavailable. Choose angular or rounded.');
+  if (style === 'arc' && (parts !== 1 || curves !== 1))
+    throw new RangeError('A clear single arc is unavailable. Choose rounded or another endpoint.');
+  if (style === 'rounded' && curves === 0)
+    throw new RangeError('No clear corner to round. Choose arc for a curved direct connection.');
+}

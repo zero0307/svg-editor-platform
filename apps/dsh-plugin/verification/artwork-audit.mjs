@@ -5,6 +5,7 @@ import { readFile } from 'node:fs/promises';
 import { Resvg } from '@resvg/resvg-js';
 import { parseSvg } from '../dist/src/chartDocument.js';
 import { artworkTargets } from '../dist/src/artworkTargets.js';
+import { edgeTargets } from '../dist/src/edgeTargets.js';
 import { artwork } from '../dist/src/artwork.js';
 const font =
   { darwin: 'PingFang SC', win32: 'Microsoft YaHei', linux: 'DejaVu Sans' }[process.platform] ??
@@ -43,18 +44,31 @@ for (const [sample, id] of cases) {
     originalText: target.title,
     label: 'QA OK',
   });
-  const active = nodes
-    .map(
-      (n) =>
-        '<' +
-        n.shape +
-        ' ' +
-        Object.entries(n.geometry)
-          .map(([k, v]) => k + '="' + v + '"')
-          .join(' ') +
-        ' fill="transparent" stroke="none"/>',
-    )
+  const edgeOverlay = edgeTargets(root, nodes)
+    .flatMap((edge) => edge.parts)
+    .map(({ shape, geometry }) => {
+      const layer = root.ownerDocument.createElementNS(root.namespaceURI, shape);
+      for (const [key, value] of Object.entries(geometry)) layer.setAttribute(key, value);
+      layer.setAttribute('fill', 'none');
+      layer.setAttribute('stroke', 'transparent');
+      layer.setAttribute('stroke-width', '14');
+      return layer.toString();
+    })
     .join('');
+  const active =
+    edgeOverlay +
+    nodes
+      .map(
+        (n) =>
+          '<' +
+          n.shape +
+          ' ' +
+          Object.entries(n.geometry)
+            .map(([k, v]) => k + '="' + v + '"')
+            .join(' ') +
+          ' fill="transparent" stroke="none"/>',
+      )
+      .join('');
   const wrapper = (overlay) =>
     '<svg xmlns="http://www.w3.org/2000/svg" width="' +
     width +
