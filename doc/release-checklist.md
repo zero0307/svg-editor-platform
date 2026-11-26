@@ -64,6 +64,12 @@ node scripts/assembly/diff-evidence.mjs --framework a21f758 --code evidence/box-
 4. 在收尾提交上创建**附注标签** `p2`：`git tag -a p2 -m "Phase 2 acceptance"`，推送 `main` 与 `p2` 到交付仓库（同一远程要求见 `CONTRIBUTING.md`）。
 5. 推送后重新跑一次指标，绑定 `p2` 标签对象与解引用 SHA，再核对评阅访问与最终证据索引。
 
+## 5.1 合并前待办：`exit` 命令（用户要求）
+
+- 合并到 `main` / 创建 `p2` **之前必须完成**：交互式 `svg>` 下输入 `exit` 立即退出（等价 EOF），脚本模式遇到 `exit` 停止后续命令，`help` 列出 `exit`，并有自动化测试。
+- 细节与实现建议见 [开发日志 §12](records/2026-11-25-development-log.md)；完成后重跑 `npm run check` 并更新本节状态。
+- 截至本清单生成时：**未实现**。
+
 ## 6. 未完成与风险
 
 - `p2`、`main` 合并、远程推送均未执行（用户要求）。

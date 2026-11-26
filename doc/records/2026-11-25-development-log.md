@@ -176,3 +176,13 @@
 - **p2 发布步骤（未执行，待用户确认）**：确认后把 `integration/phase2` 合并到 `main` → 在发布提交上创建附注标签 `p2`（不移动 `final`）→ 推送 `main` 与 `p2` → 用 `node scripts/metrics/metrics.mjs --from 'final^{commit}' --to 'p2^{commit}'` 重跑并在 p2 上核对源码散列 → 更新 `doc/release-checklist.md` 的最终 SHA。详见 [发布清单](../release-checklist.md)。
 - **仍可改进项**：`C_A`/`C_B` 在 F 上因缺少 `creationParts()` 钩子不可构建（仅 diff 证据）；可用 `0df080b` 的 pre-hook 插件实现重做，或把框架补丁纳入新 F′ 后重建。DSH 模型侧真实调用需 API key；跨平台/Node 22–24/CI 未复跑；VSCode 编辑后 `Ctrl+Z` 刷新未判定。
 - 工作树干净；所有子智能体空闲；本轮到此结束。
+
+## 12. 合并前待办：`exit` 命令（用户要求，2026-11-26）
+
+- 需求：交互式 `svg>` 模式下新增 `exit` 命令，**输入 `exit` 后立即退出 REPL**（等价于 EOF/Ctrl+Z），退出码 0；`--script` 模式遇到 `exit` 停止执行后续命令；`help` 中列出 `exit`；未初始化文档时也可用；A/B 两种装配行为一致。
+- 建议实现（合并到 `main` / 创建 `p2` 之前完成，作为 #14 CLI 的后续小提交，独立验收记录）：
+  - 首选：core 增加可识别的终止结果（例如 `CommandOutput` 增加 `CommandTermination` 类型），builtins 注册 `ExitCommand`（`requiresDocument:false`、无副作用），`Repl` 识别终止结果后停止并成功返回；避免在 REPL 按命令名写特例。
+  - 备选（更小）：`Repl` 在分发前拦截 `exit` 关键字，并单独把 `exit` 加入 help；需在 ADR/记录说明这是 REPL 控制关键字，不违反“router 不得按命令名判断文档前置条件”的规则。
+- 验收测试：交互模拟（`Readable.from(['init','exit'])`）立即结束且不处理后续行；`help` 含 `exit`；脚本模式 `exit` 后命令不执行；无文档可用；现有根 128 + 工作区 310 项测试保持全绿。
+- 影响面：`apps/cli`、`packages/builtins`（或 core）、`test/`、`doc/`；不改插件契约与既有输出（除 help 新增一行 `exit`，需在兼容性说明中记录）。
+- 完成状态：**未实现**（截至 2026-11-26 记录）。
