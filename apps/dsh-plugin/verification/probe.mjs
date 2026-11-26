@@ -92,6 +92,50 @@ export function apply(ctx) {
         await readFile('artwork-edited.svg', 'utf8'),
         (await readFile('artwork.svg', 'utf8')).replace('>事实核查</text>', '>事实复核</text>'),
       );
+      const originalDense = await readFile('dense.svg', 'utf8');
+      const dense = await call('svg_artwork', { operation: 'inspect', path: 'dense.svg' });
+      assert.equal(dense.selectableEdges, 4);
+      assert.equal(dense.nodes.filter((n) => n.title === '复核').length, 2);
+      const [upper, , anonymous] = dense.edges;
+      assert.equal(upper.edgeId, 'id:upper');
+      const denseArgs = {
+        operation: 'reconnect',
+        path: 'dense.svg',
+        output: 'dense-arc.svg',
+        edgeId: upper.edgeId,
+        originalGeometry: upper.originalGeometry,
+        connectorStyle: 'arc',
+      };
+      await call('svg_artwork', denseArgs);
+      const arc = await readFile('dense-arc.svg', 'utf8');
+      assert.equal(arc.replace(/d="M 120 78 Q [^"]+ 430 78"/, 'd="M120 78H430"'), originalDense);
+      await call('svg_artwork', {
+        ...denseArgs,
+        output: 'dense-redirect.svg',
+        from: 'node-in-b',
+        to: 'node-out-b',
+      });
+      const redirected = await call('svg_artwork', {
+        operation: 'inspect',
+        path: 'dense-redirect.svg',
+      });
+      const changed = redirected.edges.find((e) => e.edgeId === upper.edgeId);
+      assert.deepEqual([changed.from, changed.to], ['node-in-b', 'node-out-b']);
+      assert.equal(await readFile('dense.svg', 'utf8'), originalDense);
+      // Change the drawing between inspect and reconnect. Even matching positional
+      // ids and path data must not authorize writing to a different revision.
+      await writeFile('dense.svg', originalDense.replace('stroke="#007a82"', 'stroke="#008f92"'));
+      await call(
+        'svg_artwork',
+        {
+          ...denseArgs,
+          output: 'stale.svg',
+          edgeId: anonymous.edgeId,
+          originalGeometry: anonymous.originalGeometry,
+        },
+        true,
+      );
+      await assert.rejects(readFile('stale.svg'), { code: 'ENOENT' });
       const inspected = await call('svg_inspect', { path });
       const localEdit = await call('svg_edit_flowchart', {
         path,
@@ -319,6 +363,11 @@ export function apply(ctx) {
           created,
           inspected,
           directionChecks,
+          denseSelection: {
+            edges: dense.selectableEdges,
+            redirected: [changed.from, changed.to],
+            staleOutputAbsent: true,
+          },
           legacyGraph: legacy.graph,
           priorDirectedGraph: directed.graph,
           recoveryWarnings: recovered.warnings,

@@ -206,3 +206,139 @@ test('a blocked explicit straight edit saves nothing', async () => {
   );
   assert.equal(files.size, 1);
 });
+
+test('an anonymous position and geometry cannot be reused after coincident red and blue connectors swap', async () => {
+  const red = '<path stroke="red" d="M50 25H90" ' + marker + '/>';
+  const blue = red.replace('red', 'blue');
+  const { store, files } = filesFor(fixtures(red + blue));
+  const before = await artwork(store, { operation: 'inspect', path: 'in.svg' });
+  assert.ok('edges' in before);
+  const args = {
+    operation: 'reconnect' as const,
+    path: 'in.svg',
+    output: 'out.svg',
+    connectorStyle: 'arc' as const,
+    edgeId: before.edges[0]!.edgeId,
+    originalGeometry: before.edges[0]!.originalGeometry,
+  };
+  const reordered = fixtures(blue + red);
+  files.set('in.svg', reordered);
+  await assert.rejects(artwork(store, args), /no longer matches/);
+  assert.deepEqual([...files], [['in.svg', reordered]]);
+  const current = await artwork(store, { operation: 'inspect', path: 'in.svg' });
+  assert.ok('edges' in current);
+  const repicked = current.edges[1]!;
+  await artwork(store, {
+    ...args,
+    edgeId: repicked.edgeId,
+    originalGeometry: repicked.originalGeometry,
+  });
+  assert.ok(files.get('out.svg')!.includes(blue));
+  assert.match(files.get('out.svg')!, /stroke="red" d="M [^"]* Q /);
+});
+
+test('obstructed connections at translated origins, in both axes and directions, survive independent curve sampling', async () => {
+  for (const [ox, oy] of [
+    [0, 0],
+    [-360, -70],
+    [25, 40],
+    [-55, 120],
+  ] as const) {
+    for (const vertical of [false, true])
+      for (const reverse of [false, true]) {
+        const pt = (u: number, v: number) =>
+          vertical ? ([ox + v, oy + u] as const) : ([ox + u, oy + v] as const);
+        const card = (id: string, u: number, v: number, w: number, h: number) => {
+          const [x, y] = pt(u, v);
+          return (
+            '<g id="node-' +
+            id +
+            '"><rect x="' +
+            x +
+            '" y="' +
+            y +
+            '" width="' +
+            (vertical ? h : w) +
+            '" height="' +
+            (vertical ? w : h) +
+            '"/><text>复核</text></g>'
+          );
+        };
+        const start = pt(reverse ? 310 : 70, 110),
+          end = pt(reverse ? 70 : 310, 110);
+        const source =
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="' +
+          [ox, oy, vertical ? 240 : 380, vertical ? 380 : 240].join(' ') +
+          '"><defs><marker id="tip"><path d="M0 0L4 2L0 4Z"/></marker></defs>' +
+          card('a', 20, 90, 50, 40) +
+          card('b', 310, 90, 50, 40) +
+          card('wall', 173, 101, 34, 18) +
+          '<g id="edges"><path id="arrow" fill="none" stroke="#367" ' +
+          marker +
+          ' d="M' +
+          start.join(' ') +
+          'L' +
+          end.join(' ') +
+          '"/></g></svg>';
+        const { files, store } = filesFor(source);
+        const info = await artwork(store, { operation: 'inspect', path: 'in.svg' });
+        assert.ok('edges' in info);
+        const edge = info.edges[0]!;
+        const ends = reverse ? ['node-b', 'node-a'] : ['node-a', 'node-b'];
+        assert.deepEqual([edge.from, edge.to], ends);
+        const args = {
+          operation: 'reconnect' as const,
+          path: 'in.svg',
+          output: 'out.svg',
+          edgeId: edge.edgeId,
+          originalGeometry: edge.originalGeometry,
+        };
+        await assert.rejects(
+          artwork(store, { ...args, connectorStyle: 'straight' }),
+          /cross|clear/,
+        );
+        assert.deepEqual([...files], [['in.svg', source]]);
+        await artwork(store, { ...args, connectorStyle: 'arc' });
+        const out = files.get('out.svg')!;
+        const geom = parseSvg(out).ownerDocument!.getElementById('arrow')!.getAttribute('d')!;
+        assert.match(geom, /^M [^A-Z]* Q [^A-Z]+$/);
+        const [ax, ay, cx, cy, bx, by] = geom.match(/-?[\d.]+/g)!.map(Number) as [
+          number,
+          number,
+          number,
+          number,
+          number,
+          number,
+        ];
+        assert.deepEqual([ax, ay, bx, by], [...start, ...end]);
+        assert.ok(Math.abs((cx - ax) * (by - ay) - (cy - ay) * (bx - ax)) > 1);
+        const [wallX, wallY] = pt(173, 101);
+        for (let i = 0; i <= 200; i++) {
+          const t = i / 200,
+            s = 1 - t,
+            x = s * s * ax + 2 * s * t * cx + t * t * bx,
+            y = s * s * ay + 2 * s * t * cy + t * t * by;
+          assert.ok(
+            x >= ox &&
+              y >= oy &&
+              x <= ox + (vertical ? 240 : 380) &&
+              y <= oy + (vertical ? 380 : 240),
+          );
+          assert.ok(
+            x < wallX ||
+              x > wallX + (vertical ? 18 : 34) ||
+              y < wallY ||
+              y > wallY + (vertical ? 34 : 18),
+          );
+        }
+        assert.equal(
+          out.replace('d="' + geom + '"', 'd="M' + start.join(' ') + 'L' + end.join(' ') + '"'),
+          source,
+        );
+        assert.equal(files.get('in.svg'), source);
+        const reread = await artwork(store, { operation: 'inspect', path: 'out.svg' });
+        assert.ok('edges' in reread);
+        assert.deepEqual([reread.edges[0]!.from, reread.edges[0]!.to], ends);
+      }
+  }
+});

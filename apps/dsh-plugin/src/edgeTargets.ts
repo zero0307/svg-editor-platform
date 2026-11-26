@@ -111,3 +111,30 @@ export function edgeTargets(
     }
   return result;
 }
+
+// Positional addresses have meaning only for the inspected revision. Compute one
+// digest for all such edges; a unique XML id keeps its existing geometry guard.
+export async function revisionEdgeTargets(
+  root: Element,
+  nodes: Parameters<typeof artworkBoxes>[0],
+  source: string,
+) {
+  const edges = edgeTargets(root, nodes);
+  const positional = edges.filter((edge) => edge.artwork && edge.id.startsWith('at:'));
+  if (positional.length) {
+    // Plain HTTP deployments may lack Web Crypto. Keep stable targets available
+    // while declining positional writes that cannot be tied to the source.
+    if (!globalThis.crypto?.subtle) {
+      for (const edge of positional) {
+        delete edge.originalGeometry;
+        edge.reconnectable = false;
+      }
+      return edges;
+    }
+    const bytes = new TextEncoder().encode(source.replace(/^\uFEFF/, ''));
+    const hash = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
+    const revision = Array.from(hash, (v) => v.toString(16).padStart(2, '0')).join('');
+    for (const edge of positional) edge.originalGeometry = revision + '/' + edge.id;
+  }
+  return edges;
+}

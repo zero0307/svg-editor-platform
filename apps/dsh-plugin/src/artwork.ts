@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { FileStore } from '@svgframe/core';
 import { parseSvg } from './chartDocument.js';
-import { edgeTargets } from './edgeTargets.js';
+import { edgeTargets, revisionEdgeTargets } from './edgeTargets.js';
 import type { EditConnectorStyle } from './curveRoute.js';
 import { reconnectArtwork } from './artworkReconnect.js';
 import { artworkTargets } from './artworkTargets.js';
@@ -66,7 +66,7 @@ export async function artwork(files: FileStore, req: Request): Promise<ArtworkRe
     root = parseSvg(before),
     nodes = artworkTargets(root);
   if (req.operation === 'inspect') {
-    const edges = edgeTargets(root, nodes).filter((e) => e.artwork);
+    const edges = (await revisionEdgeTargets(root, nodes, before)).filter((e) => e.artwork);
     return {
       path: req.path,
       selectableNodes: nodes.length,
@@ -92,7 +92,9 @@ export async function artwork(files: FileStore, req: Request): Promise<ArtworkRe
   }
   if (req.operation === 'reconnect') {
     if (!req.output || req.output === req.path) throw new RangeError('Choose a new output path.');
-    const edge = edgeTargets(root, nodes).find((e) => e.artwork && e.id === req.edgeId);
+    const edge = (await revisionEdgeTargets(root, nodes, before)).find(
+      (e) => e.artwork && e.id === req.edgeId,
+    );
     if (!edge || !req.originalGeometry || edge.originalGeometry !== req.originalGeometry)
       throw new RangeError('The selected connector no longer matches. Inspect and pick it again.');
     const changed = reconnectArtwork(

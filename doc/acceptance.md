@@ -24,6 +24,8 @@ DSH 0.8.1 的验收覆盖局部编辑、期待端口与磁盘几何的一致性�
 
 DSH-01、PKG-02 已在固定版真实 DSH 中完成安装、调用和卸载。0.2.0 的自动验收覆盖四节点分叉与汇合，macOS 桌面模型会话另行覆盖三节点布局、生成与读回，得到 2 条连线和 0 条导入警告。#14 默认运行时完成后再复验 #16。[四节点自动验收](evidence/dsh/demo/verification.json) · [三节点桌面验收](evidence/dsh/desktop/verification.json) · [复验步骤](dsh.md)
 
+桌面连线编辑覆盖同名端点、密集平行线、重合线改选、失效选区、障碍绕行及原生分叉保真。[交互与磁盘复验](records/2026-11-26-dsh-edge-selection.md#密集连线与直接编辑)
+
 ## 1. 基线事实与迁移原则
 
 参考仓库为 [zero0307/svg-editor-cli](https://github.com/zero0307/svg-editor-cli)。本次只读审阅时，`main` 与 `final^{commit}` 均指向 `e5621a68afd4731626d54566f17ba55885d1bc0f`。`final` 是附注标签，`git rev-parse final` 得到的是标签对象 SHA；基线清单应同时保存标签对象与解引用后的提交 SHA。

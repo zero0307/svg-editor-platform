@@ -1,6 +1,6 @@
 {
   "name": "dsh-svg-editor",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "type": "module",
   "description": "Inspect SVG documents and create editable flowcharts in DeepSeek Harness",
@@ -30,6 +30,7 @@
       "inject": [
         "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
         "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-file-actions",
         "@deepseek-ai/dsh-client-ui-session"
       ]
     }

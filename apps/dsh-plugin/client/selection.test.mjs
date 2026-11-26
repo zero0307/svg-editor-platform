@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
-import { sessionPath, quoteNode, currentSelection } from './selection.js';
+import { sessionPath, quoteNode, currentSelection, edgeChoices } from './selection.js';
 
 function composer(initial = { text: '', references: [], quotes: [] }) {
   let snapshot = initial;
@@ -180,4 +180,24 @@ test('the edge quote keeps the original address separate from staged endpoints a
   assert.equal(input.draftSnapshot.quotes.length, 1);
   quoteNode(input, path, { id: 'a', title: '需求' });
   assert.deepEqual(currentSelection(input.draftSnapshot), { path, nodeId: 'a' });
+});
+
+test('an SVG stroke wins over nearby wider hit areas; a crossing offers each logical edge once within its own preview', () => {
+  const svg = {},
+    other = {};
+  const hit = (id, ink, owner = svg) => ({
+    ownerSVGElement: owner,
+    dataset: { edgeHit: id, edgeInk: String(ink) },
+  });
+  const lower = hit('lower', false),
+    upper = hit('upper', true);
+  assert.deepEqual(edgeChoices([lower, upper, hit('upper', false)], svg), ['upper']);
+  assert.deepEqual(
+    edgeChoices(
+      [lower, upper, hit('upper', true), hit('kv', true), hit('other', true, other)],
+      svg,
+    ),
+    ['upper', 'kv'],
+  );
+  assert.deepEqual(edgeChoices([lower, hit('upper', false)], svg), ['lower', 'upper']);
 });

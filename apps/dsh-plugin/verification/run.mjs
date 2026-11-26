@@ -91,6 +91,10 @@ try {
     path.join(root, 'doc/evidence/dsh/presentation/trials/review-without.svg'),
     path.join(cwd, 'artwork.svg'),
   );
+  copyFileSync(
+    path.join(root, 'apps/dsh-plugin/demo/dense-connectors.svg'),
+    path.join(cwd, 'dense.svg'),
+  );
   const version = run(cli, ['--version']).trim();
   assert.equal(version, '0.2.2-rc.5');
   run(npm, ['pack', '--silent', '--workspace', 'dsh-svg-editor', '--pack-destination', temp], root);

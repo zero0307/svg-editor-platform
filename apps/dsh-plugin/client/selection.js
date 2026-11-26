@@ -108,7 +108,7 @@ function selectionQuote(path, target) {
     if (target.changes && Object.keys(target.changes).length) selection.changes = target.changes;
     hint = target.artwork
       ? target.reconnectable
-        ? '用 svg_artwork reconnect，沿用选区 edgeId 和 originalGeometry，from、to、connectorStyle 可独立修改。只改弧线用 connectorStyle=arc，保留两端，另存新文件。用 inspect 查节点。'
+        ? '用 svg_artwork reconnect，沿用选区 edgeId 和 originalGeometry，from、to、connectorStyle 可独立修改。省略的端点沿用原值，另存新文件。用 inspect 查节点。'
         : '这是原画的线段。用 svg_artwork inspect 核对该段；分离的箭头、分叉或变换需结合原图处理。'
       : '用 svg_edit_flowchart reconnect，沿用选区 edgeId，仅填要换的 from、to 或 connectorStyle（弧线用 arc）；另存新文件并核对。';
     if (selection.changes) hint += ' changes 是用户在桌面指定的新值，调用工具时展开为同名参数。';
@@ -177,4 +177,17 @@ export function quoteNode(input, path, target) {
   }
   input.focus();
   return '';
+}
+
+// SVG performs the geometric hit test, including curves, transforms and zoom.
+// Prefer the narrow stroke; at a true intersection let the user choose a logical edge.
+export function edgeChoices(elements, svg) {
+  const ink = new Set(),
+    near = new Set();
+  for (const element of elements) {
+    const id = element.dataset?.edgeHit;
+    if (!id || element.ownerSVGElement !== svg) continue;
+    (element.dataset.edgeInk === 'true' ? ink : near).add(id);
+  }
+  return [...(ink.size ? ink : near)];
 }
