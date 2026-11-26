@@ -52,7 +52,7 @@ try {
   assert.ok(report, 'Browser returned no acceptance report');
   const checks = JSON.parse(report);
   console.log(JSON.stringify(checks, null, 2));
-  assert.equal(Object.keys(checks).length, 26, 'Browser did not reach all checks');
+  assert.equal(Object.keys(checks).length, 27, 'Browser did not reach all checks');
   assert.ok(
     Object.values(checks).every((check) => check.pass),
     'Browser selection failed',

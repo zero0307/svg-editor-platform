@@ -92,9 +92,8 @@ export async function artwork(files: FileStore, req: Request): Promise<ArtworkRe
   }
   if (req.operation === 'reconnect') {
     if (!req.output || req.output === req.path) throw new RangeError('Choose a new output path.');
-    const edge = (await revisionEdgeTargets(root, nodes, before)).find(
-      (e) => e.artwork && e.id === req.edgeId,
-    );
+    const edges = await revisionEdgeTargets(root, nodes, before);
+    const edge = edges.find((e) => e.artwork && e.id === req.edgeId);
     if (!edge || !req.originalGeometry || edge.originalGeometry !== req.originalGeometry)
       throw new RangeError('The selected connector no longer matches. Inspect and pick it again.');
     const changed = reconnectArtwork(
@@ -102,6 +101,7 @@ export async function artwork(files: FileStore, req: Request): Promise<ArtworkRe
       root,
       edge,
       nodes,
+      edges,
       req.from,
       req.to,
       req.connectorStyle,

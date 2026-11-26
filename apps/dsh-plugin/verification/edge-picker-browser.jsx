@@ -111,6 +111,31 @@ async function click(x, y) {
     await click(270, 82);
     check('lower' + width, pick(), 'id:lower');
   }
+  await click(270, 78);
+  document.querySelector('[data-endpoint="to"]').click();
+  await pause();
+  await click(485, 170);
+  const arcStyle = document.querySelector('select');
+  arcStyle.value = 'arc';
+  arcStyle.dispatchEvent(new Event('change', { bubbles: true }));
+  await pause();
+  const between = await (
+    await fetch(document.querySelector('section image').getAttribute('href'))
+  ).text();
+  const arc = new DOMParser()
+    .parseFromString(between, 'image/svg+xml')
+    .querySelector('#upper')
+    .getAttribute('d');
+  const [, a, , c, , b] = arc.match(/-?[\d.]+/g).map(Number);
+  const heights = Array.from({ length: 1001 }, (_, i) => {
+    const t = i / 1000;
+    return (1 - t) ** 2 * a + 2 * (1 - t) * t * c + t * t * b;
+  });
+  check(
+    'visible selected arc stays between both parallel bands',
+    arc.includes(' Q ') && Math.min(...heights) > 82 && Math.max(...heights) < 170,
+    true,
+  );
   await click(485, 80);
   await click(485, 170);
   check('latest duplicate card', pick(), 'node-out-b');

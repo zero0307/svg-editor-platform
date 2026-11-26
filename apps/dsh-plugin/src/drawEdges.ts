@@ -6,6 +6,8 @@ import { inputFork, checkPortLabels, type ForkPort } from './inputFork.js';
 import type { Bounds } from './edgeRouting.js';
 import type { Chart, ChartNode, Tone } from './flowchart.js';
 
+import { addSpanSegments, type Segment } from './connectorCrossings.js';
+
 export function drawEdges(
   session: EditorSessionPort,
   chart: Chart,
@@ -14,6 +16,7 @@ export function drawEdges(
   graphicId: (preferred: string) => string,
   captionObstacles?: Span[],
   captionBoxes?: Bounds[],
+  preserved: readonly Segment[] = [],
 ): void {
   const portLabels: ForkPort[] = [];
   const obstacles = captionObstacles ?? (chart.edges.some((e) => e.inputs) ? [] : undefined);
@@ -45,13 +48,47 @@ export function drawEdges(
     const key = pairKey(edge.from, edge.to);
     totals.set(key, (totals.get(key) ?? 0) + 1);
   }
-  for (const edge of chart.edges) {
+  const plans = chart.edges.map((edge) => {
     const key = pairKey(edge.from, edge.to),
       index = (drawn.get(key) ?? 0) + 1;
     drawn.set(key, index);
     const route =
       namedRoutes.get(edge.id) ??
       routeEdge(nodes.get(edge.from)!, nodes.get(edge.to)!, index / (totals.get(key)! + 1));
+    const from = nodes.get(edge.from)!,
+      to = nodes.get(edge.to)!;
+    const fork = edge.inputs && inputFork(route, edge.inputs, from, to, chart);
+    const style = fork
+      ? 'angular'
+      : (options.get(edge.id)?.style ?? chart.connectorStyle ?? 'angular');
+    return { edge, from, to, route: fork?.trunk ?? route, fork, style, spans: [] as Span[] };
+  });
+  const neighbours = [...preserved];
+  const hasArc = plans.some((p) => p.style === 'arc');
+  // Resolve fixed connections first, even if they appear last in the SVG.
+  // Emit groups in their original order so ids and layering stay predictable.
+  const routingOrder = hasArc
+    ? [...plans.filter((p) => p.style !== 'arc'), ...plans.filter((p) => p.style === 'arc')]
+    : plans;
+  for (const plan of routingOrder) {
+    plan.spans = shapeRoute(plan.route, plan.style, chart, plan.from, plan.to, neighbours);
+    if (!hasArc) continue;
+    for (const span of plan.spans) addSpanSegments(span, neighbours);
+    if (plan.fork) {
+      const ports = plan.fork.ports;
+      if (ports.length > 1) neighbours.push({ start: ports[0]!.base, end: ports.at(-1)!.base });
+      for (const port of ports) {
+        neighbours.push({ start: port.base, end: port.tip });
+        for (const wing of arrowWings(port.base, port.tip))
+          neighbours.push({ start: wing, end: port.tip });
+      }
+    } else {
+      const tail = plan.spans.at(-1)!;
+      for (const wing of arrowWings(tail.control ?? tail.start, tail.end))
+        neighbours.push({ start: wing, end: tail.end });
+    }
+  }
+  for (const { edge, fork, spans } of plans) {
     session.create({
       type: 'g',
       id: edge.id,
@@ -64,7 +101,6 @@ export function drawEdges(
       },
     });
     const rule = options.get(edge.id);
-    const style = rule?.style ?? chart.connectorStyle ?? 'angular';
     const muted = rule?.tone === 'muted',
       accent = rule?.tone === 'accent',
       strong = rule?.tone === 'strong';
@@ -107,17 +143,6 @@ export function drawEdges(
         parent,
       );
     }
-    const fork =
-      edge.inputs &&
-      inputFork(route, edge.inputs, nodes.get(edge.from)!, nodes.get(edge.to)!, chart);
-    // Keep the trunk tangent at its connection to the bus.
-    const spans = shapeRoute(
-      fork?.trunk ?? route,
-      fork ? 'angular' : style,
-      chart,
-      nodes.get(edge.from)!,
-      nodes.get(edge.to)!,
-    );
     for (const span of spans) {
       obstacles?.push(span);
       const { start, end, control } = span;

@@ -14,6 +14,9 @@ import { renameLine } from './renameLine.js';
 import { verifyEditStyle } from './curveRoute.js';
 import type { EditRequest } from './editFlowchart.js';
 
+import { connectorSegments } from './connectorSegments.js';
+import { edgeTargets } from './edgeTargets.js';
+
 export async function prepareNativeEdit(before: string, req: EditRequest) {
   const { graph, warnings } = await nativeGraph(before);
   if (warnings.length || graph.unresolvedEdges.length || graph.inferredEdges.length)
@@ -172,24 +175,35 @@ export async function prepareNativeEdit(before: string, req: EditRequest) {
     (e) => e.parentNode === root && e.getAttribute('data-dsh-theme') === 'presentation',
   );
   const scratch = memorySession('');
-  if (!lineEdit)
-    await new SvgTools(scratch.session).createFlowchart({
-      path: 'generated.svg',
-      theme: presentation ? 'presentation' : undefined,
-      width: Number(root.getAttribute('width')),
-      height: Number(root.getAttribute('height')),
-      nodes: kept,
-      edges: addEdges,
-      connectorStyle:
-        req.connectorStyle === 'straight'
-          ? 'angular'
-          : (req.connectorStyle ??
-            (previousRoute.some((e) => e.localName === 'path')
-              ? previousRoute.length === 1
-                ? 'arc'
-                : 'rounded'
-              : 'angular')),
-    });
+  if (!lineEdit) {
+    const style =
+      req.connectorStyle === 'straight'
+        ? 'angular'
+        : (req.connectorStyle ??
+          (previousRoute.some((e) => e.localName === 'path')
+            ? previousRoute.length === 1
+              ? 'arc'
+              : 'rounded'
+            : 'angular'));
+    const neighbours =
+      style === 'arc'
+        ? connectorSegments(
+            edgeTargets(root, []).filter((e) => !e.artwork && !removedEdges.has(e.id)),
+          )
+        : [];
+    await new SvgTools(scratch.session).createFlowchart(
+      {
+        path: 'generated.svg',
+        theme: presentation ? 'presentation' : undefined,
+        width: Number(root.getAttribute('width')),
+        height: Number(root.getAttribute('height')),
+        nodes: kept,
+        edges: addEdges,
+        connectorStyle: style,
+      },
+      neighbours,
+    );
+  }
   const generated = lineEdit ? root : parseSvg(scratch.contents());
   const resultElements = new Map(elements(generated).map((e) => [e.getAttribute('id'), e]));
   const taken = new Set(

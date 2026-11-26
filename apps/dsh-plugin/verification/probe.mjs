@@ -122,6 +122,15 @@ export function apply(ctx) {
       const changed = redirected.edges.find((e) => e.edgeId === upper.edgeId);
       assert.deepEqual([changed.from, changed.to], ['node-in-b', 'node-out-b']);
       assert.equal(await readFile('dense.svg', 'utf8'), originalDense);
+      await call('svg_artwork', { ...denseArgs, output: 'dense-between.svg', to: 'node-out-b' });
+      const between = await readFile('dense-between.svg', 'utf8');
+      const corridor = between.match(/<path id="upper" d="(M [^"]+ Q [^"]+)"/)[1];
+      assert.equal(between.replace(corridor, 'M120 78H430'), originalDense);
+      const [, a, , c, , b] = corridor.match(/-?[\d.]+/g).map(Number);
+      const t = (a - c) / (a - 2 * c + b),
+        heights = [a, b];
+      if (t > 0 && t < 1) heights.push((1 - t) ** 2 * a + 2 * (1 - t) * t * c + t * t * b);
+      assert.ok(Math.min(...heights) > 82 && Math.max(...heights) < 170);
       // Change the drawing between inspect and reconnect. Even matching positional
       // ids and path data must not authorize writing to a different revision.
       await writeFile('dense.svg', originalDense.replace('stroke="#007a82"', 'stroke="#008f92"'));
@@ -367,6 +376,11 @@ export function apply(ctx) {
             edges: dense.selectableEdges,
             redirected: [changed.from, changed.to],
             staleOutputAbsent: true,
+            arcBetweenBands: {
+              d: corridor,
+              minY: Math.min(...heights),
+              maxY: Math.max(...heights),
+            },
           },
           legacyGraph: legacy.graph,
           priorDirectedGraph: directed.graph,

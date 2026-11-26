@@ -3,6 +3,7 @@ import type { DocumentView, EditorSessionPort, ShapeView } from '@svgframe/core'
 import { graphicIds, indexFlowchart, type Chart } from './flowchart.js';
 
 import { drawPanels } from './drawPanels.js';
+import type { Segment } from './connectorCrossings.js';
 import { drawEdges } from './drawEdges.js';
 import { portEdits } from './portEdits.js';
 import { readFlowchart } from './readFlowchart.js';
@@ -49,7 +50,7 @@ export class SvgTools {
       warnings: [...warnings],
     };
   }
-  async createFlowchart(chart: Chart) {
+  async createFlowchart(chart: Chart, preserved?: readonly Segment[]) {
     if (![chart.width, chart.height].every((n) => Number.isFinite(n) && n > 0))
       throw new RangeError('Canvas dimensions must be positive.');
     const nodes = indexFlowchart(chart);
@@ -74,6 +75,7 @@ export class SvgTools {
       graphicId,
       captions?.spans,
       captions?.occupied,
+      preserved,
     );
     captions?.render();
     const wrap = cachedWrap();

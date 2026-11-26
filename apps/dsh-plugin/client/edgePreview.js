@@ -10,13 +10,15 @@ export async function edgePreview(source, edge, changes) {
   if (edge.artwork) {
     const root = parseSvg(source);
     const nodes = artworkTargets(root);
-    const original = edgeTargets(root, nodes).find((e) => e.id === edge.id && e.artwork);
+    const edges = edgeTargets(root, nodes);
+    const original = edges.find((e) => e.id === edge.id && e.artwork);
     if (!original) throw new Error('连线已变化，请重新点选。');
     after = reconnectArtwork(
       source,
       root,
       original,
       nodes,
+      edges,
       changes.from,
       changes.to,
       changes.connectorStyle,

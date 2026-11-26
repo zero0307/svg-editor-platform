@@ -12,6 +12,9 @@ await build({
     {
       name: 'shared-svg-codec',
       setup(build) {
+        build.onResolve({ filter: /^\.\/svgpath\.cjs$/ }, () => ({
+          path: local.resolve('svgpath'),
+        }));
         build.onResolve({ filter: /^\.\/(xml|session)\.cjs$/ }, ({ path }) => ({
           path:
             path === './xml.cjs'

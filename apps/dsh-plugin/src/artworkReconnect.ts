@@ -6,6 +6,8 @@ import { serialize } from './chartDocument.js';
 import { artworkBoxes, endpoints } from './artworkEndpoints.js';
 import { crosses, routeEdge } from './edgeRouting.js';
 
+import { connectorSegments } from './connectorSegments.js';
+
 type Nodes = ReturnType<typeof artworkTargets>;
 // xmldom records the opening quote of each attribute. Patch only numeric geometry
 // values so unknown attributes, comments, markers, line endings and styles survive.
@@ -83,6 +85,7 @@ export function reconnectArtwork(
   root: Element,
   edge: EdgeTarget,
   nodes: Nodes,
+  edges: readonly EdgeTarget[],
   fromId?: string,
   toId?: string,
   style?: EditConnectorStyle,
@@ -129,7 +132,15 @@ export function reconnectArtwork(
     style === 'straight'
       ? 'angular'
       : (style ?? (oldCurved ? (/[LHV]/i.test(oldGeometry) ? 'rounded' : 'arc') : 'angular'));
-  const spans = shapeRoute(route, requested, chart, from, to);
+  const neighbours =
+    requested === 'arc'
+      ? connectorSegments(
+          edges.filter((e) => e.id !== edge.id),
+          x,
+          y,
+        )
+      : [];
+  const spans = shapeRoute(route, requested, chart, from, to, neighbours);
   verifyEditStyle(style, spans.length, spans.filter((s) => s.control).length);
   if (
     spans.some(
