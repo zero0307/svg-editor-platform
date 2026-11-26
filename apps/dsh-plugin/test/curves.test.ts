@@ -191,3 +191,56 @@ test('import preflight preserves global ID uniqueness across anonymous and neste
   await assert.rejects(reader.read('duplicate.svg'), /already exists/);
   assert.deepEqual(reader.snapshot(), before);
 });
+
+test('a selected native edge can bow, straighten and change both endpoints; dash and other nodes survive', async () => {
+  const { tools, files } = fixture();
+  const { editFlowchart } = await import('../src/editFlowchart.js');
+  const { parseSvg, serialize } = await import('../src/chartDocument.js');
+  await tools.createFlowchart({
+    ...chart,
+    connectorStyle: 'angular',
+    nodes: [...nodes, { id: 'c', label: 'C', x: 135, y: 130, width: 48, height: 34 }],
+    edges: [...edges, { id: 'other', from: 'b', to: 'c' }],
+    edgeStyles: [{ ids: ['link'], tone: 'muted' }],
+  });
+  const store = {
+    read: async (p: string) => files.get(p)!,
+    write: async (p: string, s: string) => {
+      assert.ok(!files.has(p));
+      files.set(p, s);
+    },
+  };
+  const group = (p: string, id: string) =>
+    parseSvg(files.get(p)!).ownerDocument!.getElementById(id)!;
+  const gone = serialize(group(chart.path, 'other'));
+  for (const [path, output, connectorStyle, from, to] of [
+    [chart.path, 'bow.svg', 'arc', undefined, undefined],
+    ['bow.svg', 'line.svg', 'straight', undefined, undefined],
+    ['line.svg', 'changed.svg', 'arc', 'c', 'a'],
+  ] as const) {
+    await editFlowchart(store, {
+      path,
+      output,
+      operation: 'reconnect',
+      edgeId: 'link',
+      connectorStyle,
+      from,
+      to,
+    });
+    const link = group(output, 'link');
+    const routes = Array.from(link.childNodes)
+      .filter((n) => n.nodeType === 1)
+      .map((n) => n as typeof link)
+      .filter((n) => n.getAttribute('data-dsh-part') === 'route');
+    assert.equal(routes.length, 1);
+    assert.equal(routes[0]!.localName, connectorStyle === 'arc' ? 'path' : 'line');
+    assert.equal(routes[0]!.getAttribute('stroke-dasharray'), '5 4');
+    assert.equal(serialize(group(output, 'other')), gone);
+    const view = await tools.inspect(output);
+    assert.deepEqual(
+      view.graph.edges.find((e) => e.id === 'link'),
+      { id: 'link', from: from ?? 'a', to: to ?? 'b' },
+    );
+    assert.deepEqual(view.graph.unresolvedEdges, []);
+  }
+});

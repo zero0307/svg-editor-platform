@@ -3,6 +3,7 @@ import type { Context } from '@deepseek-ai/cordis';
 import { ToolArgsError, defineTool, type ToolRunContext } from '@deepseek-ai/dsh-tools';
 import { DshFileStore } from './DshFileStore.js';
 import { Phase1EditorSession } from './session.cjs';
+import { prepareChart } from './presentationLayout.js';
 import { layoutFlowchart } from './layoutFlowchart.js';
 import { SvgTools } from './SvgTools.js';
 
@@ -32,6 +33,20 @@ const positionedNodes = {
       y: number,
       width: number,
       height: number,
+    },
+  },
+} as const;
+const measure = { type: 'number' } as const;
+const inputNodes = {
+  ...positionedNodes,
+  items: {
+    ...positionedNodes.items,
+    properties: {
+      ...positionedNodes.items.properties,
+      x: measure,
+      y: measure,
+      width: measure,
+      height: measure,
     },
   },
 } as const;
@@ -110,7 +125,7 @@ export function apply(ctx: Context): void {
     defineTool({
       name: 'svg_layout_flowchart',
       description:
-        'Lay out an acyclic flowchart from node IDs, labels and directed edges. Returns canvas dimensions and positioned nodes. Pass this result plus a new path to svg_create_flowchart to save it.',
+        'Return coordinates for an acyclic flowchart. To publish an automatically arranged slide in one call, use svg_create_flowchart directly. Returns canvas dimensions and positioned nodes. Pass this result plus a new path to svg_create_flowchart to save it.',
       parameters: { nodes, edges },
       output: {
         schema: {
@@ -175,16 +190,27 @@ export function apply(ctx: Context): void {
     defineTool({
       name: 'svg_create_flowchart',
       description:
-        'Create a new editable SVG with labeled nodes and routed connectors with arrowheads. Choose a new .svg path. Coordinates are top-left canvas units.',
+        'For a structured flowchart, create a slide-ready editable SVG directly from node IDs/labels and directed edges. For automatic layout omit all coordinates and canvas dimensions. Use direction down for vertical flow, right for horizontal. Use format slide for 16:9 projection. Style using the chart subtitle, node tones, named inputs and edgeStyles. Keep nodes for actual steps so graph counts match. Put secondary text after a newline in a node label. For custom illustrated or reference-matched artwork use svg_artwork to keep the original visual design and enable picking. For manually positioned flowcharts use both dimensions and all coordinates.',
       parameters: {
         path,
-        width: number,
-        height: number,
-        nodes: positionedNodes,
+        width: measure,
+        height: measure,
+        direction: { type: 'string', enum: ['right', 'down'] },
+        format: {
+          type: 'string',
+          enum: ['slide', 'content'],
+          description:
+            'Automatic layout only. Choose slide for exact 16:9 or content for tight bounds. Short titled presentation diagrams default to slides.',
+        },
+        nodes: inputNodes,
         title: {
           type: 'string',
           description:
             'Optional single-line title in the top 56 canvas units. Reserve space above the nodes.',
+        },
+        subtitle: {
+          type: 'string',
+          description: 'Optional short explanation under the chart title. Reserve space for both.',
         },
         panels: {
           type: 'array',
@@ -208,7 +234,7 @@ export function apply(ctx: Context): void {
         connectorStyle: {
           ...connectorStyle,
           description:
-            'Match a supplied reference. Keep direct links straight. Use rounded for side detours and arc sparingly for a distinct relationship. Default angular.',
+            'Match a supplied reference. Keep direct links straight. Use rounded for side detours and arc sparingly for a distinct relationship. Automatic diagrams default to rounded, explicit diagrams to angular.',
         },
         edgeStyles: {
           type: 'array',
@@ -222,8 +248,9 @@ export function apply(ctx: Context): void {
         },
         theme: {
           type: 'string',
-          enum: ['studio', 'print'],
-          description: 'Default studio uses role colors. Choose print for grayscale.',
+          enum: ['studio', 'print', 'presentation'],
+          description:
+            'Choose presentation for slide-ready diagrams with distinct primary and secondary text, studio for classic role colors, or print for grayscale.',
         },
         edges,
       },
@@ -237,7 +264,7 @@ export function apply(ctx: Context): void {
       },
       async execute(args, exec) {
         try {
-          return await tools(exec).createFlowchart(args);
+          return await tools(exec).createFlowchart(prepareChart(args));
         } catch (error) {
           argumentError(error);
         }

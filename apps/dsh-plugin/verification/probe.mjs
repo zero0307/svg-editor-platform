@@ -10,6 +10,7 @@ export function apply(ctx) {
     try {
       await ctx.loader.await();
       const names = [
+        'svg_artwork',
         'svg_check_flowchart',
         'svg_create_flowchart',
         'svg_edit_flowchart',
@@ -60,6 +61,90 @@ export function apply(ctx) {
       assert.deepEqual(created, { path, nodes: 2, edges: 1 });
       const svg = await readFile(path, 'utf8');
       assert.match(svg, /开始 &amp; 检查/);
+      await call('svg_create_flowchart', {
+        path: 'presentation.svg',
+        title: '发布',
+        direction: 'down',
+        nodes: [
+          { id: 'a', label: '接收样本\nIngest' },
+          { id: 'b', label: '导出报告\nExport' },
+        ],
+        edges: [{ id: 'ab', from: 'a', to: 'b' }],
+      });
+      const arranged = await call('svg_inspect', { path: 'presentation.svg' });
+      assert.deepEqual(arranged.warnings, []);
+      assert.equal(arranged.graph.nodes[0].label, '接收样本\nIngest');
+      assert.equal(arranged.graph.edges[0].to, 'b');
+      const artworkInfo = await call('svg_artwork', { path: 'artwork.svg', operation: 'inspect' });
+      assert.equal(artworkInfo.selectableNodes, 7);
+      const picked = artworkInfo.nodes.find((n) => n.nodeId === 'node-fact-check');
+      const artEdit = await call('svg_artwork', {
+        path: 'artwork.svg',
+        output: 'artwork-edited.svg',
+        operation: 'rename',
+        nodeId: picked.nodeId,
+        textIndex: picked.textIndex,
+        originalText: picked.title,
+        label: '事实复核',
+      });
+      assert.equal(artEdit.otherBytesUnchanged, true);
+      assert.equal(
+        await readFile('artwork-edited.svg', 'utf8'),
+        (await readFile('artwork.svg', 'utf8')).replace('>事实核查</text>', '>事实复核</text>'),
+      );
+      const originalDense = await readFile('dense.svg', 'utf8');
+      const dense = await call('svg_artwork', { operation: 'inspect', path: 'dense.svg' });
+      assert.equal(dense.selectableEdges, 4);
+      assert.equal(dense.nodes.filter((n) => n.title === '复核').length, 2);
+      const [upper, , anonymous] = dense.edges;
+      assert.equal(upper.edgeId, 'id:upper');
+      const denseArgs = {
+        operation: 'reconnect',
+        path: 'dense.svg',
+        output: 'dense-arc.svg',
+        edgeId: upper.edgeId,
+        originalGeometry: upper.originalGeometry,
+        connectorStyle: 'arc',
+      };
+      await call('svg_artwork', denseArgs);
+      const arc = await readFile('dense-arc.svg', 'utf8');
+      assert.equal(arc.replace(/d="M 120 78 Q [^"]+ 430 78"/, 'd="M120 78H430"'), originalDense);
+      await call('svg_artwork', {
+        ...denseArgs,
+        output: 'dense-redirect.svg',
+        from: 'node-in-b',
+        to: 'node-out-b',
+      });
+      const redirected = await call('svg_artwork', {
+        operation: 'inspect',
+        path: 'dense-redirect.svg',
+      });
+      const changed = redirected.edges.find((e) => e.edgeId === upper.edgeId);
+      assert.deepEqual([changed.from, changed.to], ['node-in-b', 'node-out-b']);
+      assert.equal(await readFile('dense.svg', 'utf8'), originalDense);
+      await call('svg_artwork', { ...denseArgs, output: 'dense-between.svg', to: 'node-out-b' });
+      const between = await readFile('dense-between.svg', 'utf8');
+      const corridor = between.match(/<path id="upper" d="(M [^"]+ Q [^"]+)"/)[1];
+      assert.equal(between.replace(corridor, 'M120 78H430'), originalDense);
+      const [, a, , c, , b] = corridor.match(/-?[\d.]+/g).map(Number);
+      const t = (a - c) / (a - 2 * c + b),
+        heights = [a, b];
+      if (t > 0 && t < 1) heights.push((1 - t) ** 2 * a + 2 * (1 - t) * t * c + t * t * b);
+      assert.ok(Math.min(...heights) > 82 && Math.max(...heights) < 170);
+      // Change the drawing between inspect and reconnect. Even matching positional
+      // ids and path data must not authorize writing to a different revision.
+      await writeFile('dense.svg', originalDense.replace('stroke="#007a82"', 'stroke="#008f92"'));
+      await call(
+        'svg_artwork',
+        {
+          ...denseArgs,
+          output: 'stale.svg',
+          edgeId: anonymous.edgeId,
+          originalGeometry: anonymous.originalGeometry,
+        },
+        true,
+      );
+      await assert.rejects(readFile('stale.svg'), { code: 'ENOENT' });
       const inspected = await call('svg_inspect', { path });
       const localEdit = await call('svg_edit_flowchart', {
         path,
@@ -185,7 +270,9 @@ export function apply(ctx) {
       );
       const automatic = await inSession('svg_layout_flowchart', graph);
       // An explicitly positioned architecture diagram uses its supplied positions for publication.
-      const layout = input.width === undefined ? { ...input, ...automatic } : input;
+      const oneCall =
+        input.direction || input.format || process.env.SVG_DEMO_THEME === 'presentation';
+      const layout = input.width === undefined && !oneCall ? { ...input, ...automatic } : input;
       assert.deepEqual(layout.edges, graph.edges);
       assert.deepEqual(
         layout.nodes.map(({ id, label }) => ({ id, label })),
@@ -200,7 +287,9 @@ export function apply(ctx) {
       const demoView = await inSession('svg_inspect', { path: demoPath });
       const count = graph.nodes.length;
       assert.deepEqual(demoCreated, { path: demoPath, nodes: count, edges: graph.edges.length });
-      assert.deepEqual([demoView.width, demoView.height], [layout.width, layout.height]);
+      if (layout.width !== undefined)
+        assert.deepEqual([demoView.width, demoView.height], [layout.width, layout.height]);
+      else assert.ok(demoView.width > 0 && demoView.height > 0);
       assert.deepEqual(demoView.warnings, []);
       assert.deepEqual(demoView.graph, {
         nodes: graph.nodes,
@@ -208,10 +297,14 @@ export function apply(ctx) {
         unresolvedEdges: [],
         inferredEdges: [],
       });
-      assert.equal(
-        (demoView.counts.rect ?? 0) + (demoView.counts.ellipse ?? 0),
-        count + (layout.panels?.length ?? 0),
-      );
+      for (const { id, shape } of layout.nodes) {
+        const oval = shape === 'ellipse';
+        const body = demoView.structure.find(
+          (item) => item.id === id + (oval ? '-ellipse' : '-rect'),
+        );
+        assert.equal(body?.type, oval ? 'ellipse' : 'rect');
+        assert.equal(body.parent, id);
+      }
       assert.ok(demoView.counts.text >= count);
       for (const { id } of graph.nodes) {
         const first = demoView.structure.find((s) => s.id === id + '-label');
@@ -279,6 +372,16 @@ export function apply(ctx) {
           created,
           inspected,
           directionChecks,
+          denseSelection: {
+            edges: dense.selectableEdges,
+            redirected: [changed.from, changed.to],
+            staleOutputAbsent: true,
+            arcBetweenBands: {
+              d: corridor,
+              minY: Math.min(...heights),
+              maxY: Math.max(...heights),
+            },
+          },
           legacyGraph: legacy.graph,
           priorDirectedGraph: directed.graph,
           recoveryWarnings: recovered.warnings,

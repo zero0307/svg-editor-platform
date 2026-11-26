@@ -1,6 +1,8 @@
 import type { Chart, ChartNode } from './flowchart.js';
 import { arrowWings, crosses, type Point, type Bounds } from './edgeRouting.js';
 
+import { crossingCount, type Segment } from './connectorCrossings.js';
+
 export type ConnectorStyle = 'angular' | 'rounded' | 'arc';
 export interface Span {
   start: Point;
@@ -47,6 +49,7 @@ export function shapeRoute(
   chart: Chart,
   from: ChartNode,
   to: ChartNode,
+  neighbours: readonly Segment[] = [],
 ): Span[] {
   const straight = () => route.slice(1).map((end, i) => ({ start: route[i]!, end }));
   if (style === 'angular') return straight();
@@ -65,25 +68,38 @@ export function shapeRoute(
     const preferred =
       route.length > 2 && (lead.x - first.x) * nx + (lead.y - first.y) * ny < 0 ? -1 : 1;
     const bow = route.length > 2 ? Math.min(150, length * 0.72) : Math.min(90, length * 0.32);
-    for (const sign of [preferred, -preferred])
-      for (const scale of [1, 0.55]) {
-        const control = {
-          x: center.x + sign * scale * bow * nx,
-          y: center.y + sign * scale * bow * ny,
-        };
-        if (
-          safe(first, control, last) &&
-          arrowWings(control, last).every(
-            (wing) =>
-              wing.x >= 0 &&
-              wing.x <= chart.width &&
-              wing.y >= 0 &&
-              wing.y <= chart.height &&
-              !chart.nodes.some((n) => crosses(wing, last, n)),
-          )
-        )
-          return [{ start: first, control, end: last }];
-      }
+    let best: Span | undefined,
+      fewest = Infinity;
+    // Preserve the original bend on ties. Try shallower bows when neighbouring
+    // strokes occupy both sides of the preferred route.
+    for (const scales of [[1, 0.55], ...(neighbours.length ? [[0.3, 0.18]] : [])])
+      for (const sign of [preferred, -preferred])
+        for (const scale of scales) {
+          const control = {
+            x: center.x + sign * scale * bow * nx,
+            y: center.y + sign * scale * bow * ny,
+          };
+          if (
+            safe(first, control, last) &&
+            arrowWings(control, last).every(
+              (wing) =>
+                wing.x >= 0 &&
+                wing.x <= chart.width &&
+                wing.y >= 0 &&
+                wing.y <= chart.height &&
+                !chart.nodes.some((n) => crosses(wing, last, n)),
+            )
+          ) {
+            const candidate = { start: first, control, end: last };
+            const count = crossingCount(first, control, last, neighbours, fewest);
+            if (count === 0) return [candidate];
+            if (count < fewest) {
+              fewest = count;
+              best = candidate;
+            }
+          }
+        }
+    if (best) return [best];
   }
   const spans: Span[] = [];
   let cursor = first;
@@ -106,4 +122,21 @@ export function shapeRoute(
   }
   line(last);
   return spans;
+}
+
+export type EditConnectorStyle = ConnectorStyle | 'straight';
+
+// Creation may choose a fallback; an explicit edit must actually produce the requested shape.
+export function verifyEditStyle(
+  style: EditConnectorStyle | undefined,
+  parts: number,
+  curves: number,
+) {
+  if (!style) return;
+  if (style === 'straight' && (parts !== 1 || curves !== 0))
+    throw new RangeError('A clear straight connection is unavailable. Choose angular or rounded.');
+  if (style === 'arc' && (parts !== 1 || curves !== 1))
+    throw new RangeError('A clear single arc is unavailable. Choose rounded or another endpoint.');
+  if (style === 'rounded' && curves === 0)
+    throw new RangeError('No clear corner to round. Choose arc for a curved direct connection.');
 }

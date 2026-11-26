@@ -1,11 +1,21 @@
 import type { Chart, Tone } from './flowchart.js';
 
-export type ChartTheme = 'studio' | 'print';
+export type ChartTheme = 'studio' | 'print' | 'presentation';
 type NodeRole = 'start' | 'step' | 'split' | 'join' | 'end';
 type Paint = { fill: string; stroke: string; ink: string; radius: number };
 type Palette = { connector: string; nodes: Record<NodeRole, Paint> };
 
 const palettes: Record<ChartTheme, Palette> = {
+  presentation: {
+    connector: '#536379',
+    nodes: {
+      start: { fill: '#24364C', stroke: '#24364C', ink: '#FFFFFF', radius: 9 },
+      step: { fill: '#FFFFFF', stroke: '#A1AFBF', ink: '#23364C', radius: 7 },
+      split: { fill: '#EEEAFE', stroke: '#9385C6', ink: '#493875', radius: 8 },
+      join: { fill: '#DBF3EF', stroke: '#63A89C', ink: '#155E54', radius: 8 },
+      end: { fill: '#185D56', stroke: '#185D56', ink: '#FFFFFF', radius: 9 },
+    },
+  },
   studio: {
     connector: '#496979',
     nodes: {
@@ -30,7 +40,8 @@ const palettes: Record<ChartTheme, Palette> = {
 
 export function chartPaint(chart: Chart) {
   const theme = chart.theme ?? 'studio';
-  if (!Object.hasOwn(palettes, theme)) throw new RangeError('Choose chart theme studio or print.');
+  if (!Object.hasOwn(palettes, theme))
+    throw new RangeError('Choose chart theme studio, presentation or print.');
   const palette = palettes[theme];
   const neighbors = new Map(
     chart.nodes.map((n) => [n.id, { incoming: new Set<string>(), outgoing: new Set<string>() }]),
@@ -45,6 +56,8 @@ export function chartPaint(chart: Chart) {
     if (tone) {
       if (tone === 'strong') return palette.nodes.start;
       if (tone === 'accent') return palette.nodes.join;
+      if (tone === 'muted' && theme === 'presentation')
+        return { fill: '#F8FAFC', stroke: '#A2ADBB', ink: '#42536A', radius: 6 };
       if (tone === 'muted')
         return theme === 'print'
           ? palette.nodes.step

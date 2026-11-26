@@ -1,7 +1,7 @@
 import { cachedWrap, nodeSize } from './chartText.js';
-import { indexFlowchart, type FlowchartGraph } from './flowchart.js';
+import { indexFlowchart, type GraphNode, type FlowchartGraph } from './flowchart.js';
 
-export function layoutFlowchart(graph: FlowchartGraph) {
+export function layoutFlowchart<T extends GraphNode>(graph: FlowchartGraph<T>) {
   indexFlowchart(graph);
   const vertices = graph.nodes.map((node) => ({
     node,

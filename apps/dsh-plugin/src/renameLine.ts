@@ -46,12 +46,27 @@ export function renameLine(
     throw new RangeError(
       'The replacement needs reflow. Supply the full label to fit it to the node.',
     );
+  const changed = replaceLeafText(source, element, label);
+  parts[(line - 1) * 2] = label;
+  return { source: changed, label: parts.join('') };
+}
+
+// Preserve every byte outside a single XML text node, including comments and CSS.
+export function replaceLeafText(source: string, element: Element, label: string): string {
+  const text = element.firstChild;
+  if (
+    !text ||
+    text.nodeType !== 3 ||
+    element.childNodes.length !== 1 ||
+    !text.lineNumber ||
+    !text.columnNumber
+  )
+    throw new RangeError('Choose one editable text leaf.');
   const starts = [0, ...Array.from(source.matchAll(/\r\n|\r|\n/g), (m) => m.index + m[0].length)];
   const offset = starts[text.lineNumber - 1]! + text.columnNumber - 1;
   const end = source.indexOf('<', offset);
   if (source[offset - 1] !== '>' || end < offset || !source.startsWith('</' + element.tagName, end))
     throw new RangeError('Unable to locate the original text safely.');
   const escaped = label.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-  parts[(line - 1) * 2] = label;
-  return { source: source.slice(0, offset) + escaped + source.slice(end), label: parts.join('') };
+  return source.slice(0, offset) + escaped + source.slice(end);
 }

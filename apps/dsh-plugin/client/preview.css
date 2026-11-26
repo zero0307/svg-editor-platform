@@ -1,0 +1,122 @@
+.dsh-edge-editor {
+  --ink: #1c3342;
+  --soft: #526775;
+  --border: #c8d5da;
+  --paper: #fff;
+  --panel: #f5f8f9;
+  --pick: #116f67;
+  color: var(--ink);
+  width: 100%;
+  font:
+    13px/1.45 Inter,
+    'PingFang SC',
+    system-ui,
+    sans-serif;
+}
+.dsh-edge-editor .edge-panel {
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px;
+}
+.dsh-edge-editor .edge-status {
+  color: var(--soft);
+  overflow-wrap: anywhere;
+}
+.dsh-edge-editor .edge-tools,
+.dsh-edge-editor .edge-options {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 8px;
+}
+.dsh-edge-editor button,
+.dsh-edge-editor select {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.dsh-edge-editor button,
+.dsh-edge-editor .line-style {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 10px;
+  background: var(--paper);
+}
+.dsh-edge-editor button:hover,
+.dsh-edge-editor .line-style:focus-within {
+  border-color: var(--pick);
+}
+.dsh-edge-editor [data-endpoint] {
+  text-align: start;
+  display: grid;
+  border-inline-start: 3px solid #168175;
+  min-width: 6.8em;
+}
+.dsh-edge-editor [data-endpoint='to'] {
+  border-inline-start-color: #7a65be;
+}
+.dsh-edge-editor [data-endpoint][aria-pressed='true'] {
+  outline: 2px solid var(--pick);
+  outline-offset: -2px;
+}
+.dsh-edge-editor .endpoint-action,
+.dsh-edge-editor .line-style,
+.dsh-edge-editor small {
+  color: var(--soft);
+  font-size: 11px;
+}
+.dsh-edge-editor strong {
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+}
+.dsh-edge-editor .line-style {
+  display: grid;
+  align-content: center;
+}
+.dsh-edge-editor select {
+  max-width: 9em;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13px;
+}
+.dsh-edge-editor .reset-edit {
+  background: transparent;
+}
+.dsh-edge-editor .save-copy {
+  color: white;
+  background: #17665f;
+  border-color: #17665f;
+}
+.dsh-edge-editor button:focus-visible,
+.dsh-edge-editor select:focus-visible {
+  outline: 2px solid var(--pick);
+  outline-offset: 2px;
+}
+.dsh-edge-editor .edge-sample {
+  width: 1.5em;
+  display: inline-block;
+  margin-right: 6px;
+  border-top-width: 2px;
+  vertical-align: middle;
+}
+.dsh-edge-editor .editable-node[data-picking='true'] {
+  cursor: crosshair !important;
+}
+.dsh-edge-editor .editable-node[data-picking='true']:hover,
+.dsh-edge-editor .editable-node[data-picking='true']:focus-visible {
+  fill: #16817520;
+  stroke: var(--pick);
+}
+@media (prefers-color-scheme: dark) {
+  .dsh-edge-editor {
+    --ink: #e3edf0;
+    --soft: #afc1ca;
+    --paper: #1b2930;
+    --panel: #162128;
+    --border: #425761;
+    --pick: #73c6b6;
+  }
+}

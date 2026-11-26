@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <title id="figTitle">数据质量检查</title>
+  <desc id="figDesc">从上到下的四步数据质量流程：接收样本、校验字段与单位、缺失值与异常值检查、导出报告。</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#F1F5F8"/>
+    </linearGradient>
+    <linearGradient id="exportFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0E4742"/>
+      <stop offset="1" stop-color="#0A3531"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-10%" y="-30%" width="120%" height="180%">
+      <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#16324A" flood-opacity="0.08"/>
+    </filter>
+    <style>
+      .cn { font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+      .en { font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif; }
+    </style>
+  </defs>
+
+  <rect width="1280" height="720" fill="url(#bg)"/>
+  <circle cx="1188" cy="64" r="210" fill="#0F766E" opacity="0.035"/>
+  <circle cx="86" cy="690" r="150" fill="#0F766E" opacity="0.025"/>
+
+  <!-- Header -->
+  <text x="640" y="52" text-anchor="middle" class="en" font-size="13" font-weight="600" letter-spacing="4.6" fill="#0F766E">DATA QUALITY CHECK</text>
+  <text x="640" y="107" text-anchor="middle" class="cn" font-size="48" font-weight="700" letter-spacing="1.5" fill="#102A43">数据质量检查</text>
+  <text x="640" y="143" text-anchor="middle" class="cn" font-size="19" font-weight="400" letter-spacing="0.4" fill="#5B7083">从样本接收、字段校验到质量检查与报告导出</text>
+  <line x1="280" y1="164" x2="1000" y2="164" stroke="#DFE7EE" stroke-width="1.2"/>
+
+  <!-- Step 1 -->
+  <g id="step-1">
+    <rect x="280" y="184" width="720" height="94" rx="16" fill="#FFFFFF" stroke="#DDE6ED" stroke-width="1.2" filter="url(#cardShadow)"/>
+    <circle cx="326" cy="231" r="23" fill="#0F766E"/>
+    <text x="326" y="237" text-anchor="middle" class="en" font-size="15" font-weight="700" letter-spacing="0.5" fill="#FFFFFF">01</text>
+    <text x="369" y="227" class="cn" font-size="30" font-weight="600" letter-spacing="0.5" fill="#102A43">接收样本</text>
+    <text x="369" y="253" class="en" font-size="18" font-weight="500" letter-spacing="0.3" fill="#5B7083">Ingest</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <line x1="640" y1="282" x2="640" y2="293" stroke="#7E97AA" stroke-width="2.4"/>
+  <path d="M634 291 L646 291 L640 300 Z" fill="#7E97AA"/>
+
+  <!-- Step 2 -->
+  <g id="step-2">
+    <rect x="280" y="302" width="720" height="94" rx="16" fill="#FFFFFF" stroke="#DDE6ED" stroke-width="1.2" filter="url(#cardShadow)"/>
+    <circle cx="326" cy="349" r="23" fill="#0F766E"/>
+    <text x="326" y="355" text-anchor="middle" class="en" font-size="15" font-weight="700" letter-spacing="0.5" fill="#FFFFFF">02</text>
+    <text x="369" y="345" class="cn" font-size="30" font-weight="600" letter-spacing="0.5" fill="#102A43">校验字段与单位</text>
+    <text x="369" y="371" class="en" font-size="18" font-weight="500" letter-spacing="0.3" fill="#5B7083">Schema validation</text>
+  </g>
+
+  <!-- Arrow 2 -->
+  <line x1="640" y1="400" x2="640" y2="411" stroke="#7E97AA" stroke-width="2.4"/>
+  <path d="M634 409 L646 409 L640 418 Z" fill="#7E97AA"/>
+
+  <!-- Step 3 -->
+  <g id="step-3">
+    <rect x="280" y="420" width="720" height="94" rx="16" fill="#FFFFFF" stroke="#DDE6ED" stroke-width="1.2" filter="url(#cardShadow)"/>
+    <circle cx="326" cy="467" r="23" fill="#0F766E"/>
+    <text x="326" y="473" text-anchor="middle" class="en" font-size="15" font-weight="700" letter-spacing="0.5" fill="#FFFFFF">03</text>
+    <text x="369" y="463" class="cn" font-size="30" font-weight="600" letter-spacing="0.5" fill="#102A43">缺失值与异常值检查</text>
+    <text x="369" y="489" class="en" font-size="18" font-weight="500" letter-spacing="0.3" fill="#5B7083">Quality checks</text>
+  </g>
+
+  <!-- Arrow 3 -->
+  <line x1="640" y1="518" x2="640" y2="529" stroke="#7E97AA" stroke-width="2.4"/>
+  <path d="M634 527 L646 527 L640 536 Z" fill="#7E97AA"/>
+
+  <!-- Step 4 -->
+  <g id="step-4">
+    <rect x="280" y="538" width="720" height="94" rx="16" fill="url(#exportFill)"/>
+    <circle cx="326" cy="585" r="23" fill="#5EEAD4"/>
+    <text x="326" y="591" text-anchor="middle" class="en" font-size="15" font-weight="700" letter-spacing="0.5" fill="#073B36">04</text>
+    <text x="369" y="581" class="cn" font-size="30" font-weight="600" letter-spacing="0.5" fill="#FFFFFF">导出报告</text>
+    <text x="369" y="607" class="en" font-size="18" font-weight="500" letter-spacing="0.3" fill="#A7D8D0">Export</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="280" y1="668" x2="1000" y2="668" stroke="#DFE7EE" stroke-width="1.2"/>
+  <text x="280" y="691" class="en" font-size="12" font-weight="600" letter-spacing="2.8" fill="#8FA5B6">04 STEPS</text>
+  <text x="1000" y="691" text-anchor="end" class="cn" font-size="13" fill="#8FA5B6">从源数据到可交付报告</text>
+</svg>

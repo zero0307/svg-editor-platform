@@ -59,7 +59,7 @@ function luminance(color: string) {
   return red! * 0.2126 + green! * 0.7152 + blue! * 0.0722;
 }
 
-test('rendered text in both themes has at least 4.5:1 contrast for all five topology roles', async () => {
+test('rendered text in each theme has at least 4.5:1 contrast for all five topology roles', async () => {
   const { tools, session, files } = fixture();
   const nodes = ['start', 'branch', 'first', 'second', 'join', 'end'].map((id) => ({
     id,
@@ -74,7 +74,7 @@ test('rendered text in both themes has at least 4.5:1 contrast for all five topo
     ['join', 'end'],
   ].map(([from, to], i) => ({ id: 'e' + i, from: from!, to: to! }));
   const layout = layoutFlowchart({ nodes, edges });
-  for (const theme of ['studio', 'print'] as const) {
+  for (const theme of ['studio', 'print', 'presentation'] as const) {
     const path = theme + '.svg';
     await tools.createFlowchart({ ...layout, path, theme });
     const { document, warnings } = await session().read(path);

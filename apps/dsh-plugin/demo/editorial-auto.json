@@ -1,0 +1,79 @@
+{
+  "title": "稿件发布",
+  "direction": "down",
+  "theme": "presentation",
+  "nodes": [
+    {
+      "id": "receive",
+      "label": "收稿",
+      "tone": "strong"
+    },
+    {
+      "id": "fact_check",
+      "label": "事实核查",
+      "tone": "normal"
+    },
+    {
+      "id": "copy_edit",
+      "label": "文字审校",
+      "tone": "normal"
+    },
+    {
+      "id": "fact_confirm",
+      "label": "事实确认",
+      "tone": "normal"
+    },
+    {
+      "id": "proof_confirm",
+      "label": "校样确认",
+      "tone": "normal"
+    },
+    {
+      "id": "final_review",
+      "label": "终审",
+      "tone": "strong"
+    },
+    {
+      "id": "publish",
+      "label": "发表",
+      "tone": "accent"
+    }
+  ],
+  "edges": [
+    {
+      "id": "receive_fact",
+      "from": "receive",
+      "to": "fact_check"
+    },
+    {
+      "id": "receive_copy",
+      "from": "receive",
+      "to": "copy_edit"
+    },
+    {
+      "id": "fact_to_confirm",
+      "from": "fact_check",
+      "to": "fact_confirm"
+    },
+    {
+      "id": "copy_to_proof",
+      "from": "copy_edit",
+      "to": "proof_confirm"
+    },
+    {
+      "id": "fact_confirm_final",
+      "from": "fact_confirm",
+      "to": "final_review"
+    },
+    {
+      "id": "proof_confirm_final",
+      "from": "proof_confirm",
+      "to": "final_review"
+    },
+    {
+      "id": "final_publish",
+      "from": "final_review",
+      "to": "publish"
+    }
+  ]
+}

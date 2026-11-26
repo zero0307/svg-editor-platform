@@ -27,7 +27,10 @@ const {
     theme: { type: 'string', default: 'studio' },
   },
 });
-assert.ok(['studio', 'print'].includes(theme), 'Choose --theme studio or print');
+assert.ok(
+  ['studio', 'print', 'presentation'].includes(theme),
+  'Choose --theme studio, print or presentation',
+);
 const npm = process.env.npm_execpath;
 // Locate the official npm/pnpm install behind a PATH entry, including Windows shims.
 function findCli() {
@@ -83,6 +86,14 @@ try {
   copyFileSync(
     path.join(root, 'doc/evidence/dsh/directed/shortcut.svg'),
     path.join(cwd, 'directed.svg'),
+  );
+  copyFileSync(
+    path.join(root, 'doc/evidence/dsh/presentation/trials/review-without.svg'),
+    path.join(cwd, 'artwork.svg'),
+  );
+  copyFileSync(
+    path.join(root, 'apps/dsh-plugin/demo/dense-connectors.svg'),
+    path.join(cwd, 'dense.svg'),
   );
   const version = run(cli, ['--version']).trim();
   assert.equal(version, '0.2.2-rc.5');

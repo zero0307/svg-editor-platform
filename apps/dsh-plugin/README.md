@@ -1,36 +1,70 @@
 # DSH SVG 流程图插件
 
-在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.9.2 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
+在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.14.1 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
 
 ## 在已有 DSH 中试用
 
 将验收包下载到当前目录，指定自己实际使用的 profile，以下以 web 为例。
 
 ```sh
-dsh plugin --profile web add ./dsh-svg-editor-0.9.2.tgz
+dsh plugin --profile web add ./dsh-svg-editor-0.14.1.tgz
 ```
 
 打开该 profile 的 DSH 会话，给智能体这段指令（模型会话需要配置可用模型）：
 
-> 画一个审批流程。提交后并行评审和复核，两项都完成后通过。先用 svg_layout_flowchart 布局，再用 svg_create_flowchart 保存成 review.svg，最后用 svg_inspect 核对节点、文字和连线。把文件路径和检查结果告诉我。
+> 画一个审批流程。提交后并行评审和复核，两项都完成后通过。用 svg_create_flowchart 直接排成一页 16∶9 幻灯片，保存成 review.svg，再用 svg_inspect 核对节点、文字和连线。把文件路径和检查结果告诉我。
 
 第一次请选择新文件名。预期 `graph.nodes` 和 `graph.edges` 各有 4 项。再次生成到已有文件时会提示失败，已有内容会保留。卸载命令为 `dsh plugin --profile web remove dsh-svg-editor`。
 
 | 工具                   | 输入                                                 | 返回                                                            |
 | ---------------------- | ---------------------------------------------------- | --------------------------------------------------------------- |
 | `svg_layout_flowchart` | `nodes[{id,label}]` 和有方向的 `edges[{id,from,to}]` | 画布大小、节点坐标和原连线，可直接交给生成工具                  |
-| `svg_create_flowchart` | 布局结果加 `path`，可选 `theme`，也可手工指定坐标    | 新建 SVG 的路径、节点数和边数                                   |
+| `svg_create_flowchart` | 文件名、节点、连线，可选方向、主题或完整坐标         | 新建 SVG 的路径、节点数和边数                                   |
 | `svg_inspect`          | `path`                                               | 业务节点、有向边、未确认关系，以及原始 SVG 结构、统计和导入警告 |
 
 自动布局支持分叉、汇合、孤立节点和多个互不相连的子图。有环图可以手工指定坐标，连接线要求两个不同端点。检查工具支持课程编辑器的 SVG 子集。
 
-## 在桌面预览中点选节点
+## 保留自由设计的原稿，在桌面点选改字
 
-在会话右侧打开「工作区文件」，选择插件生成的 SVG。预览顶部显示「点选节点，将它引用到当前对话」。点击图里的目标框，或用 Tab 移到目标后按 Enter。输入框会出现一张可移除的「SVG 选区」卡片，里面有文件路径、节点 ID 和简短的当前标签。同名框也有各自的 ID。
+想保留 DeepSeek 自己设计的图标、滤镜、渐变、路径和版式，可以直接让它自由绘制：
 
-例如，在含五个 Add & Norm 的 Transformer 图上点一个框，发送「只把这个框第一行改成课堂重点，保留副标题和其他内容，另存 result.svg 并读回」。发送前可以移除旧卡片重选。普通 SVG 仍可用图片或源码方式查看。
+> 设计一张课堂投影用的稿件发布流程图，配色和版式你定。把每个业务节点放在带唯一 ID 的 SVG 分组里，保留节点框和可编辑文字。保存为 稿件发布.svg，用 svg_artwork inspect 核对可以点选的节点。
+
+在文件预览里点中某个框，再说「把这个框的标题改成『事实复核』，另存为 复核版.svg」。原文件直接作为图像绘制，命中区域来自单独的透明图层。工具以节点 ID、文字序号和原文共同定位，再从磁盘核对新文件。普通墨迹、投影、渐变、背景和连接线沿用原稿。业务连线的拓扑核验可用下面的结构化绘图模式。
+
+此版本识别具有唯一 ID 的分组、直接包含的矩形／圆形／椭圆形框，以及框内的 SVG 文字、tspan 和子分组中的公式或徽标文字。组名以 `node-`、`step-` 等开头或带 `data-svg-node` 最可靠。文字已转成路径、嵌在位图里的图，或靠 CSS 改变几何位置的图需要单独处理。换成长标题后请查看实际宽度，原稿模式只替换文字。[模型启用插件后自由绘制的交叉注意力](../../doc/evidence/dsh/presentation/trials/ports-artwork-design.svg) · [实测原稿](../../doc/evidence/dsh/presentation/trials/review-without.svg) · [测试记录](../../doc/records/2026-11-25-dsh-presentation.md)
+
+## 直接画一张投影用流程图
+
+向 `svg_create_flowchart` 提供文件名、节点、连线和可选标题，即可自动排版。省略坐标和画布尺寸，`direction: "down"` 指定自上而下，`"right"` 指定从左向右。省略方向时，工具在两种布局里选择画幅更接近 16∶9 的一种。带标题的小型演示图默认使用 16∶9 画布。用 `format: "slide"` 指定幻灯片尺寸比例，或用 `format: "content"` 紧贴内容。换行可以区分节点的主标题和说明；并行步骤按上游节点的位置排列。
+
+例如「把收稿、并行事实核查和文字审校、终审、发表画成课程幻灯片。用 svg_create_flowchart 自动排版，保存为全新的 review.svg，然后读回核对」。有精确参考、有回路或要指定面板位置时，可以传完整坐标并选择 `theme: "presentation"`。演示主题会区分主副文字，另有原来的 `studio` 和黑白 `print`。
+
+[可编辑的 Transformer 示例](../../doc/evidence/dsh/presentation/Transformer.svg) · [Transformer 输入](demo/transformer-presentation.json) · [模型提供节点后自动排版的交叉注意力](../../doc/evidence/dsh/presentation/cross-attention.svg) · [自然语言对照实验](../../doc/records/2026-11-25-dsh-presentation.md)
+
+```sh
+npm run demo:dsh -- --input apps/dsh-plugin/demo/cross-attention-auto.json --theme presentation
+```
+
+## 在桌面预览中点选节点与连线
+
+在会话右侧打开「工作区文件」，选择 SVG。点击节点或连线，或用 Tab 移到目标后按 Enter。输入框会出现一张可移除的「SVG 选区」卡片。发送前直接点另一个目标即可改选，最后点的目标会取代旧选区。已经写好的要求、其他引用和附件会保留。
+
+例如，在含五个 Add & Norm 的 Transformer 图上点一个框，发送「只把这个框第一行改成课堂重点，保留副标题和其他内容，另存 result.svg 并读回」。
+
+在迭代闭环图中，点中橙色回流虚线后可以说「把这条线的终点改到方案设计，保留起点，另存为 回流修正版.svg」。线有 14 个屏幕像素宽的点击区，卡片区域优先选中节点。原生图按逻辑边选择，点中分叉的主干或分支都会引用整条边。自由 SVG 中带独立 `marker-end` 的连线支持 `svg_artwork reconnect`。单独绘制箭头的线段支持点选定位，自动重连要求箭头附在线身且端点坐标可核验。
 
 单行修改使用 `svg_edit_flowchart` 的 `rename`、`nodeId`、`labelLine` 和 `label`。`labelLine` 从框内第一行数起。成功时工具返回从磁盘核对过的完整标签、`otherBytesUnchanged` 及包含原件核对状态与输出 SHA-256 的 `diskReadBack`。如果新文字放不下或目标行已自动折行，工具会提示需要重排。只想核对一个框时，用 `svg_inspect(path, nodeId)` 可读回该节点和全图计数。需要局部前后对照图时可传 `previewPath`。
+
+### 改线型、起点和终点
+
+1. 点击线的笔画。密集连线优先命中鼠标指向的线芯；完全重叠时按名称、标识和线样选择。
+2. 点「改起点」或「改终点」，再点图中的目标模块。连线立即改到新位置，两个端点用不同颜色描边；同名模块在面板里显示 ID。线型可单独改为弧线、直线或折线。Esc 取消选点，「撤销预览」恢复原连接。
+3. 点「另存 SVG」保存当前看到的图。桌面使用系统保存面板，Web 请求下载副本。这条路径无需调用模型。也可以将当前选区发给 DeepSeek，例如「按选区修改，另存为 改线.svg」。
+
+选择弧线时，插件会先排除穿过模块和越界的候选，再比较与邻线的交点数。在同名「复核」的双通道示例中，将上方连线的终点改到下排，曲线会留在两条水平线之间。交点相同时优先保留原先偏好的弯曲方向和幅度。
+
+显式选择直线时会检查是否穿过卡片，选择弧线时会核验生成了真正的曲线。空间不足时工具返回原因，便于改选圆角折线或端点。原生 K/V 等分叉整条重连时保留各支的端口和箭头。它的具名分支需要直线进入端口。
 
 同一台 Mac 上比较五次点选和五次无插件位置描述，结果与一次较慢的反例见[桌面点选验收](../../doc/records/2026-11-25-dsh-desktop-selection.md)。
 

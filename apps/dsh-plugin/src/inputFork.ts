@@ -49,7 +49,7 @@ export function inputFork(
     const text = dx
       ? {
           x: (base.x + end.x - width) / 2 - 2 * dx,
-          y: end.y - (width > 12 ? 7 : 5),
+          y: end.y - (chart.autoDirection ? 9 : width > 12 ? 7 : 5),
         }
       : { x: end.x + 7, y: (base.y + end.y) / 2 + 4 };
     return { name, base, tip: end, text, ink: { x: text.x, y: text.y - 11, width, height: 14 } };

@@ -1,0 +1,47 @@
+{
+  "direction": "right",
+  "theme": "presentation",
+  "connectorStyle": "angular",
+  "title": "交叉注意力",
+  "nodes": [
+    {
+      "id": "decoder",
+      "label": "解码器状态",
+      "tone": "normal"
+    },
+    {
+      "id": "memory",
+      "label": "编码器记忆",
+      "tone": "normal"
+    },
+    {
+      "id": "cross",
+      "label": "交叉注意力",
+      "tone": "accent"
+    },
+    {
+      "id": "context",
+      "label": "上下文表示",
+      "tone": "strong"
+    }
+  ],
+  "edges": [
+    {
+      "id": "q",
+      "from": "decoder",
+      "to": "cross",
+      "inputs": ["Q"]
+    },
+    {
+      "id": "kv",
+      "from": "memory",
+      "to": "cross",
+      "inputs": ["K", "V"]
+    },
+    {
+      "id": "out",
+      "from": "cross",
+      "to": "context"
+    }
+  ]
+}

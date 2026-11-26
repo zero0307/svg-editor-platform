@@ -11,12 +11,36 @@ export function drawPanels(
   chart: Chart,
   id: (preferred: string) => string,
 ) {
+  const presentation = chart.theme === 'presentation';
+  if (chart.subtitle && !chart.title) throw new RangeError('A chart subtitle requires a title.');
+  if (presentation)
+    session.create({
+      id: id('dsh-background'),
+      type: 'rect',
+      args: ['0', '0', String(chart.width), String(chart.height), '#FFFFFF'],
+      dataAttributes: { 'data-dsh-role': 'background', 'data-dsh-theme': 'presentation' },
+    });
+  if (chart.slideTitleWidth) {
+    session.create({
+      type: 'rect',
+      id: id('dsh-slide-field'),
+      args: [
+        String(chart.slideTitleWidth),
+        '12',
+        String(chart.width - chart.slideTitleWidth - 12),
+        String(chart.height - 24),
+        chart.theme === 'print' ? '#F7F7F7' : '#F3F7FA',
+      ],
+      presentation: { rx: '12' },
+      dataAttributes: { 'data-dsh-role': 'background' },
+    });
+  }
   if (chart.title === undefined && !chart.panels?.length) return;
   const spans: Span[] = [];
   const occupied: Bounds[] = [...chart.nodes];
   const captions: (() => void)[] = [];
   const print = chart.theme === 'print';
-  const ink = print ? '#292929' : '#193B50';
+  const ink = print ? '#292929' : presentation ? '#202D46' : '#193B50';
   const family = 'Inter, PingFang SC, Microsoft YaHei, sans-serif';
   function text(
     name: string,
@@ -32,7 +56,7 @@ export function drawPanels(
       type: 'text',
       args: [String(x), String(baseline), label],
       presentation: {
-        fill: ink,
+        fill: presentation && weight === '400' ? '#536378' : ink,
         'font-family': family,
         'font-size': String(size),
         'font-weight': weight,
@@ -98,10 +122,12 @@ export function drawPanels(
     heading(
       'dsh-title',
       chart.title,
-      { x: 0, y: 0, width: chart.width, height: chart.height },
+      { x: 0, y: 0, width: chart.slideTitleWidth ?? chart.width, height: chart.height },
       28,
-      46,
-      32,
+      chart.slideTitleWidth ? Math.round(chart.height * 0.38) : 46,
+      presentation ? 34 : 32,
+      'start',
+      chart.subtitle,
     );
   }
   for (const [i, panel] of (chart.panels ?? []).entries()) {
@@ -118,22 +144,34 @@ export function drawPanels(
       throw new RangeError('Panel must fit within the canvas: ' + label);
     if (panel.tone && !['normal', 'accent', 'muted', 'strong'].includes(panel.tone))
       throw new RangeError('Unknown panel tone.');
-    const fill = print
-      ? '#FAFAFA'
-      : panel.tone === 'accent'
-        ? '#F0F7F5'
-        : panel.tone === 'muted'
-          ? '#FBF7EE'
-          : panel.tone === 'strong'
-            ? '#E1EAF0'
-            : '#F2F6FA';
-    const stroke = print
-      ? '#888888'
-      : panel.tone === 'accent'
-        ? '#BED8D1'
-        : panel.tone === 'muted'
-          ? '#DFD0AF'
-          : '#BDCDD9';
+    const fill = presentation
+      ? panel.tone === 'accent'
+        ? '#F0F8F6'
+        : panel.tone === 'strong'
+          ? '#EDF0FA'
+          : panel.tone === 'muted'
+            ? '#F8F7FD'
+            : '#F5F7FB'
+      : print
+        ? '#FAFAFA'
+        : panel.tone === 'accent'
+          ? '#F0F7F5'
+          : panel.tone === 'muted'
+            ? '#FBF7EE'
+            : panel.tone === 'strong'
+              ? '#E1EAF0'
+              : '#F2F6FA';
+    const stroke = presentation
+      ? panel.tone === 'accent'
+        ? '#C4DFD9'
+        : '#D2D8E5'
+      : print
+        ? '#888888'
+        : panel.tone === 'accent'
+          ? '#BED8D1'
+          : panel.tone === 'muted'
+            ? '#DFD0AF'
+            : '#BDCDD9';
     const key = 'dsh-panel-' + (i + 1);
     session.create({
       id: id(key),

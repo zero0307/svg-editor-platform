@@ -1,0 +1,375 @@
+{
+  "nodes": [
+    {
+      "id": "src",
+      "label": "源序列",
+      "x": 117.5,
+      "y": 933.0,
+      "width": 209,
+      "height": 40,
+      "tone": "strong"
+    },
+    {
+      "id": "src-embed",
+      "label": "词嵌入",
+      "x": 132.0,
+      "y": 860.0,
+      "width": 180,
+      "height": 42,
+      "tone": "normal"
+    },
+    {
+      "id": "src-pos",
+      "label": "位置编码",
+      "x": 34.5,
+      "y": 788.0,
+      "width": 113,
+      "height": 36,
+      "tone": "normal"
+    },
+    {
+      "id": "src-add",
+      "label": "+",
+      "x": 202.0,
+      "y": 786.0,
+      "width": 40,
+      "height": 40,
+      "tone": "muted",
+      "shape": "ellipse"
+    },
+    {
+      "id": "tgt",
+      "label": "目标序列 · 右移一位",
+      "x": 553.5,
+      "y": 933.0,
+      "width": 209,
+      "height": 40,
+      "tone": "strong"
+    },
+    {
+      "id": "tgt-embed",
+      "label": "词嵌入",
+      "x": 568.0,
+      "y": 860.0,
+      "width": 180,
+      "height": 42,
+      "tone": "normal"
+    },
+    {
+      "id": "tgt-pos",
+      "label": "位置编码",
+      "x": 747.5,
+      "y": 788.0,
+      "width": 113,
+      "height": 36,
+      "tone": "normal"
+    },
+    {
+      "id": "tgt-add",
+      "label": "+",
+      "x": 638.0,
+      "y": 786.0,
+      "width": 40,
+      "height": 40,
+      "tone": "muted",
+      "shape": "ellipse"
+    },
+    {
+      "id": "enc-self",
+      "label": "多头自注意力\nSelf-Attention",
+      "x": 102.0,
+      "y": 666.5,
+      "width": 240,
+      "height": 55,
+      "tone": "warm"
+    },
+    {
+      "id": "enc-norm1",
+      "label": "Add & Norm",
+      "x": 143.0,
+      "y": 611.0,
+      "width": 158,
+      "height": 32,
+      "tone": "muted"
+    },
+    {
+      "id": "enc-ff",
+      "label": "逐位置前馈网络\nFeed-Forward",
+      "x": 102.0,
+      "y": 538.0,
+      "width": 240,
+      "height": 52,
+      "tone": "accent"
+    },
+    {
+      "id": "enc-norm2",
+      "label": "Add & Norm",
+      "x": 143.0,
+      "y": 484.0,
+      "width": 158,
+      "height": 32,
+      "tone": "muted"
+    },
+    {
+      "id": "dec-masked",
+      "label": "掩码多头自注意力\nMasked Self-Attention",
+      "x": 538.0,
+      "y": 666.5,
+      "width": 240,
+      "height": 55,
+      "tone": "warm"
+    },
+    {
+      "id": "dec-norm1",
+      "label": "Add & Norm",
+      "x": 579.0,
+      "y": 611.0,
+      "width": 158,
+      "height": 32,
+      "tone": "muted"
+    },
+    {
+      "id": "dec-cross",
+      "label": "多头交叉注意力\nCross-Attention",
+      "x": 538.0,
+      "y": 472.0,
+      "width": 240,
+      "height": 56,
+      "tone": "warm"
+    },
+    {
+      "id": "dec-norm2",
+      "label": "Add & Norm",
+      "x": 579.0,
+      "y": 398.0,
+      "width": 158,
+      "height": 32,
+      "tone": "muted"
+    },
+    {
+      "id": "dec-ff",
+      "label": "逐位置前馈网络\nFeed-Forward",
+      "x": 538.0,
+      "y": 329.0,
+      "width": 240,
+      "height": 52,
+      "tone": "accent"
+    },
+    {
+      "id": "dec-norm3",
+      "label": "Add & Norm",
+      "x": 579.0,
+      "y": 279.0,
+      "width": 158,
+      "height": 32,
+      "tone": "muted"
+    },
+    {
+      "id": "linear",
+      "label": "线性投影",
+      "x": 576.0,
+      "y": 190.0,
+      "width": 164,
+      "height": 34,
+      "tone": "normal"
+    },
+    {
+      "id": "softmax",
+      "label": "Softmax",
+      "x": 576.0,
+      "y": 139.0,
+      "width": 164,
+      "height": 34,
+      "tone": "accent"
+    },
+    {
+      "id": "probs",
+      "label": "输出概率",
+      "x": 569.0,
+      "y": 85.0,
+      "width": 178,
+      "height": 36,
+      "tone": "strong"
+    }
+  ],
+  "edges": [
+    {
+      "id": "src--src-embed",
+      "from": "src",
+      "to": "src-embed"
+    },
+    {
+      "id": "src-embed--src-add",
+      "from": "src-embed",
+      "to": "src-add"
+    },
+    {
+      "id": "src-pos--src-add",
+      "from": "src-pos",
+      "to": "src-add"
+    },
+    {
+      "id": "tgt--tgt-embed",
+      "from": "tgt",
+      "to": "tgt-embed"
+    },
+    {
+      "id": "tgt-embed--tgt-add",
+      "from": "tgt-embed",
+      "to": "tgt-add"
+    },
+    {
+      "id": "tgt-pos--tgt-add",
+      "from": "tgt-pos",
+      "to": "tgt-add"
+    },
+    {
+      "id": "src-add--enc-self",
+      "from": "src-add",
+      "to": "enc-self",
+      "inputs": ["Q", "K", "V"]
+    },
+    {
+      "id": "enc-self--enc-norm1",
+      "from": "enc-self",
+      "to": "enc-norm1"
+    },
+    {
+      "id": "enc-norm1--enc-ff",
+      "from": "enc-norm1",
+      "to": "enc-ff"
+    },
+    {
+      "id": "enc-ff--enc-norm2",
+      "from": "enc-ff",
+      "to": "enc-norm2"
+    },
+    {
+      "id": "enc-norm2--dec-cross",
+      "from": "enc-norm2",
+      "to": "dec-cross",
+      "inputs": ["K", "V"]
+    },
+    {
+      "id": "tgt-add--dec-masked",
+      "from": "tgt-add",
+      "to": "dec-masked",
+      "inputs": ["Q", "K", "V"]
+    },
+    {
+      "id": "dec-masked--dec-norm1",
+      "from": "dec-masked",
+      "to": "dec-norm1"
+    },
+    {
+      "id": "dec-norm1--dec-cross",
+      "from": "dec-norm1",
+      "to": "dec-cross",
+      "inputs": ["Q"]
+    },
+    {
+      "id": "dec-cross--dec-norm2",
+      "from": "dec-cross",
+      "to": "dec-norm2"
+    },
+    {
+      "id": "dec-norm2--dec-ff",
+      "from": "dec-norm2",
+      "to": "dec-ff"
+    },
+    {
+      "id": "dec-ff--dec-norm3",
+      "from": "dec-ff",
+      "to": "dec-norm3"
+    },
+    {
+      "id": "dec-norm3--linear",
+      "from": "dec-norm3",
+      "to": "linear"
+    },
+    {
+      "id": "linear--softmax",
+      "from": "linear",
+      "to": "softmax"
+    },
+    {
+      "id": "softmax--probs",
+      "from": "softmax",
+      "to": "probs"
+    },
+    {
+      "id": "residual-enc-norm1",
+      "from": "src-add",
+      "to": "enc-norm1"
+    },
+    {
+      "id": "residual-enc-norm2",
+      "from": "enc-norm1",
+      "to": "enc-norm2"
+    },
+    {
+      "id": "residual-dec-norm1",
+      "from": "tgt-add",
+      "to": "dec-norm1"
+    },
+    {
+      "id": "residual-dec-norm2",
+      "from": "dec-norm1",
+      "to": "dec-norm2"
+    },
+    {
+      "id": "residual-dec-norm3",
+      "from": "dec-norm2",
+      "to": "dec-norm3"
+    }
+  ],
+  "edgeStyles": [
+    {
+      "ids": [
+        "residual-enc-norm1",
+        "residual-enc-norm2",
+        "residual-dec-norm1",
+        "residual-dec-norm2",
+        "residual-dec-norm3"
+      ],
+      "tone": "muted"
+    },
+    {
+      "ids": ["enc-norm2--dec-cross"],
+      "tone": "accent"
+    }
+  ],
+  "width": 900,
+  "height": 1020,
+  "title": "Transformer",
+  "subtitle": "编码器与解码器  /  从下往上读取，图中每个堆栈各重复 6 次。",
+  "theme": "presentation",
+  "connectorStyle": "rounded",
+  "panels": [
+    {
+      "label": "交叉注意力如何取值",
+      "description": "Q 取自解码器上一子层。\nK、V 由编码器最终输出投影得到。\n虚线表示各子层的残差连接。",
+      "x": 48,
+      "y": 169,
+      "width": 326,
+      "height": 127,
+      "tone": "normal"
+    },
+    {
+      "label": "编码器 × 6",
+      "x": 50,
+      "y": 443,
+      "width": 336,
+      "height": 304,
+      "tone": "muted"
+    },
+    {
+      "label": "解码器 × 6",
+      "x": 489,
+      "y": 232,
+      "width": 356,
+      "height": 515,
+      "tone": "accent"
+    }
+  ]
+}
