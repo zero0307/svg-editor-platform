@@ -1,0 +1,7 @@
+url: https://github.com/zero0307/svg-editor-platform/tree/main/apps/dsh-plugin
+name: zero0307/svg-editor-platform#dsh-plugin
+category: tools
+description:
+  en: Creates editable SVG flowcharts and lets users pick nodes or connectors in the desktop preview to rename, reconnect, reroute and verify a saved copy.
+  zh: 生成可编辑的 SVG 流程图，在桌面预览中点选节点或连线，改名、改接端点或调整线型，另存后核验。
+tarball: https://github.com/zero0307/svg-editor-platform/releases/download/dsh-svg-editor-v0.14.2/dsh-svg-editor-0.14.2.tgz

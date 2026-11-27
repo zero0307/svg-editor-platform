@@ -1,5 +1,6 @@
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { parsers } from 'prettier/plugins/typescript';
 
 const root = path.resolve('src');
 const allowed = {
@@ -20,11 +21,18 @@ for (const file of files) {
   );
   if (classes.length > 1 || (classes.length === 1 && path.basename(file, '.ts') !== classes[0]))
     failures.push(`${file}: one class per file; filename must match`);
-  for (const [, dependency] of source.matchAll(
-    /(?:import\s[\s\S]*?from\s*|import\s*)['"]([^'"]+)['"]/g,
-  )) {
+  const ast = await parsers.typescript.parse(source, { filepath: file });
+  for (const declaration of ast.body) {
+    const dependency = declaration.source?.value;
+    if (typeof dependency !== 'string') continue;
     if (!dependency.startsWith('.')) {
-      if (layer === 'domain' || layer === 'application')
+      if (dependency.startsWith('@svgframe/')) {
+        const publicCore = dependency === '@svgframe/core';
+        const publicHost =
+          dependency === '@svgframe/host' && ['bootstrap', 'infrastructure'].includes(layer);
+        if (!publicCore && !publicHost)
+          failures.push(`${file}: forbidden workspace dependency ${dependency}`);
+      } else if (layer === 'domain' || layer === 'application')
         failures.push(`${file}: forbidden external dependency ${dependency}`);
       continue;
     }

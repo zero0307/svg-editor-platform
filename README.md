@@ -2,7 +2,7 @@
 
 高级软件开发 Lab1 的 SVG 编辑平台，基于 [svg-editor-cli](https://github.com/zero0307/svg-editor-cli) 的 Phase 1 完整历史继续开发。现有 CLI 使用 TypeScript、Command 与 Composite 模式，已具备六种内置图形、19 条命令、SVG 读写及撤销重做。
 
-当前运行代码仍为 Phase 1 实现；Phase 2 的插件框架、VSCode 扩展和 DSH 插件按已确定的开发方案逐步推进。原始 `final` 标签保留为兼容基线，最终验收后另建 `p2`。目标工作区目录和Phase 2工作区专用检查属于后续工程任务；当前已提供根检查与文档/目录检查。
+本分支提供 DeepSeek Harness 的 SVG 绘图与桌面点选编辑插件，并复用 Phase 1 编辑器与公共工作区包。插件可以生成有向流程图、改接连线，并从磁盘读回结果。[使用指南](apps/dsh-plugin/README.md) · [开发与打包](doc/dsh.md)
 
 ## 团队开发入口
 

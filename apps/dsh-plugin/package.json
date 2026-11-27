@@ -1,0 +1,71 @@
+{
+  "name": "dsh-svg-editor",
+  "version": "0.14.2",
+  "private": true,
+  "type": "module",
+  "description": "Inspect SVG documents and create editable flowcharts in DeepSeek Harness",
+  "exports": {
+    ".": "./dist/src/index.js",
+    "./client": "./dist/client.js",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/src/index.js",
+  "files": [
+    "dist/src/*.js",
+    "dist/src/session.cjs",
+    "dist/src/xml.cjs",
+    "cordis.patch.yml",
+    "xmldom-LICENSE",
+    "dist/client.js",
+    "dist/src/svgpath.cjs",
+    "svgpath-LICENSE",
+    "LICENSE"
+  ],
+  "engines": {
+    "dsh": "0.2.2-rc.5"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar-documentpreview",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-file-actions",
+        "@deepseek-ai/dsh-client-ui-session"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.5"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "~4.1.0",
+    "@deepseek-ai/dsh-tools": "0.2.2-rc.5",
+    "@svgframe/core": "0.1.0",
+    "@xmldom/xmldom": "0.9.12",
+    "esbuild": "0.25.12",
+    "@deepseek-ai/dsh-fs": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-sandbox-policy": "0.2.2-rc.5",
+    "@deepseek-ai/dsh-working-directory": "0.2.2-rc.5",
+    "svgpath": "2.6.0"
+  },
+  "scripts": {
+    "bundle": "esbuild ../../src/bootstrap/Phase1EditorSession.ts --bundle --platform=node --format=cjs --outfile=dist/src/session.cjs && esbuild @xmldom/xmldom --bundle --platform=node --format=cjs --outfile=dist/src/xml.cjs && esbuild svgpath --bundle --platform=node --format=cjs --outfile=dist/src/svgpath.cjs && node client/build.mjs",
+    "build": "tsc -b && npm run bundle --silent",
+    "prepack": "npm run build"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zero0307/svg-editor-platform.git",
+    "directory": "apps/dsh-plugin"
+  }
+}

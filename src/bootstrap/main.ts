@@ -3,7 +3,7 @@ import { ShapeFactory } from '../application/ShapeFactory.js';
 import { SvgEditor } from '../application/SvgEditor.js';
 import { CommandRouter } from '../cli/CommandRouter.js';
 import { Repl } from '../cli/Repl.js';
-import { LocalFileStore } from '../infrastructure/LocalFileStore.js';
+import { LocalFileStore } from '@svgframe/host';
 import { XmlSvgCodec } from '../infrastructure/XmlSvgCodec.js';
 
 const factory = new ShapeFactory();
