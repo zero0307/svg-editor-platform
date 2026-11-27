@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 -20 640 280" width="640" height="280">
+  <title>双通道复核</title>
+  <defs>
+    <marker id="tip" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#465772"/></marker>
+  </defs>
+  <rect x="-40" y="-20" width="640" height="280" fill="#f6f8fb"/>
+  <g id="edges" stroke-width="2" fill="none" marker-end="url(#tip)">
+    <path id="upper" d="M120 78C230 35 360 115 430 170" stroke="#007a82"/>
+    <path id="lower" d="M120 82H430" stroke="#a94c16"/>
+    <path d="M120 170H430" stroke="#007a82"/>
+    <path d="M120 170H430" stroke="#a94c16" stroke-dasharray="6 4"/>
+  </g>
+  <g id="node-in-a"><rect x="10" y="56" width="110" height="48" rx="7" fill="#d8e8ed"/><text x="65" y="85" text-anchor="middle">输入 A</text></g>
+  <g id="node-in-b"><rect x="10" y="146" width="110" height="48" rx="7" fill="#d8e8ed"/><text x="65" y="175" text-anchor="middle">输入 B</text></g>
+  <g id="node-out-a"><rect x="430" y="56" width="110" height="48" rx="7" fill="#dce9d9"/><text x="485" y="85" text-anchor="middle">复核</text></g>
+  <g id="node-out-b"><rect x="430" y="146" width="110" height="48" rx="7" fill="#dce9d9"/><text x="485" y="175" text-anchor="middle">复核</text></g>
+</svg>

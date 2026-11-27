@@ -221,6 +221,8 @@ npm run verify:dsh
 
 ## 社区市场发布清单
 
+0.14.2 的 11 轮同模型实验记录了无插件、自由选工具和附桌面选区的结果。可按任务对照正确性、耗时、总 token 和超时样例。[市场候选的无插件对照](records/2026-11-27-dsh-market.md)
+
 课程建议开源并向 DSH 插件市场发布。这里采用社区目录 `awesome-dsh-plugin` 和 `dsh-market` 支持的 GitHub Release 预构建包。适配 DeepSeek Harness 0.2.2-rc.5，服务端提供六个工具，桌面端支持点选节点及连线。[课程原文](../phase_cli_2-研-1.md) · [工具与使用说明](../apps/dsh-plugin/README.md) · [社区投稿规则](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)
 
 1. 将 0.14.2 与发布清单合入保护分支。该版本的主分支 CI 通过后，发行任务在干净的 Harness 中安装并卸载候选包，上传同一个文件和 SHA-256，校验 Release 附件，再从公开 URL 下载安装并复验。失败时查看该次主分支 CI，可重新运行失败任务。[工作流](../.github/workflows/ci.yml)
