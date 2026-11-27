@@ -25,14 +25,22 @@ export class SvgEditor {
     return `canvas ${width}x${height} created`;
   }
   async read(path: string): Promise<readonly string[]> {
+    const { document, warnings } = await this.openFile(path);
+    return [...warnings, `read ${path} (${document.all().length} elements)`];
+  }
+  async openFile(path: string) {
     const source = await this.files.read(path);
     const decoded = this.codec.decode(source);
     this.current = decoded.document;
     this.path = path;
     this.history.barrier();
-    return [...decoded.warnings, `read ${path} (${decoded.document.all().length} elements)`];
+    return decoded;
   }
   async save(path?: string): Promise<string> {
+    const result = await this.saveFile(path);
+    return `saved to ${result.path} (${result.elements} elements)`;
+  }
+  async saveFile(path?: string) {
     const document = this.document();
     const target = path ?? this.path;
     if (!target) throw new DomainError('no file path. use save <file.svg>');
@@ -41,7 +49,7 @@ export class SvgEditor {
     // A newly initialized document may remember its first successful save.
     this.path ??= target;
     this.history.barrier();
-    return `saved to ${target} (${document.all().length} elements)`;
+    return { path: target, elements: document.all().length };
   }
   canvas(width?: number, height?: number): string {
     const document = this.document();

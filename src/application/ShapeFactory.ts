@@ -61,11 +61,12 @@ export class ShapeFactory {
     ],
     ['g', { fields: [], construct: (id) => new Group(id) }],
   ]);
+  constructor(private readonly extra: ReadonlyMap<string, Definition> = new Map()) {}
   private n(args: readonly string[], index: number): number {
     return Numbers.parse(args[index]!, `parameter ${index + 1}`);
   }
   private definition(type: string): Definition {
-    const definition = this.definitions.get(type);
+    const definition = this.definitions.get(type) ?? this.extra.get(type);
     if (!definition) throw new DomainError(`unknown shape type: ${type} (is the plugin loaded?)`);
     return definition;
   }

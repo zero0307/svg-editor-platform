@@ -1,19 +1,21 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "types": ["node"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "outDir": "dist",
     "rootDir": ".",
-    "sourceMap": true
+    "outDir": "dist",
+    "incremental": true,
+    "tsBuildInfoFile": "dist/root.tsbuildinfo"
   },
+  "references": [
+    {
+      "path": "packages/core"
+    },
+    {
+      "path": "packages/host"
+    },
+    {
+      "path": "apps/dsh-plugin"
+    }
+  ],
   "include": ["src/**/*.ts", "test/**/*.ts"]
 }
