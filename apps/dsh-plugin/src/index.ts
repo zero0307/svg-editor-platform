@@ -125,7 +125,7 @@ export function apply(ctx: Context): void {
     defineTool({
       name: 'svg_layout_flowchart',
       description:
-        'Return coordinates for an acyclic flowchart. To publish an automatically arranged slide in one call, use svg_create_flowchart directly. Returns canvas dimensions and positioned nodes. Pass this result plus a new path to svg_create_flowchart to save it.',
+        'Return coordinates for an acyclic flowchart. To publish an automatically arranged slide in one call, use svg_create_flowchart directly. Returns canvas dimensions and positioned nodes. To save, pass exactly {path, width, height, nodes, edges} from this result to svg_create_flowchart. Omit direction and format when reusing coordinates.',
       parameters: { nodes, edges },
       output: {
         schema: {
@@ -190,12 +190,16 @@ export function apply(ctx: Context): void {
     defineTool({
       name: 'svg_create_flowchart',
       description:
-        'For a structured flowchart, create a slide-ready editable SVG directly from node IDs/labels and directed edges. For automatic layout omit all coordinates and canvas dimensions. Use direction down for vertical flow, right for horizontal. Use format slide for 16:9 projection. Style using the chart subtitle, node tones, named inputs and edgeStyles. Keep nodes for actual steps so graph counts match. Put secondary text after a newline in a node label. For custom illustrated or reference-matched artwork use svg_artwork to keep the original visual design and enable picking. For manually positioned flowcharts use both dimensions and all coordinates.',
+        'For a structured flowchart, create a slide-ready editable SVG directly from node IDs/labels and directed edges. For automatic layout omit all coordinates and canvas dimensions. Use direction down for vertical flow, right for horizontal. Use format slide for 16:9 projection. Style using the chart subtitle, node tones, named inputs and edgeStyles. Keep nodes for actual steps so graph counts match. Put secondary text after a newline in a node label. For custom illustrated or reference-matched artwork use svg_artwork to keep the original visual design and enable picking. For explicit coordinates (including svg_layout_flowchart output), supply width, height and positioned nodes. Omit direction and format.',
       parameters: {
         path,
         width: measure,
         height: measure,
-        direction: { type: 'string', enum: ['right', 'down'] },
+        direction: {
+          type: 'string',
+          enum: ['right', 'down'],
+          description: 'Automatic layout only. Omit when passing coordinates.',
+        },
         format: {
           type: 'string',
           enum: ['slide', 'content'],

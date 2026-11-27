@@ -1,26 +1,29 @@
 # DSH SVG 流程图插件
 
-在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.14.1 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
+在 DeepSeek Harness 里把节点和关系排成流程图，保存为可编辑 SVG，再读回文件检查内容。0.14.2 适配 DSH 0.2.2-rc.5。示例使用 Node 24、pnpm 10。
 
 ## 在已有 DSH 中试用
 
-将验收包下载到当前目录，指定自己实际使用的 profile，以下以 web 为例。
+下载发行包到当前目录。桌面版使用 `desktop`，Web 版将下面的 profile 换成 `web`。[下载 0.14.2 发行包](https://github.com/zero0307/svg-editor-platform/releases/download/dsh-svg-editor-v0.14.2/dsh-svg-editor-0.14.2.tgz)
 
 ```sh
-dsh plugin --profile web add ./dsh-svg-editor-0.14.1.tgz
+dsh plugin --profile desktop add ./dsh-svg-editor-0.14.2.tgz
 ```
 
 打开该 profile 的 DSH 会话，给智能体这段指令（模型会话需要配置可用模型）：
 
 > 画一个审批流程。提交后并行评审和复核，两项都完成后通过。用 svg_create_flowchart 直接排成一页 16∶9 幻灯片，保存成 review.svg，再用 svg_inspect 核对节点、文字和连线。把文件路径和检查结果告诉我。
 
-第一次请选择新文件名。预期 `graph.nodes` 和 `graph.edges` 各有 4 项。再次生成到已有文件时会提示失败，已有内容会保留。卸载命令为 `dsh plugin --profile web remove dsh-svg-editor`。
+包内附有[入门输入](demo/review.json)，包含同一个审批流程。第一次请选择新文件名。预期 `graph.nodes` 和 `graph.edges` 各有 4 项。再次生成到已有文件时会提示失败，已有内容会保留。卸载命令为 `dsh plugin --profile desktop remove dsh-svg-editor`。
 
 | 工具                   | 输入                                                 | 返回                                                            |
 | ---------------------- | ---------------------------------------------------- | --------------------------------------------------------------- |
 | `svg_layout_flowchart` | `nodes[{id,label}]` 和有方向的 `edges[{id,from,to}]` | 画布大小、节点坐标和原连线，可直接交给生成工具                  |
 | `svg_create_flowchart` | 文件名、节点、连线，可选方向、主题或完整坐标         | 新建 SVG 的路径、节点数和边数                                   |
 | `svg_inspect`          | `path`                                               | 业务节点、有向边、未确认关系，以及原始 SVG 结构、统计和导入警告 |
+| `svg_artwork`          | 自由 SVG、选区或原几何                               | 定位、改名或改接，并保存副本                                    |
+| `svg_edit_flowchart`   | 原生图、操作与目标 ID                                | 局部改名、插节点、改端点或合并输入                              |
+| `svg_check_flowchart`  | 保存路径及预期节点、连接或端口                       | 检查实际几何，返回验证结果                                      |
 
 自动布局支持分叉、汇合、孤立节点和多个互不相连的子图。有环图可以手工指定坐标，连接线要求两个不同端点。检查工具支持课程编辑器的 SVG 子集。
 
@@ -32,7 +35,7 @@ dsh plugin --profile web add ./dsh-svg-editor-0.14.1.tgz
 
 在文件预览里点中某个框，再说「把这个框的标题改成『事实复核』，另存为 复核版.svg」。原文件直接作为图像绘制，命中区域来自单独的透明图层。工具以节点 ID、文字序号和原文共同定位，再从磁盘核对新文件。普通墨迹、投影、渐变、背景和连接线沿用原稿。业务连线的拓扑核验可用下面的结构化绘图模式。
 
-此版本识别具有唯一 ID 的分组、直接包含的矩形／圆形／椭圆形框，以及框内的 SVG 文字、tspan 和子分组中的公式或徽标文字。组名以 `node-`、`step-` 等开头或带 `data-svg-node` 最可靠。文字已转成路径、嵌在位图里的图，或靠 CSS 改变几何位置的图需要单独处理。换成长标题后请查看实际宽度，原稿模式只替换文字。[模型启用插件后自由绘制的交叉注意力](../../doc/evidence/dsh/presentation/trials/ports-artwork-design.svg) · [实测原稿](../../doc/evidence/dsh/presentation/trials/review-without.svg) · [测试记录](../../doc/records/2026-11-25-dsh-presentation.md)
+此版本识别具有唯一 ID 的分组、直接包含的矩形／圆形／椭圆形框，以及框内的 SVG 文字、tspan 和子分组中的公式或徽标文字。组名以 `node-`、`step-` 等开头或带 `data-svg-node` 最可靠。文字已转成路径、嵌在位图里的图，或靠 CSS 改变几何位置的图需要单独处理。换成长标题后请查看实际宽度，原稿模式只替换文字。[模型启用插件后自由绘制的交叉注意力](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/presentation/trials/ports-artwork-design.svg) · [实测原稿](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/presentation/trials/review-without.svg) · [测试记录](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/records/2026-11-25-dsh-presentation.md)
 
 ## 直接画一张投影用流程图
 
@@ -40,7 +43,7 @@ dsh plugin --profile web add ./dsh-svg-editor-0.14.1.tgz
 
 例如「把收稿、并行事实核查和文字审校、终审、发表画成课程幻灯片。用 svg_create_flowchart 自动排版，保存为全新的 review.svg，然后读回核对」。有精确参考、有回路或要指定面板位置时，可以传完整坐标并选择 `theme: "presentation"`。演示主题会区分主副文字，另有原来的 `studio` 和黑白 `print`。
 
-[可编辑的 Transformer 示例](../../doc/evidence/dsh/presentation/Transformer.svg) · [Transformer 输入](demo/transformer-presentation.json) · [模型提供节点后自动排版的交叉注意力](../../doc/evidence/dsh/presentation/cross-attention.svg) · [自然语言对照实验](../../doc/records/2026-11-25-dsh-presentation.md)
+[可编辑的 Transformer 示例](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/presentation/Transformer.svg) · [Transformer 输入](demo/transformer-presentation.json) · [模型提供节点后自动排版的交叉注意力](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/presentation/cross-attention.svg) · [自然语言对照实验](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/records/2026-11-25-dsh-presentation.md)
 
 ```sh
 npm run demo:dsh -- --input apps/dsh-plugin/demo/cross-attention-auto.json --theme presentation
@@ -66,7 +69,7 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/cross-attention-auto.json --the
 
 显式选择直线时会检查是否穿过卡片，选择弧线时会核验生成了真正的曲线。空间不足时工具返回原因，便于改选圆角折线或端点。原生 K/V 等分叉整条重连时保留各支的端口和箭头。它的具名分支需要直线进入端口。
 
-同一台 Mac 上比较五次点选和五次无插件位置描述，结果与一次较慢的反例见[桌面点选验收](../../doc/records/2026-11-25-dsh-desktop-selection.md)。
+同一台 Mac 上比较五次点选和五次无插件位置描述，结果与一次较慢的反例见[桌面点选验收](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/records/2026-11-25-dsh-desktop-selection.md)。
 
 ## 在原图上修改并核验
 
@@ -77,7 +80,7 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/cross-attention-auto.json --the
 - `svg_check_flowchart` 从磁盘核对预期的节点 ID、完整标签数量、有向边和同源具名端口。举例，交叉注意力仅当来自编码器的一条合格连接同时携带 `["K","V"]` 才满足共用主干要求。缺翼箭头会返回对应端口和坐标，传入新文件名 `markPath` 可以生成带红圈的故障副本。
 - 编辑器面向带原生节点和连线信息的 SVG。遇到通用 SVG 或带变换的图形，几何核验可以返回 `unverified`。模型另行改写文件后，应重新调用检查工具。比较图是展示用文件。
 
-使用同一张原图的模型对照、端口故障复验及示例文件见[局部改图实测](../../doc/records/2026-11-24-dsh-local-edits.md)。
+使用同一张原图的模型对照、端口故障复验及示例文件见[局部改图实测](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/records/2026-11-24-dsh-local-edits.md)。
 
 ## 生成汇报图或打印稿
 
@@ -85,7 +88,7 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/cross-attention-auto.json --the
 
 > 画一张发布流程图。提交申请后评估风险，同时做回归测试和隐私审查，汇总后发布。在同一个布局上用 svg_create_flowchart 分别生成「发布汇报.svg」和「发布打印.svg」。第一份用 studio，第二份用 print，再读回核对两份的节点与连线。
 
-`print` 使用灰阶填充、深色描边与相同的箭头，适合黑白讲义。下面是同一份输入实际生成的两张图。[彩色示例](../../doc/evidence/dsh/design/studio.svg) · [打印示例](../../doc/evidence/dsh/design/print.svg)
+`print` 使用灰阶填充、深色描边与相同的箭头，适合黑白讲义。下面是同一份输入实际生成的两张图。[彩色示例](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/design/studio.svg) · [打印示例](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/design/print.svg)
 
 ## 按参考图决定线型
 
@@ -98,7 +101,7 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-reference.json
 npm run demo:dsh -- --input apps/dsh-plugin/demo/release-curves.json
 ```
 
-[参考图版 Transformer](../../doc/evidence/dsh/captions/Transformer.svg) · [自动布局的发布流程](../../doc/evidence/dsh/curves/release.svg) · [标题避让验收](../../doc/dsh.md#标题避让与本地性能) · [性能对照](../../doc/dsh.md#线型与读回性能)
+[参考图版 Transformer](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/captions/Transformer.svg) · [自动布局的发布流程](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/curves/release.svg) · [标题避让验收](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/dsh.md#标题避让与本地性能) · [性能对照](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/dsh.md#线型与读回性能)
 
 ## 绘制 Q、K、V 分叉箭头
 
@@ -108,7 +111,7 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/release-curves.json
 npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-qkv.json
 ```
 
-这张图保持 21 个节点、25 条逻辑连接，最终有 30 个可见箭头，其中 9 个标注了注意力输入。[可编辑架构图](../../doc/evidence/dsh/qkv/Transformer.svg) · [输入与验证](../../doc/dsh.md#qkv-分叉箭头)
+这张图保持 21 个节点、25 条逻辑连接，最终有 30 个可见箭头，其中 9 个标注了注意力输入。[可编辑架构图](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/qkv/Transformer.svg) · [输入与验证](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/dsh.md#qkv-分叉箭头)
 
 ## 用 Transformer 架构图验收
 
@@ -118,7 +121,7 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer-qkv.json
 npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer.json
 ```
 
-向 `svg_create_flowchart` 传入明确的坐标、可选 `title` 和 `panels` 可以保留双栏排版。面板接受标题、可选说明和矩形范围。请在面板顶部为标题和说明留白。0.6.1 会根据实际连线、箭头和节点位置选择可用位置；标题和说明一起移动。空间不足时，工具会指出需要扩大的面板。读回业务关系用 `graph`，背景板与标题只进入 SVG 元素统计。本例有 18 个节点、22 条有向边。[可编辑架构图](../../doc/evidence/dsh/transformer/Transformer.svg) · [多层压力测试与数据](../../doc/dsh.md#transformer-架构图与性能验证)
+向 `svg_create_flowchart` 传入明确的坐标、可选 `title` 和 `panels` 可以保留双栏排版。面板接受标题、可选说明和矩形范围。请在面板顶部为标题和说明留白。0.6.1 会根据实际连线、箭头和节点位置选择可用位置；标题和说明一起移动。空间不足时，工具会指出需要扩大的面板。读回业务关系用 `graph`，背景板与标题只进入 SVG 元素统计。本例有 18 个节点、22 条有向边。[可编辑架构图](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/evidence/dsh/transformer/Transformer.svg) · [多层压力测试与数据](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/dsh.md#transformer-架构图与性能验证)
 
 ## 检查直达路线与箭头
 
@@ -132,7 +135,7 @@ npm run demo:dsh -- --input apps/dsh-plugin/demo/transformer.json
 
 > 请用 svg_layout_flowchart 布局「开始 → 处理 → 完成」，用 svg_create_flowchart 将布局保存为「桌面验收.svg」，再用 svg_inspect 读回该文件，报告节点数、连线数和导入警告。
 
-2026-11-19 使用 0.2.0 的桌面会话实际生成了 448 × 96 的 SVG。读回和磁盘文件均有 **3 个节点、2 条连线**，工具返回的导入警告为 `[]`。[桌面安装、复验步骤与原始 SVG](../../doc/dsh.md#macos-桌面版验收) · [市场发布进度](../../doc/dsh.md#社区市场发布清单)
+2026-11-19 使用 0.2.0 的桌面会话实际生成了 448 × 96 的 SVG。读回和磁盘文件均有 **3 个节点、2 条连线**，工具返回的导入警告为 `[]`。[桌面安装、复验步骤与原始 SVG](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/dsh.md#macos-桌面版验收) · [市场发布进度](https://github.com/zero0307/svg-editor-platform/blob/dsh-svg-editor-v0.14.2/doc/dsh.md#社区市场发布清单)
 
 ## 在源码仓库复跑 demo
 
@@ -146,3 +149,7 @@ npm run demo:dsh
 程序会打包并安装到全新的临时 profile，在真实 Agent 会话目录执行三个工具，再检查卸载。终端打印本次输出目录，打开 `demo.svg` 看图，`verification.json` 包含输入、布局和实际读回结果，同目录里的 .tgz 就是这一轮安装过的包。每次运行使用新的目录。这个可复现演示无需模型密钥。
 
 要试自己的图，可复制 `apps/dsh-plugin/demo/review.json`，改节点和边，再运行 `npm run demo:dsh -- --input my-graph.json`。
+
+## 许可证
+
+本插件及随包分发的项目自有运行时代码采用 [MIT](LICENSE)。内含第三方代码的声明见 [xmldom 声明](xmldom-LICENSE) 和 [svgpath 声明](svgpath-LICENSE)。

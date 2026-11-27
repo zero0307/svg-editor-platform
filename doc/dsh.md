@@ -221,18 +221,19 @@ npm run verify:dsh
 
 ## 社区市场发布清单
 
-以课程列举的 `dsh-market` 为投稿目标。DSH 官方桌面版支持按 profile 添加第三方索引。此社区市场的目录由 `awesome-dsh-plugin` 维护，也可作为索引源添加到官方「发现」页。[课程原文](../phase_cli_2-研-1.md) · [官方索引规范](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/plugin-market.zh.md) · [市场投稿入口](https://github.com/dsh-market/dsh-market#submit-your-plugin)
+课程建议开源并向 DSH 插件市场发布。这里采用社区目录 `awesome-dsh-plugin` 和 `dsh-market` 支持的 GitHub Release 预构建包。适配 DeepSeek Harness 0.2.2-rc.5，服务端提供六个工具，桌面端支持点选节点及连线。[课程原文](../phase_cli_2-研-1.md) · [工具与使用说明](../apps/dsh-plugin/README.md) · [社区投稿规则](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)
 
-截至 2026-11-19，仓库公开、仍在维护，创建于 11 月 15 日，已满足目录要求的仓龄。子包已声明 `dsh.bundle.patch`，包含对应 patch、三个工具及桌面验收证据。兼容声明精确限定 DSH 0.2.2-rc.5。社区目录接受 `apps/` 子包，可沿用当前仓库。[包清单](../apps/dsh-plugin/package.json) · [社区收录与评审规则](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)
+1. 将 0.14.2 与发布清单合入保护分支。该版本的主分支 CI 通过后，发行任务在干净的 Harness 中安装并卸载候选包，上传同一个文件和 SHA-256，校验 Release 附件，再从公开 URL 下载安装并复验。失败时查看该次主分支 CI，可重新运行失败任务。[工作流](../.github/workflows/ci.yml)
+2. 在 `awesome-dsh-plugin/awesome-dsh-plugin` 的投稿 PR 中，只新增 `data/plugins/zero0307__svg-editor-platform--apps-dsh-plugin.yml`，使用本仓库[已准备的条目](../apps/dsh-plugin/market/zero0307__svg-editor-platform--apps-dsh-plugin.yml)。展示名按子目录末段使用 `zero0307/svg-editor-platform#dsh-plugin`。投稿前确认 URL 和 Release 链接都可匿名访问。[社区投稿入口](https://github.com/dsh-market/dsh-market#submit-your-plugin)
+3. 条目经维护者审核、同步后，用干净的目标版本 profile 搜索、安装、点选改接一条边、从磁盘读回，再卸载。将市场条目链接、实测版本和结果写入记录。仓库 CI 的安装证据与市场审核分别跟踪。
 
-| 待办                       | 完成标志                                                                                                                                                                                                                                                                                                                                                                          |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 让发布源码可从默认分支访问 | 当前 `main` 尚无插件。按依赖顺序评审并合入 #25、#26、#27，确认 `main/apps/dsh-plugin` 可浏览。团队按开源目标确认自有代码的许可证，打包时保留已有的 `xmldom-LICENSE`。                                                                                                                                                                                                             |
-| 补全仓库与分发入口         | 仓库尚无 `dsh-plugin` topic、公开 Release 或同名 npm 包。添加目录要求的 topic。建议从选定发布提交打包，把预构建的 `.tgz` 附到固定标签的 GitHub Release，在干净 profile 从公开产物验证安装、三工具和卸载。子包构建引用仓库内的运行时，市场用户可以直接安装编译好的产物。                                                                                                           |
-| 提交一条社区目录记录       | 在 `awesome-dsh-plugin/awesome-dsh-plugin` 提 PR，仅新增 `data/plugins/zero0307__svg-editor-platform--apps-dsh-plugin.yml`。填写指向本仓库 `tree/main/apps/dsh-plugin` 的 URL、名称 `zero0307/svg-editor-platform#dsh-svg-editor`、分类 `tools`、一句准确的英文功能描述，以及指向本次 Release 资产的 HTTPS `tarball` 链接。可附中文描述。核对相近条目，等待目录 CI 和维护者审核。 |
-| 从市场完成最终复验         | 条目合并并同步后，在干净且版本匹配的 DSH profile 打开 `dsh-market`，搜索插件、确认安装来源、安装启用并重跑上面的三节点用例，再卸载。记录条目链接、发布版本及实测结果。                                                                                                                                                                                                            |
+发行包包含 MIT 许可的自有代码、两份第三方声明和两个可离线读取的 JSON 示例。包名 `dsh-svg-editor`，兼容性以清单为准。官方原生「发现」的参考生成器使用 npm 或固定 Git 提交和子目录，会忽略 `private: true` 的子包。这里保留该标记，使用社区市场的 Release 附件分发。[许可证](../apps/dsh-plugin/LICENSE) · [官方索引规范](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/plugin-market.zh.md)
 
-如团队选择发布到 npm，需要先调整**插件子包**当前的 `private: true`，补充指向本仓库及子目录的 `repository`，用发布账号验证包名和权限，再发布、验证具体版本。上表推荐的 GitHub Release 路径可直接利用现有打包流程。官方「发现」索引的版本来源仅支持 npm 或固定提交的 Git 子目录，社区条目的 Release `tarball` 字段属于 `dsh-market` 的安装机制。若也要支持原生「发现」安装，须另验索引中的实际 npm/Git 来源。#14/#16 跟踪团队的默认运行时迁移，后续替换运行时需要重跑验收。[官方版本来源格式](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/guide/plugin-market.zh.md#index-format) · [社区分发选项](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)
+复验下载到本地的指定发行包，可在本仓库运行以下命令。验收器直接安装所给文件，报告中的 `packageSha256` 可与公开的校验和对照。
+
+```sh
+npm run verify:dsh -- --archive /path/to/dsh-svg-editor-0.14.2.tgz
+```
 
 ## Phase 边界与交接
 

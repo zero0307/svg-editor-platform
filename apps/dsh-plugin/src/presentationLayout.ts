@@ -29,7 +29,9 @@ export function prepareChart(input: ChartInput): Chart {
         'Supply both canvas dimensions and all four coordinates on every node, or omit all geometry for automatic layout.',
       );
     if (input.direction || input.format)
-      throw new RangeError('direction and format apply to automatic layout.');
+      throw new RangeError(
+        'For automatic layout, omit geometry. To keep these coordinates, remove direction and format and retry.',
+      );
     return {
       ...input,
       width: input.width,

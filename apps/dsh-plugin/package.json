@@ -1,6 +1,6 @@
 {
   "name": "dsh-svg-editor",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "private": true,
   "type": "module",
   "description": "Inspect SVG documents and create editable flowcharts in DeepSeek Harness",
@@ -18,7 +18,10 @@
     "xmldom-LICENSE",
     "dist/client.js",
     "dist/src/svgpath.cjs",
-    "svgpath-LICENSE"
+    "svgpath-LICENSE",
+    "LICENSE",
+    "demo/review.json",
+    "demo/transformer-presentation.json"
   ],
   "engines": {
     "dsh": "0.2.2-rc.5"
@@ -61,5 +64,11 @@
     "build": "tsc -b && npm run bundle --silent",
     "test": "npm run build --silent && node --test dist/test/*.test.js client/*.test.mjs",
     "prepack": "npm run build"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zero0307/svg-editor-platform.git",
+    "directory": "apps/dsh-plugin"
   }
 }

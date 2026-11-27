@@ -18,10 +18,11 @@ import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '../../..');
 const {
-  values: { evidence, input, demo, theme },
+  values: { evidence, input, demo, theme, archive: suppliedArchive },
 } = parseArgs({
   options: {
     evidence: { type: 'string' },
+    archive: { type: 'string' },
     input: { type: 'string' },
     demo: { type: 'boolean' },
     theme: { type: 'string', default: 'studio' },
@@ -97,7 +98,16 @@ try {
   );
   const version = run(cli, ['--version']).trim();
   assert.equal(version, '0.2.2-rc.5');
-  run(npm, ['pack', '--silent', '--workspace', 'dsh-svg-editor', '--pack-destination', temp], root);
+  if (suppliedArchive) {
+    assert.equal(path.extname(suppliedArchive), '.tgz');
+    copyFileSync(path.resolve(suppliedArchive), path.join(temp, path.basename(suppliedArchive)));
+  } else {
+    run(
+      npm,
+      ['pack', '--silent', '--workspace', 'dsh-svg-editor', '--pack-destination', temp],
+      root,
+    );
+  }
   run(cli, ['--profile', profile, '--from-default-profile', 'sdk-minimal', '--dump-config']);
   const archives = readdirSync(temp).filter((name) => name.endsWith('.tgz'));
   assert.equal(archives.length, 1);
@@ -106,6 +116,16 @@ try {
   const profileDir = path.join(env.DSH_HOME, 'profiles', profile);
   const installed = path.join(profileDir, 'node_modules', 'dsh-svg-editor');
   assert.ok(realpathSync(installed).startsWith(realpathSync(temp) + path.sep));
+  const manifest = JSON.parse(readFileSync(path.join(installed, 'package.json'), 'utf8'));
+  assert.equal(manifest.license, 'MIT');
+  for (const name of [
+    'LICENSE',
+    'xmldom-LICENSE',
+    'svgpath-LICENSE',
+    'demo/review.json',
+    'demo/transformer-presentation.json',
+  ])
+    assert.ok(existsSync(path.join(installed, name)), 'Missing from installed archive: ' + name);
   const driver = path.join(temp, 'probe.mjs');
   copyFileSync(path.join(import.meta.dirname, 'probe.mjs'), driver);
   const patch = path.join(temp, 'acceptance.yml');
