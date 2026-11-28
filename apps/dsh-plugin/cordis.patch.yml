@@ -1,0 +1,9 @@
+# Bundle patch: insert the minimal TASK-DSH-01 plugin row into a DSH profile.
+# Install with `dsh plugin --profile <name> add <this-directory>`; remove with
+# `dsh plugin --profile <name> remove @svgframe/dsh-plugin`.
+- insert:
+    - id: svgframe-dsh-plugin
+      name: '@svgframe/dsh-plugin'
+      config:
+        log: true
+        dshVersion: '0.2.2-rc.5'
