@@ -34,7 +34,8 @@
 - A：`apps/cli/src/main.ts` 显式 import 四个插件并放入 `embeddedPlugins`。
 - B：同一入口加 `--config plugins.config.json`，由 `packages/host` 的 `PluginLoader` 解析模块、把模块对象交给同一个 `PluginInstaller.install`。
 - 加载失败按冻结文案输出后继续启动：`plugin not found: <module>`、`plugin has no default export: <name>`、`plugin manifest mismatch: <name> (declared: …, registered: …)`、`plugin failed to activate: <name> (<reason>)`、`duplicate registration: <category>/<name>`、`invalid plugin config`；失败插件的暂存注册与订阅全部回滚。
-- 证据：A/B 三组会话逐字节一致 + 空配置 4/4 回到 `final`（[assembly/README.md](evidence/assembly/README.md)）；C_A/C_B 接入差异（[diff 证据](evidence/assembly/README.md)，仅 diff：F 上缺 #19 后续框架补丁）。
+- 集成回放的三组 A/B 会话逐字节一致，空配置下四组会话均匹配 Phase 1 基线。原冻结基线上的接入差异与回放记录见[集成装配报告](evidence/assembly/README.md)。
+- 从含通用回显修复的共同基线 `9cf8447` 分别检出代码装配 `bcdb30f` 与配置装配 `30f02c7`。两者均独立构建成功，各通过 30 项插件测试。两次回放的标准输出均逐字节匹配预期，生成的 SVG 均匹配既有验收摘要。见[box 双装配复核报告](evidence/assembly/verified-box/README.md)。
 
 ## 5. 设计模式与 OCP 验证
 
@@ -52,7 +53,7 @@
 | 根测试       | 128 项通过（Phase 1 回归 + 基线 + 框架 + 组合根）                                                        | `npm test`，日志 [release/check.log](evidence/release/check.log) |
 | 工作区测试   | 310 项通过（core 102、host 39、svg-xml 36、cli 2、dsh 19、vscode 25、stats 14、dir 17、box 30、tree 26） | `npm run test:packages`                                          |
 | Phase 1 兼容 | 空配置下四个 golden 会话 4/4 逐字节一致                                                                  | [baseline/README.md](evidence/baseline/README.md)                |
-| A/B 装配     | 三组会话逐字节一致；help 顺序一致；空配置 4/4                                                            | [assembly/README.md](evidence/assembly/README.md)                |
+| A/B 装配 | 集成回放三组一致，空配置 4/4；box 两种独立接入均通过构建与预期输出核对 | [集成回放](evidence/assembly/README.md)、[box 双装配复核报告](evidence/assembly/verified-box/README.md) |
 | 加载器矩阵   | 39 项 host 测试覆盖四类失败、重复注册、回滚与订阅                                                        | `packages/host/test/`                                            |
 | 视觉         | `differingChannels: 0`                                                                                   | [release/verify-visual.log](evidence/release/verify-visual.log)  |
 | 指标         | `final → fb0427a` 由脚本从 Git 生成                                                                      | [docs/metrics/README.md](../docs/metrics/README.md)              |
@@ -90,10 +91,9 @@ VSCode：在 `apps/vscode-svg` 下构建并打包 VSIX（见 [vscode.md](vscode.
 ## 11. 未完成项
 
 1. `p2` 标签、`main` 合并与远程推送未执行（用户要求，由主线在确认后按 [release-checklist.md](release-checklist.md) 完成）。
-2. 跨平台（Linux/macOS）与 Node 22/24 未验证；`.nvmrc` 为 24.22.1，本机实跑为 Node 26.13.0。
+2. 跨平台（Linux/macOS）与 Node 22/24 的全套发布检查未验证；`.nvmrc` 为 24.22.1，全套发布检查实跑为 Node 26.13.0。
 3. DSH 模型侧真实工具调用未执行（无凭据）。
-4. C_A/C_B 证据分支在 F 上不可构建（缺 #19 后续框架补丁），仅作 diff 证据；运行期 A/B 在 `fb0427a` 上验证。
-5. 真实 VSCode 宿主演示仅在 Windows/本机 VSCode 版本完成，未做跨平台截图。
+4. 真实 VSCode 宿主演示仅在 Windows/本机 VSCode 版本完成，未做跨平台截图。
 
 ## 12. Phase 1 归档
 

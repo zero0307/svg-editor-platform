@@ -10,7 +10,9 @@
 | 指标提交     | `412727fdab1a11d1d6951f22a256387415bc3725`（`412727f`）                                                             | 只新增 `docs/metrics/` 与 `doc/evidence/release/`；源码复核见 `doc/evidence/release/metrics-recheck.log`   |
 | 收口报告提交 | 本文件随其提交                                                                                                      | `docs(release): close phase 2 report and release checklist (#22)`；SHA 见 `git log -1`，不写死以避免自引用 |
 | 框架基线 F   | `a21f758bf072a7d8c0ff683bc579db124c6d209d`                                                                          | 受保护分支 `evidence/p2-framework-base`                                                                    |
-| C_A / C_B    | `d3465f73…` / `043a2f76…`                                                                                           | `evidence/box-code` / `evidence/box-config`，仅 diff 证据（F 上不可构建，见 #21 记录）                     |
+| 原 C_A / C_B    | `d3465f73…` / `043a2f76…`                                                                                           | `evidence/box-code` / `evidence/box-config`，仅 diff 证据（F 上不可构建，见 #21 记录）                     |
+| box 复核基线 | `9cf8447` | `codex/box-feedback-base`，包含通用回显修复 |
+| box 独立接入 A / B | `bcdb30f` / `30f02c7` | `codex/box-code-verified` / `codex/box-config-verified`，见[box 双装配复核报告](evidence/assembly/verified-box/README.md) |
 | Phase 1 基线 | `final` = `25c263bda5515816d59efb383a3790dd2c77df3a`（标签对象），解引用 `e5621a68afd4731626d54566f17ba55885d1bc0f` | 不移动、不复用                                                                                             |
 
 ## 2. 复跑命令（真实执行过）
@@ -48,7 +50,7 @@ node scripts/assembly/diff-evidence.mjs --framework a21f758 --code evidence/box-
 | ----------------------------------- | ------------------------------------------------------ | ------------------------------------------------------- |
 | Phase 1 兼容（BASE-01）             | 空配置下四个 golden 会话 4/4 逐字节一致                | 只在 Windows/Node 26 实跑                               |
 | 四扩展点与事务（EXT/ATTR/BOX/TREE） | 契约、实现、缺省与错误测试齐备；插件独立测试全绿       | —                                                       |
-| 加载与装配（LOAD/ASM）              | loader 39 项故障矩阵；A/B 三会话逐字节一致；空配置 4/4 | C_A/C_B 仅 diff 证据（F 缺 #19 后续补丁，按授权不改 F） |
+| 加载与装配（LOAD/ASM） | 加载器 39 项故障测试；集成回放三组一致，空配置 4/4。独立 box A/B 均构建通过，各通过 30 项插件测试；标准输出均匹配预期 806 字节，SVG 均匹配既有 601 字节产物摘要。见[box 双装配复核报告](evidence/assembly/verified-box/README.md) | — |
 | 指标（MET）                         | `final → fb0427a` 由脚本生成，报告提交源码复核不变     | `p2` 创建后需重跑并核对                                 |
 | VSCode（VS/PKG-01）                 | 标记/Outline 截图真实；VSIX 干净安装                   | 跨平台未验                                              |
 | DSH（DSH-01/PKG-02）                | 插件产物在干净目录安装、加载、注册、卸载               | 模型侧真实工具调用未执行（无 `DEEPSEEK_API_KEY`）       |
@@ -65,6 +67,6 @@ node scripts/assembly/diff-evidence.mjs --framework a21f758 --code evidence/box-
 ## 6. 未完成与风险
 
 - `p2`、`main` 合并、远程推送均未执行（用户要求）。
-- 跨平台（Linux/macOS）与 Node 22/24 未验证；`.nvmrc` 为 24.22.1，本机全部实跑在 Node 26.13.0。
+- 跨平台（Linux/macOS）与 Node 22/24 的全套发布检查未验证；`.nvmrc` 为 24.22.1，全套发布检查实跑在 Node 26.13.0。
 - DSH 模型侧调用未执行；VSCode 真实宿主验证仅在 Windows/本机 VSCode 版本完成。
 - `npm ci` 时 `@vscode/vsce-sign` 与 `esbuild` 的 postinstall 被 `allowScripts` 策略阻止；本节点检查不依赖二者，VSCode 打包由 V 板块单独记录。
