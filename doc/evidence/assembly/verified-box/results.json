@@ -1,0 +1,32 @@
+{
+  "node": "v24.22.3",
+  "npm": "11.6.2",
+  "fixtureCommit": "14a45d7082390479ea866492350237a77b5fdb75",
+  "inputSha256": "bc81ef59124294623e538da7dfad43cedfb184dea2b0f5db92e196386b505c35",
+  "expectedStdoutSha256": "9a7dc6eac39168a43f587a5eabe8d2ce9e13a438e31e1ecba5cef1df777f373c",
+  "expectedSvgSha256": "746e10d9af7eb5c483d98e51dc5a325f40d933c3e9e91f567ef0a33b18cd9b56",
+  "results": {
+    "A": {
+      "commit": "bcdb30f0f33207053c41c80966935e31dbc39e32",
+      "parent": "9cf84471cf910190424073a186897566271100f4",
+      "pluginTree": "35b60872e3f9469dfc1526659eeef9b0ab44709a",
+      "exit": 0,
+      "stderrBytes": 0,
+      "stdoutBytes": 806,
+      "stdoutSha256": "9a7dc6eac39168a43f587a5eabe8d2ce9e13a438e31e1ecba5cef1df777f373c",
+      "svgBytes": 601,
+      "svgSha256": "746e10d9af7eb5c483d98e51dc5a325f40d933c3e9e91f567ef0a33b18cd9b56"
+    },
+    "B": {
+      "commit": "30f02c7c9665799906e19ccd545f4eb90ea6854b",
+      "parent": "9cf84471cf910190424073a186897566271100f4",
+      "pluginTree": "35b60872e3f9469dfc1526659eeef9b0ab44709a",
+      "exit": 0,
+      "stderrBytes": 0,
+      "stdoutBytes": 806,
+      "stdoutSha256": "9a7dc6eac39168a43f587a5eabe8d2ce9e13a438e31e1ecba5cef1df777f373c",
+      "svgBytes": 601,
+      "svgSha256": "746e10d9af7eb5c483d98e51dc5a325f40d933c3e9e91f567ef0a33b18cd9b56"
+    }
+  }
+}
