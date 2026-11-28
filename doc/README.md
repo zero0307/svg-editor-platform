@@ -48,15 +48,15 @@
 
 ## 6. 质量证据
 
-| 项目         | 结果                                                                                                     | 位置                                                             |
-| ------------ | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| 根测试       | 128 项通过（Phase 1 回归 + 基线 + 框架 + 组合根）                                                        | `npm test`，日志 [release/check.log](evidence/release/check.log) |
-| 工作区测试   | 310 项通过（core 102、host 39、svg-xml 36、cli 2、dsh 19、vscode 25、stats 14、dir 17、box 30、tree 26） | `npm run test:packages`                                          |
-| Phase 1 兼容 | 空配置下四个 golden 会话 4/4 逐字节一致                                                                  | [baseline/README.md](evidence/baseline/README.md)                |
-| A/B 装配 | 集成回放三组一致，空配置 4/4；box 两种独立接入均通过构建与预期输出核对 | [集成回放](evidence/assembly/README.md)、[box 双装配复核报告](evidence/assembly/verified-box/README.md) |
-| 加载器矩阵   | 39 项 host 测试覆盖四类失败、重复注册、回滚与订阅                                                        | `packages/host/test/`                                            |
-| 视觉         | `differingChannels: 0`                                                                                   | [release/verify-visual.log](evidence/release/verify-visual.log)  |
-| 指标         | `final → fb0427a` 由脚本从 Git 生成                                                                      | [docs/metrics/README.md](../docs/metrics/README.md)              |
+| 项目         | 结果                                                                                                     | 位置                                                                                                    |
+| ------------ | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 根测试       | 128 项通过（Phase 1 回归 + 基线 + 框架 + 组合根）                                                        | `npm test`，日志 [release/check.log](evidence/release/check.log)                                        |
+| 工作区测试   | 310 项通过（core 102、host 39、svg-xml 36、cli 2、dsh 19、vscode 25、stats 14、dir 17、box 30、tree 26） | `npm run test:packages`                                                                                 |
+| Phase 1 兼容 | 空配置下四个 golden 会话 4/4 逐字节一致                                                                  | [baseline/README.md](evidence/baseline/README.md)                                                       |
+| A/B 装配     | 集成回放三组一致，空配置 4/4；box 两种独立接入均通过构建与预期输出核对                                   | [集成回放](evidence/assembly/README.md)、[box 双装配复核报告](evidence/assembly/verified-box/README.md) |
+| 加载器矩阵   | 39 项 host 测试覆盖四类失败、重复注册、回滚与订阅                                                        | `packages/host/test/`                                                                                   |
+| 视觉         | `differingChannels: 0`                                                                                   | [release/verify-visual.log](evidence/release/verify-visual.log)                                         |
+| 指标         | `final → fb0427a` 由脚本从 Git 生成                                                                      | [docs/metrics/README.md](../docs/metrics/README.md)                                                     |
 
 ## 7. 需求状态
 
