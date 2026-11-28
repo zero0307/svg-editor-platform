@@ -210,23 +210,23 @@ npm run build        # tsc + esbuild，产出 dist/extension.js
 
 ## 10. 已遇到的问题与处理
 
-| 现象                                                                           | 原因                                                       | 处理                                                                                          |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `create box` 报 `unknown shape type`                                           | 在 `main` 分支运行（Phase 1 无插件），或用了空插件配置     | 切到 `integration/phase2`；或不要带 `--config test/fixtures/plugins/no-optional-plugins.json` |
-| 同样报错但分支正确                                                             | 用了 B 模式且配置缺少 `@svgframe/shape-box`                | 用根 `plugins.config.json`，或补上该条配置                                                    |
-| `--script examples/README.md` 报 `cannot read script`                          | 该文件不存在；`--script` 需要命令文本文件                  | 使用 `examples/*.commands` 或自建 `.txt` 脚本                                                 |
-| `code --install-extension` 报 `ENOENT ...\apps\vscode-svg\apps\vscode-svg\...` | 已 `cd` 到 `apps/vscode-svg`，路径前缀重复                 | 用 `dist/...` 相对路径，或回仓库根用完整相对路径                                              |
-| 中文文档/脚本出现乱码                                                          | PowerShell `Get-Content/Set-Content` 按 ANSI 读写          | 用编辑器工具或 Node 以 UTF-8 写入                                                             |
-| `npm ci` 警告两个 postinstall 被跳过                                           | 环境 `allowScripts` 策略拦截 `esbuild`/`@vscode/vsce-sign` | 不影响测试与打包，已记录在证据中                                                              |
-| 想退出 `svg>` 会话                                                             | 没有 `exit` 命令                                           | `Ctrl+Z`+回车（Windows）或 `Ctrl+D`；`exit` 已列为合并前待办                                  |
-| `C_A`/`C_B` 在 F 上无法构建                                                    | 插件实现用到 F 之后新增的 `creationParts()` 钩子           | 仅作 diff 证据；可改用 `0df080b` 的旧实现或纳入新 F′ 后重建                                   |
+| 现象                                                                           | 原因                                                       | 处理                                                                                                                                       |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `create box` 报 `unknown shape type`                                           | 在 `main` 分支运行（Phase 1 无插件），或用了空插件配置     | 切到 `integration/phase2`；或不要带 `--config test/fixtures/plugins/no-optional-plugins.json`                                              |
+| 同样报错但分支正确                                                             | 用了 B 模式且配置缺少 `@svgframe/shape-box`                | 用根 `plugins.config.json`，或补上该条配置                                                                                                 |
+| `--script examples/README.md` 报 `cannot read script`                          | 该文件不存在；`--script` 需要命令文本文件                  | 使用 `examples/*.commands` 或自建 `.txt` 脚本                                                                                              |
+| `code --install-extension` 报 `ENOENT ...\apps\vscode-svg\apps\vscode-svg\...` | 已 `cd` 到 `apps/vscode-svg`，路径前缀重复                 | 用 `dist/...` 相对路径，或回仓库根用完整相对路径                                                                                           |
+| 中文文档/脚本出现乱码                                                          | PowerShell `Get-Content/Set-Content` 按 ANSI 读写          | 用编辑器工具或 Node 以 UTF-8 写入                                                                                                          |
+| `npm ci` 警告两个 postinstall 被跳过                                           | 环境 `allowScripts` 策略拦截 `esbuild`/`@vscode/vsce-sign` | 不影响测试与打包，已记录在证据中                                                                                                           |
+| 想退出 `svg>` 会话                                                             | 没有 `exit` 命令                                           | `Ctrl+Z`+回车（Windows）或 `Ctrl+D`；`exit` 已列为合并前待办                                                                               |
+| `C_A`/`C_B` 在 F 上无法构建                                                    | 插件实现用到 F 之后新增的 `creationParts()` 钩子           | 已由独立复核补齐：基线 `9cf8447` 上重建 A=`bcdb30f`、B=`30f02c7`，构建/测试/SVG/回放全部通过，证据见 `doc/evidence/assembly/verified-box/` |
 
 ## 11. 验收、证据与指标
 
 - 验收矩阵：`doc/acceptance.md`（31 通过 / 4 部分通过 / 0 未执行）。
 - 节点验收文档：`doc/evidence/acceptance/001`–`022`。
 - 证据索引：`doc/evidence-index.md`。
-- 真实提交证据索引：`doc/evidence/assembly/`（C_A/C_B diff、零改动检查、A/B 回放）。
+- 真实提交证据索引：`doc/evidence/assembly/`（C_A/C_B diff、零改动检查、A/B 回放）与 `doc/evidence/assembly/verified-box/`（独立复核的可构建 A/B、构建/测试/安装日志、SVG 与字节对比）。
 - 框架冻结：`doc/evidence/framework/freeze.json`（F=`a21f758`）、扩展点清单。
 - 最终指标（`final`=`e5621a6` → 候选）：
 
@@ -247,7 +247,7 @@ npm run build        # tsc + esbuild，产出 dist/extension.js
 2. 合并 `main`、创建 `p2` 标签、推送（需用户确认）；步骤见 [发布清单](../release-checklist.md)。
 3. 在 `p2` 上重跑指标并核对源码散列。
 4. DSH 模型侧真实调用（需要 `DEEPSEEK_API_KEY`）。
-5. 可选：重建可构建的 `C_A`/`C_B`；补跨平台/Node 22–24/CI 验证；渲染 PlantUML 图。
+5. 可选：补跨平台/Node 22–24/CI 验证；渲染 PlantUML 图；在 `p2` 上重跑指标。
 
 ## 13. 相关文档
 

@@ -69,7 +69,7 @@
 - #2：运行期只读保护、消费方评审记录（2 条部分通过）。
 - #12：p2 终版指标未生成（第 4 条部分通过，留给 #22）。
 - #16：真实会话中执行两个工具未验证（无 API key；第 3/4 条部分满足）。
-- #21：C_A/C_B 在 F 上无法构建（`creationParts()` 是 F 之后的补丁），仅作 diff 证据（第 1 条部分通过）；A/B 运行回放与零改动检查通过。
+- #21：C_A/C_B 在 F 上无法构建（`creationParts()` 是 F 之后的补丁），仅作 diff 证据（第 1 条部分通过）；A/B 运行回放与零改动检查通过。后续独立复核在基线 `9cf8447` 上重建了可构建的 A=`bcdb30f`、B=`30f02c7`，构建/测试/SVG/回放全部通过，证据见 `doc/evidence/assembly/verified-box/`，该限制已解除。
 
 ## 5. 包与关键接口（下次开发前必读）
 
@@ -139,7 +139,7 @@
 ## 9. 已知差距与风险（#22 需处理/记录）
 
 - **p2 未创建**：用户要求不合并 `main`，因此 `p2` 标签与“同一仓库发布”留待用户确认；#22 只能准备发布清单与候选 SHA。
-- **#21 C_A/C_B 不可构建**：F 缺少 `creationParts()` 钩子；若需要“可构建的证据分支”，可从 `0df080b`（#19 接入时的插件实现）重做 C_A/C_B，或把框架补丁纳入新 F' 后重建。当前仅 diff 证据。
+- **#21 C_A/C_B 不可构建**：F 缺少 `creationParts()` 钩子；若需要“可构建的证据分支”，可从 `0df080b`（#19 接入时的插件实现）重做 C_A/C_B，或把框架补丁纳入新 F' 后重建。当前仅 diff 证据。（后续独立复核已补齐可构建版本，见 `doc/evidence/assembly/verified-box/`。）
 - **#16 模型侧工具调用未执行**：无 `DEEPSEEK_API_KEY`；真实宿主只验证装载/注册/卸载。
 - **#12 指标**：需要 #22 在最终候选上重跑，避免报告 SHA 循环。
 - **跨平台/Node 版本**：仅 Windows + Node 26 实测；`.nvmrc` 24.22.1、CI 22/24 未本机复跑。
@@ -174,7 +174,7 @@
 - **架构图**：新增 `doc/architecture/phase2-actual.puml`（边来自各 `package.json`）；本机只有 Java 17、无 PlantUML jar，**未渲染 SVG**，已在 `doc/architecture.md` 写明原因与渲染命令。
 - **最终检查真实结果**：`npm ci --prefer-offline` exit 0（两个 postinstall 被环境 allowScripts 阻止，已记录）；`npm run check` exit 0（根 128、workspace 310、文档 96/471、架构 11 包/257 源/119 导入）；`npm run verify:visual` exit 0（`differingChannels: 0`）；CLI `--help` 与含 box/stats/dir/tree 的会话 exit 0。日志在 `doc/evidence/release/`。
 - **p2 发布步骤（未执行，待用户确认）**：确认后把 `integration/phase2` 合并到 `main` → 在发布提交上创建附注标签 `p2`（不移动 `final`）→ 推送 `main` 与 `p2` → 用 `node scripts/metrics/metrics.mjs --from 'final^{commit}' --to 'p2^{commit}'` 重跑并在 p2 上核对源码散列 → 更新 `doc/release-checklist.md` 的最终 SHA。详见 [发布清单](../release-checklist.md)。
-- **仍可改进项**：`C_A`/`C_B` 在 F 上因缺少 `creationParts()` 钩子不可构建（仅 diff 证据）；可用 `0df080b` 的 pre-hook 插件实现重做，或把框架补丁纳入新 F′ 后重建。DSH 模型侧真实调用需 API key；跨平台/Node 22–24/CI 未复跑；VSCode 编辑后 `Ctrl+Z` 刷新未判定。
+- **仍可改进项**：`C_A`/`C_B` 的可构建版本已由独立复核补齐（`doc/evidence/assembly/verified-box/`）；DSH 模型侧真实调用需 API key；跨平台/Node 22–24/CI 未复跑；VSCode 编辑后 `Ctrl+Z` 刷新未判定。
 - 工作树干净；所有子智能体空闲；本轮到此结束。
 
 ## 12. 合并前待办：`exit` 命令（用户要求，2026-11-26）
