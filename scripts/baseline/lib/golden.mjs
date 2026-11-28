@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { existsSync } from 'node:fs';
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -91,7 +92,12 @@ async function walk(directory, prefix) {
 export async function readGolden(sessionDirectory) {
   const produced = new Map();
   const filesRoot = path.join(sessionDirectory, FILES);
-  for (const relative of await walk(filesRoot, '')) {
+  // Git omits empty directories on a fresh checkout.
+  const files =
+    existsSync(filesRoot) || (await readFile(path.join(sessionDirectory, MANIFEST))).length
+      ? await walk(filesRoot, '')
+      : [];
+  for (const relative of files) {
     produced.set(relative, await readFile(path.join(filesRoot, relative)));
   }
   const exitText = await readFile(path.join(sessionDirectory, EXIT_CODE), 'utf8');

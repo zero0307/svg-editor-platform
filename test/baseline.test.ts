@@ -107,7 +107,8 @@ test('baseline golden: four sessions are complete, LF-only and machine independe
     assertNoMachinePath(stderr.toString('utf8'), `${session}/stderr.txt`);
     assert.equal(Number.parseInt(exitText.trim(), 10), exitCodes[session], `${session}: exit code`);
     const expected = parseManifest(await readFile(path.join(directory, 'files.sha256'), 'utf8'));
-    const produced = await walk(path.join(directory, 'files'));
+    const filesRoot = path.join(directory, 'files');
+    const produced = existsSync(filesRoot) || expected.size ? await walk(filesRoot) : [];
     assert.deepEqual([...expected.keys()].sort(), produced, `${session}: manifest paths`);
     for (const relative of produced) {
       const content = await readFile(path.join(directory, 'files', relative));

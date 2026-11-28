@@ -1,0 +1,42 @@
+
+> @svgframe/shape-box@0.0.0 test
+> npm run build --silent && node --test "dist/test/*.test.js"
+
+✔ handles is a pure query that claims only box fill and label (3.1526ms)
+✔ apply propagates fill to the inner rect and label to the inner text (1.8278ms)
+✔ the handler refuses non-box targets and unknown attributes when called directly (0.9255ms)
+✔ a label on a non-box shape falls back to the default whitelist error (0.5855ms)
+✔ fill and label are each one undo unit and redo restores the change (1.7247ms)
+✔ activate registers the three box contributions through the staged context (2.0507ms)
+✔ default export is the plugin module with the shared manifest (0.1788ms)
+✔ package.json svgframe.contributes matches the manifest and the staged names (5.2526ms)
+✔ two activations stay independent and register no extra capability (0.3459ms)
+✔ create builds both role parts through the public creation service (3.2441ms)
+✔ create validates its own parameter grammar (0.8681ms)
+✔ matches only the explicit g data-kind=box marker (0.3986ms)
+✔ restore rebuilds the complete subtree including extra children and nested boxes (1.0081ms)
+✔ restore never re-applies the container world transform to its subtree (0.4194ms)
+✔ restore rejects incomplete or wrongly typed boxes and a missing id (0.5621ms)
+✔ create, in-clause nesting and the tree label reproduce the box shape (4.6679ms)
+✔ move and scale operate on the whole box and stay single undo units (1.4161ms)
+✔ fill and label edits are one undo unit each and keep nested structure (1.1723ms)
+✔ boxes can be grouped while their necessary parts cannot be split off (1.5652ms)
+✔ deleting the whole box is allowed, including nested boxes, and undo restores it (0.5853ms)
+✔ extra children can be removed while the necessary parts stay protected (0.5523ms)
+✔ a box is a g container with kind box and a data-kind marker (2.8233ms)
+✔ clone keeps the plugin type and rebinds copied parts without sharing children (0.7ms)
+✔ a cloned box keeps nested boxes and extra children as ordinary members (0.5156ms)
+✔ move and scale use the container semantics of all members (0.4301ms)
+✔ structure policy protects only the necessary parts and refuses ungroup (0.325ms)
+✔ the invariant rejects a missing or wrongly typed necessary part (0.7355ms)
+✔ the decorator labels only box rows with (box) (1.8175ms)
+✔ the tree presenter appends exactly one (box) suffix and keeps other rows bare (1.1315ms)
+✔ two decorator instances share no state (0.2155ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 308.1682
