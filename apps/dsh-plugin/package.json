@@ -17,12 +17,10 @@
     "build": "tsc -p tsconfig.json && node build.mjs",
     "test": "npm run build --silent && node --test \"dist/test/*.test.js\""
   },
-  "dependencies": {
+  "devDependencies": {
     "@svgframe/builtins": "*",
     "@svgframe/core": "*",
-    "@svgframe/svg-xml": "*"
-  },
-  "devDependencies": {
+    "@svgframe/svg-xml": "*",
     "esbuild": "0.28.2"
   },
   "dsh": {
