@@ -28,13 +28,15 @@ export class AttributeEditingService {
       );
     if (matching.length === 0) {
       target.setAttribute(request.attribute, request.value);
-      return AttributeEditingService.defaultMessage(target.tag, target.id, request);
+      return AttributeEditingService.defaultMessage(target.kind, target.id, request);
     }
     const handler = matching[0]!;
     const result = handler.apply({ document: candidate }, request);
-    return result.message ?? AttributeEditingService.defaultMessage(target.tag, target.id, request);
+    return (
+      result.message ?? AttributeEditingService.defaultMessage(target.kind, target.id, request)
+    );
   }
-  private static defaultMessage(tag: string, id: string, request: AttributeRequest): string {
-    return `${tag}#${id} updated: ${request.attribute}=${JSON.stringify(request.value)}`;
+  private static defaultMessage(kind: string, id: string, request: AttributeRequest): string {
+    return `${kind}#${id} updated: ${request.attribute}=${JSON.stringify(request.value)}`;
   }
 }
