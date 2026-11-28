@@ -38,6 +38,17 @@ AI 记录至少包含“建议是什么 → 检查了什么 → 发现什么 →
 
 A/B证据保存框架基线、插件提交、两种方式的模块集合/顺序/options和运行目录。用实际存在路径检查 diff，并包含原始 `git diff --name-status C^ C`。不以搜索无结果或不存在路径产生的空 diff 作为通过证据。
 
+## 指标重算
+
+`docs/metrics/` 由 `scripts/metrics/metrics.mjs` 从 Git 历史生成，口径、分类与解析器选型见 [ADR-0016](adr/0016-metrics-rules-and-classification.md) 与 [脚本说明](../scripts/metrics/README.md)。重算命令：
+
+```bash
+node scripts/metrics/metrics.mjs --from 'final^{commit}' --to <rev> --out docs/metrics
+node --test scripts/metrics/rules.test.mjs
+```
+
+候选测量写到 `--out artifacts/metrics-candidate`，避免在报告里引用自己尚未生成的提交 SHA；`p2` 生成后在同一 tag 上重跑并核对 CLI 源码文件集合与散列。`docs/metrics/summary.md` 与 `*.json` 是生成物，手改会被下一次重跑覆盖，且已加入 `.prettierignore`。
+
 ## 每个里程碑的收口
 
 由功能板块填写实际结果，集成协调者检查：文档里的命令是否能执行、接口是否与源码一致、矩阵是否能找到测试、日志是否来自当前代码。未完成项保持未完成，列入 Issue；最终报告不保留误导性的完成勾选。

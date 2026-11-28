@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "dist",
+    "declaration": true,
+    "composite": true,
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
+  },
+  "include": [
+    "index.ts",
+    "shapes/**/*.ts",
+    "providers/**/*.ts",
+    "actions/**/*.ts",
+    "commands/**/*.ts",
+    "register*.ts",
+    "Builtins*.ts",
+    "DefaultCommandServices.ts"
+  ],
+  "exclude": ["dist", "node_modules"],
+  "references": [{ "path": "../core" }]
+}

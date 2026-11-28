@@ -4,6 +4,7 @@ coverage/
 .npm-cache/
 artifacts/
 *.tmp
+*.tsbuildinfo
 .env*
 !.env.example
 doc/github/

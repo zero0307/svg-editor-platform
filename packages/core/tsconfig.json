@@ -3,7 +3,9 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "composite": true,
+    "tsBuildInfoFile": "dist/.tsbuildinfo"
   },
   "include": [
     "index.ts",
@@ -11,6 +13,8 @@
     "extensions/**/*.ts",
     "ports/**/*.ts",
     "events/**/*.ts",
+    "services/**/*.ts",
+    "presentation/**/*.ts",
     "testing/**/*.ts",
     "test/**/*.ts"
   ],

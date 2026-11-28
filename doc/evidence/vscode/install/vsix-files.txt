@@ -1,0 +1,42 @@
+VSIX 内容清单（#11，TASK-VSC-02）
+==================================
+
+被测构建：apps/vscode-svg，版本 0.2.0
+构建命令：npm run package -w vscode-svg
+  = npm run build --silent && vsce package --no-dependencies --out dist/svgframe.vscode-svg.vsix
+  = tsc -p tsconfig.json && node build.mjs（esbuild 打包）
+
+产物：apps/vscode-svg/dist/svgframe.vscode-svg.vsix
+大小：54381 字节
+SHA256：0E1B6CBDE082F393845270F5B28478C94BC893CE27553B5FEDA0B6F24B6C4CEB
+VSIX 二进制不入库，可用上面的命令与锁文件版本重新生成。
+
+vsce 打包输出（文件树）
+------------------------
+
+INFO  Files included in the VSIX:
+svgframe.vscode-svg.vsix
+├─ [Content_Types].xml
+├─ extension.vsixmanifest
+└─ extension/
+   ├─ package.json [0.94 KB]
+   ├─ readme.md [0.53 KB]
+   └─ dist/
+      └─ extension.js [234.46 KB]
+
+WARNING  LICENSE, LICENSE.md, or LICENSE.txt not found
+
+DONE  Packaged: dist/svgframe.vscode-svg.vsix (5 files, 53.11 KB)
+
+打包文件白名单（npx vsce ls --no-dependencies）
+-----------------------------------------------
+
+package.json
+README.md
+dist/extension.js
+
+说明：.vscodeignore 使用 `**` + 反向包含只保留扩展清单、README 与单文件入口；源码、测试、示例、
+构建脚本、tsconfig 与 source map 都不进 VSIX。`vsce ls` 不带 `--no-dependencies` 时会把
+package.json 中声明的运行依赖（@svgframe/svg-xml 的 workspace 链接与 xmldom）列出来，因此本记录
+统一使用 `--no-dependencies`；运行依赖已经在 esbuild 阶段内联进 dist/extension.js，这一点由安装版
+在干净 profile 中实际运行验证（见 clean-env.md）。

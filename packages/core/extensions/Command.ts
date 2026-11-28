@@ -1,3 +1,4 @@
+import type { CommandToken } from './CommandToken.js';
 import type { EditAction } from './EditAction.js';
 import type { EditorSessionPort } from '../ports/EditorSessionPort.js';
 import type { QueryContext } from './QueryContext.js';
@@ -71,4 +72,10 @@ export interface Command {
   /** Help line, for example `create <type> <id> [params...] [in <containerId>]`. */
   readonly usage: string;
   prepare(args: readonly string[]): CommandPreparation;
+  /**
+   * Optional token-aware parsing for commands whose grammar depends on quoting
+   * (the Phase 1 `create ... in <id>` clause). The dispatcher prefers this over
+   * `prepare` when present.
+   */
+  prepareTokens?(tokens: readonly CommandToken[]): CommandPreparation;
 }

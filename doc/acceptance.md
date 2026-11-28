@@ -154,6 +154,8 @@ A 的运行源码变化仅为新增插件及一个顶层组合根文件；B 仅�
 
 旧版 `src/domain/`、`src/application/` 可作为基线内核分类；`src/cli/`、`src/infrastructure/`、`src/bootstrap/` 为装配/宿主侧，注明 CommandRouter 仍含内置命令分发；旧版插件类为 0。新版按实际最终目录分类，六类图形和内置命令移动到 builtins 后属于插件。两端采用相同的目录职责定义，同时公开迁移表，不倒改旧版分类以美化增量。
 
+2026-11-25 执行记录（框架候选首版）：`scripts/metrics/metrics.mjs` 已从 Git 历史生成 `final^{commit}` → `17f9a78` 的指标，产物见 [docs/metrics](../docs/metrics/README.md)，规则与分类见 [ADR-0016](adr/0016-metrics-rules-and-classification.md)。该次 `plugin` 类为 0（`packages/builtins`、`apps/cli`、`plugins/*` 尚未落地），因此只是候选数据；`#15` 冻结框架与 `#22` 发布 `p2` 前必须重跑，不能以本记录替代终版指标。
+
 发布前先以候选提交生成报告，提交报告后得到最终验收提交，重算并验证运行源码指标未变化，再打 `p2`。报告中的代码分析目标 SHA 与 `p2` SHA 若不同，必须清楚写明仅报告/证据文件造成差异；最终验证日志同时记录 `final` 与 `p2` 解引用后的 SHA。这样可避免报告声称自己包含尚未生成的最终提交哈希。
 
 ## 7. 检查入口与完成定义

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { Group } from '../src/domain/shapes/Group.js';
+import { Group } from '@svgframe/core';
 import { TestHarness } from './TestHarness.js';
 
 test('course transcript: save barrier, invalid ancestor grouping, restore and external import', async () => {

@@ -1,9 +1,9 @@
 {
   "name": "vscode-svg",
   "displayName": "SVGFrame SVG",
-  "description": "Explorer decoration for SVG files and native Outline for SVG documents.",
+  "description": "Explorer decoration and native Outline for SVG documents.",
   "publisher": "svgframe",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "categories": [
@@ -15,9 +15,23 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./dist/src/extension.js",
+  "main": "./dist/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zero0307/svg-editor-platform.git",
+    "directory": "apps/vscode-svg"
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "test": "node --test \"dist/test/*.test.js\""
+    "build": "tsc -p tsconfig.json && node build.mjs",
+    "test": "npm run build --silent && node --test \"dist/test/*.test.js\"",
+    "package": "npm run build --silent && vsce package --no-dependencies --out dist/svgframe.vscode-svg.vsix"
+  },
+  "dependencies": {
+    "@svgframe/svg-xml": "*"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.140.0",
+    "@vscode/vsce": "4.1.1",
+    "esbuild": "0.28.2"
   }
 }

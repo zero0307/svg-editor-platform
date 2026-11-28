@@ -4,7 +4,7 @@
 
 ## 状态
 
-本仓库已初始化并继承 Phase 1 历史。当前运行布局为 src/、test/，已有 npm run check、npm test、npm run verify:visual 等入口。Phase 2 的 apps/、packages/、plugins/ 和工作区检查仍待实现，不得把目标目录或计划命令当作现有能力。
+本仓库已初始化并继承 Phase 1 历史。旧 `src/` 已在 #14 删除；当前运行布局为 `packages/*`（core/svg-xml/host/builtins）与 `apps/*`（cli/vscode-svg/dsh-plugin），根 `test/` 保留 89 项 Phase 1 回归、经公开包入口运行，新增 3 项组合根测试。根入口为 `npm run build`、`npm test`（92 项，含 6 项基线）、`npm run check`、`npm run build:packages`、`npm run test:packages`、`npm run cli`、`npm run verify:visual`（约定见 ADR-0006/ADR-0007）。`plugins/` 与正式业务插件按节点建立，不得把目标目录或计划命令当作现有能力。
 
 ## 修改范围
 
@@ -26,7 +26,7 @@
 ## 验证与文档
 
 - 运行与变更相关的单元、契约和集成检查；新插件须可用测试替身独立测试。
-- 现有根检查入口继续可用；新增工作区命令尚待搭建。执行前读取实际package.json，不声称不存在的命令已通过。
+- 现有根检查入口继续可用；工作区命令 `npm run build:packages`、`npm run test:packages` 已建立。执行前读取实际package.json，不声称不存在的命令已通过。
 - 更新对应需求条目和必要文档；区分计划、实现和真实测试结果。重要AI纠错记录到doc/records。
 - 测试失败或环境缺失时如实报告；不能用README历史描述代替本次验证。
 - 不在本任务之外创建、发送消息或修改远程设置。发现需要额外材料时先推进不受影响的工作，再提出具体问题。

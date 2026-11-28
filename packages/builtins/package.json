@@ -1,0 +1,19 @@
+{
+  "name": "@svgframe/builtins",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Default Phase 1 commands and six shape providers for SVG Editor Platform",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b ."
+  },
+  "dependencies": {
+    "@svgframe/core": "*"
+  }
+}

@@ -1,13 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { Rect } from '../src/domain/shapes/Rect.js';
-import { Circle } from '../src/domain/shapes/Circle.js';
-import { Ellipse } from '../src/domain/shapes/Ellipse.js';
-import { Line } from '../src/domain/shapes/Line.js';
-import { Text } from '../src/domain/shapes/Text.js';
-import { Group } from '../src/domain/shapes/Group.js';
-import { Numbers } from '../src/domain/Numbers.js';
-import { SvgDocument } from '../src/domain/SvgDocument.js';
+import { Circle, Ellipse, Group, Line, Rect, Text } from '@svgframe/builtins';
+import { Numbers, SvgDocument } from '@svgframe/core';
 
 test('each leaf owns move, scale, geometry validation and clone behavior', () => {
   const cases = [

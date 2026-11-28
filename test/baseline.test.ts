@@ -232,9 +232,9 @@ test('compare entry: pair mode detects byte differences with context', async () 
 });
 
 test('phase 1 golden replays byte-exactly against the current build', async (t) => {
-  const entry = path.join(root, 'dist', 'src', 'bootstrap', 'main.js');
+  const entry = path.join(root, 'apps', 'cli', 'dist', 'main.js');
   if (!existsSync(entry)) {
-    t.skip('dist/src/bootstrap/main.js is not built (run npm test through the root script)');
+    t.skip('apps/cli/dist/main.js is not built (run npm test through the root script)');
     return;
   }
   const work = await mkdtemp(path.join(tmpdir(), 'svg-baseline-replay-'));

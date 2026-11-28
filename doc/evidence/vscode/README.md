@@ -81,3 +81,67 @@ $tmp  = Join-Path $env:TEMP 'svgframe-vscode-3'
 - Outline 视图内容观察：本轮命令面板键盘自动化未成功（视图未展开），按“未执行”记录，不用推断代替；#11 实测。
 - 根 `npm run check` 的检查范围不包含 `apps/vscode-svg`（根 `tsc` 仅 `src/`+`test/`，架构检查仅 `src/`）；包内构建与测试是本节点唯一可复现入口，工作区接入由 #5 建立。
 - 非 Windows 平台未复跑。
+
+## 6. #11 Outline 与 VSIX（2026-11-25 追加）
+
+本节由 #11 追加；第 5 节保留 #3 当时的未执行状态，不代表 #11 结果。
+
+### 6.1 构建与单测
+
+```text
+> npm run build -w vscode-svg
+  dist\extension.js  234.5kb        （tsc -p tsconfig.json && node build.mjs，esbuild 内联 svg-xml + xmldom）
+  exit 0
+
+> npm test -w vscode-svg
+  tests 25 / pass 25 / fail 0       （装饰器 7 + Outline 模型 9 + 语法映射 5 + 读取/刷新/警告 4）
+```
+
+### 6.2 真实 Extension Host（隔离 profile + CDP）
+
+启动方式与 #3 相同（`--user-data-dir`/`--extensions-dir`/`--new-window`/`--extensionDevelopmentPath`），另加
+`--remote-debugging-port=9333`；UI 操作通过 Chrome DevTools Protocol 完成（`Input.dispatchKeyEvent` +
+`Input.insertText`，不经过系统键盘/输入法），截图用 `Page.captureScreenshot` 或窗口 `PrintWindow`。
+
+激活日志（`%TEMP%\svgframe-vscode-11\userdata\logs\20261125T131137\window1\exthost\exthost.log` 原文）：
+
+```text
+2026-11-25 13:11:39.226 [info] Extension host with pid 5248 started
+2026-11-25 13:11:39.855 [info] ExtensionService#_doActivateExtension svgframe.vscode-svg, startup: false, activationEvent: 'onStartupFinished'
+```
+
+该日志无 `[error]` 行。12:58/12:59 的首轮日志曾出现 “document selector without scheme” 提示，把选择器改为
+`{ scheme: 'file', pattern: '**/*.svg' }` 后重跑，该提示消失（上一条为修复后的日志）。
+
+Outline 观察（从工作区 DOM 读取，非截图猜测）：
+
+```text
+svg (object)
+g#flow (object)
+g (object)
+circle#dot (field)
+rect (field)
+text (field)
+```
+
+点击定位：编辑器中先按 `Ctrl+Home` 到 `Ln 1, Col 1`，在 Outline 中选中 `circle#dot` 后回车，状态栏变为
+`Ln 5, Col 7`（`<circle` 的 `<` 所在列），面包屑为 `nested > groups.svg > svg > g#flow > g > circle#dot`；截图
+[outline.png](outline.png)。
+
+编辑刷新：在第 13 行插入 `<rect id="added"/>`（未保存）后，Outline 立即从 6 行变为 7 行并出现 `rect#added`；
+截图 [outline-edit-refresh.png](outline-edit-refresh.png)。随后发送的 `Ctrl+Z` 未使 Outline 回退，原因可能是焦点/撤销
+分组差异；缓冲区未保存，仓库示例文件未被修改（`git status` 核对）。
+
+不完整 XML：真实宿主打开 `broken.svg`，Outline 面板显示 “No symbols found in document 'broken.svg'.”，扩展未崩溃；
+截图 [outline-broken.png](outline-broken.png)。同一失败在单测中断言 `SVG outline unavailable: …` 警告文案。
+
+### 6.3 VSIX
+
+- `npm run package -w vscode-svg` → `dist/svgframe.vscode-svg.vsix`（54 381 字节，SHA256 `0E1B6CBDE082F393845270F5B28478C94BC893CE27553B5FEDA0B6F24B6C4CEB`）；`vsce ls --no-dependencies` 只有 `package.json`、`README.md`、`dist/extension.js`。VSIX 二进制不入库。
+- 干净 profile 安装/运行/卸载：命令、日志、安装目录内容、`.obsolete` 清理说明见 [install/clean-env.md](install/clean-env.md)，VSIX 清单见 [install/vsix-files.txt](install/vsix-files.txt)，运行截图为 [install/clean-env-run.png](install/clean-env-run.png)。
+
+### 6.4 未执行
+
+- 只逐一点击验证 `circle#dot` 的定位，其余符号的 range/selection 由单测覆盖。
+- 编辑刷新只实测“插入元素”；撤销后的 Outline 回退未核对成功。
+- 未在 1.143.1 之外的版本、远程/Web、非 Windows 复跑；VSIX 未签名、未发布市场。

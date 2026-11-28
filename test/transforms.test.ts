@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { SvgTransform } from '../src/infrastructure/SvgTransform.js';
+import { SvgTransform } from '@svgframe/svg-xml';
 import { TestHarness } from './TestHarness.js';
 
 test('transform lists use SVG matrix order, including nested composition', () => {

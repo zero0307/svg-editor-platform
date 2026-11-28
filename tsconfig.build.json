@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/svg-xml" },
+    { "path": "./packages/host" },
+    { "path": "./packages/builtins" },
+    { "path": "./apps/cli" }
+  ]
+}
